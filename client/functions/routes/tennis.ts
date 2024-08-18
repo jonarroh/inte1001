@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
-import { tennisDTO, Tennis} from '../dto/tennisDTO';
+import { tennisDTO} from '../dto/tennisDTO';
 
 import TennisController from '../controller/tennis';
 const tennis = new Hono();
@@ -26,9 +26,12 @@ tennis.get('/:id', async (c) => {
   }
 });
 
+
+//el zValidator es un middleware que se encarga de validar los datos que se envian en el body
+// y obtiene el resultado de la validacion con c.req.valid('form')
 tennis.post('/', zValidator('form', tennisDTO), async (c) => {
   const controller = new TennisController();
-  const validated = c.req.valid('form') as Tennis;
+  const validated = c.req.valid('form') ;
   const result = await controller.insertTennis(validated);
   if (result.isOk) {
     return c.json(result.value);
@@ -40,7 +43,7 @@ tennis.post('/', zValidator('form', tennisDTO), async (c) => {
 tennis.put('/:id', zValidator('form', tennisDTO), async (c) => {
   const controller = new TennisController();
   const id = c.req.param('id');
-  const validated = c.req.valid('form') as Tennis;
+  const validated = c.req.valid('form');
   const result = await controller.updateTennis(validated, Number(id));
   if (result.isOk) {
     return c.json(result.value);

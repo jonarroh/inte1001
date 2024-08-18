@@ -1,11 +1,13 @@
-import { sqliteTable, text, integer,real } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 import tennis from "./tennis";
+
 const reviews = sqliteTable("reviews", {
   id: integer('id').primaryKey(),
-  tennisId: integer('tennis_id').notNull().references(() => tennis.id), // Relación 1:N
+  tennisId: integer('tennis_id').notNull().references(() => tennis.id),
   rating: integer('rating').notNull(),
   comment: text('comment').notNull(),
 });
+
 
 export default reviews;
 

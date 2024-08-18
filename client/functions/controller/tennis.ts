@@ -17,7 +17,7 @@ export default class TennisController {
 
   async getTennisById(id: number): Promise<Result<selectTennis | null, string>> {
     try {
-      const result = await db.select().from(schema.tennis).where(eq(schema.tennis.id, id)).get();
+      const result = db.select().from(schema.tennis).where(eq(schema.tennis.id, id)).get();
       return { isOk: true, value: result ?? null };
     } catch (error) {
       return { isOk: false, error: 'Failed to fetch tennis record by ID' };
@@ -29,7 +29,7 @@ export default class TennisController {
       await db.transaction(async (trx) => {
         await trx.insert(schema.tennis).values(body).execute();
       });
-      const result = await db.select().from(schema.tennis).where(eq(schema.tennis.marca, body.marca)).get();
+      const result = db.select().from(schema.tennis).where(eq(schema.tennis.marca, body.marca)).get();
       return { isOk: true, value: result };
     } catch (error) {
       console.error(error);
@@ -42,7 +42,7 @@ export default class TennisController {
       await db.transaction(async (trx) => {
         await trx.update(schema.tennis).set(newTennis).where(eq(schema.tennis.id, id)).execute();
       });
-      const result = await db.select().from(schema.tennis).where(eq(schema.tennis.id, id)).get();
+      const result = db.select().from(schema.tennis).where(eq(schema.tennis.id, id)).get();
       return { isOk: true, value: result };
     } catch (error) {
       console.error(error);
