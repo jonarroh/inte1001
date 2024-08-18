@@ -1,0 +1,43 @@
+{
+  "name": "client",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "generate": "drizzle-kit generate",
+    "migrate": "drizzle-kit migrate",
+    "seed": "bun run ./functions/db/seed.ts",
+    "dev:server": "bun --watch ./functions/index.ts"
+  },
+  "dependencies": {
+    "@elysiajs/eden": "^1.1.2",
+    "@hono/zod-validator": "^0.2.2",
+    "@libsql/client": "^0.9.0",
+    "drizzle-orm": "^0.33.0",
+    "hono": "^4.5.6",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "z": "^1.0.9",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.9.0",
+    "@types/bun": "^1.1.6",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react-swc": "^3.5.0",
+    "drizzle-kit": "^0.24.0",
+    "elysia": "^1.1.6",
+    "eslint": "^9.9.0",
+    "eslint-plugin-react-hooks": "^5.1.0-rc.0",
+    "eslint-plugin-react-refresh": "^0.4.9",
+    "globals": "^15.9.0",
+    "typescript": "^5.5.3",
+    "typescript-eslint": "^8.0.1",
+    "vite": "^5.4.1"
+  }
+}

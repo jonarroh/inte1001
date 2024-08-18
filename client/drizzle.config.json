@@ -1,0 +1,5 @@
+{
+  "dialect": "sqlite",
+  "schema": "./functions/db/schema/*.ts",
+  "url": "sqlite.db"
+}
