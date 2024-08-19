@@ -20,7 +20,7 @@ Esto instalará todas las dependencias tanto para el servidor como para el clien
 
 ---
 
-Si tienes alguna pregunta o necesitas más ayuda, ¡no dudes en contactarnos! 📬¡Claro! Aquí tienes una guía básica mejorada con emojis y comentarios más descriptivos:
+Si tienes alguna pregunta o necesitas más ayuda, ¡no dudes en contactarnos! 📬
 
 # 📖 Guía Básica de Uso del Proyecto
 
