@@ -72,4 +72,25 @@ await db.insert(schema.tennisCategories).values([
 ]);
 
 
+await db.insert(schema.users).values([
+  {
+    name:'indie rodriguez',
+    email:'inde@zip.com',
+    password:'1234',
+    role:'admin',
+  },
+  {
+    name:'jose rodriguez',
+    email:'sas@com',
+    password:'1234',
+    role:'user',
+  },
+  {
+    name:'luis rodriguez',
+    email:'dasda@com',
+    password:'1234',
+    role:'inventory',
+  },
+]);
+
 console.log(`Seeding complete for table`);
