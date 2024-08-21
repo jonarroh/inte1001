@@ -35,8 +35,8 @@ export function useTennisLogic() {
     };
     const result = await new TennisActions().updateTennis(editTenni, selectedItem.id);
     if ('success' in result && !result.success) {
-      setErrors(result.error);
-      return result.error;
+      setErrors(result.error.error);
+      return result.error.error;
     }
     setSelectedItem({
       modelo: '',

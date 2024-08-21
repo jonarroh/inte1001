@@ -1,8 +1,9 @@
 // TennisPage.tsx
-import { ActionFunction, Form, useActionData, useLoaderData, useNavigation, useRevalidator } from "react-router-dom";
+import { ActionFunction, Form, redirect, useActionData, useLoaderData, useNavigation, useRevalidator } from "react-router-dom";
 import { useTennisLogic } from "./hook";
 import { TennisActions } from "./actions";
 import { selectTennis } from "@t/schema/tennis";
+import { error } from "elysia";
 
 export const Actions: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
@@ -14,6 +15,8 @@ export const Actions: ActionFunction = async ({ request }) => {
     console.log(result.error);
     return result.error.error;
   }
+  
+  return redirect("/tennis");
 };
 
 export async function loader() {
@@ -42,8 +45,7 @@ function TennisPage() {
     handleInputChange,
   } = useTennisLogic();
 
-  console.log("los errores", errorsAction);
-  
+  console.log(errors)
 
   return (
     <main>
@@ -78,6 +80,11 @@ function TennisPage() {
                 {errors.issues.find(issue => issue.path.includes("modelo"))?.message}
               </div>
             )}
+            {errorsAction?.issues?.find(issue => issue.path.includes("modelo")) && (
+              <div style={{ color: "red" }}>
+                {errorsAction.issues.find(issue => issue.path.includes("modelo"))?.message}
+              </div>
+            )}
           </label>
 
           <label>
@@ -94,6 +101,11 @@ function TennisPage() {
                 {errors.issues.find(issue => issue.path.includes("marca"))?.message}
               </div>
             )}
+             {errorsAction?.issues?.find(issue => issue.path.includes("marca")) && (
+              <div style={{ color: "red" }}>
+                {errorsAction.issues.find(issue => issue.path.includes("marca"))?.message}
+              </div>
+            )}
           </label>
 
           <label>
@@ -108,6 +120,11 @@ function TennisPage() {
             {errors?.issues?.find(issue => issue.path.includes("precio")) && (
               <div style={{ color: "red" }}>
                 {errors.issues.find(issue => issue.path.includes("precio"))?.message}
+              </div>
+            )}
+             {errorsAction?.issues?.find(issue => issue.path.includes("precio")) && (
+              <div style={{ color: "red" }}>
+                {errorsAction.issues.find(issue => issue.path.includes("precio"))?.message}
               </div>
             )}
           </label>

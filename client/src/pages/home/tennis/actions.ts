@@ -1,80 +1,59 @@
 import { inserTennis } from "@t/schema/tennis";
 
-
 export class TennisActions {
-  
+  private baseUrl: string = "http://localhost:3000/tennis";
+
   async createTenis(newTenni: FormData): Promise<inserTennis | { success: false; error: any }> {
-    const tenni: inserTennis = {
-      marca: newTenni.get("marca") as string,
-      modelo: newTenni.get("modelo") as string,
-      precio: Number(newTenni.get("precio")),
+    const tenni: inserTennis = this.extractTennisData(newTenni);
+    return this.sendRequest("POST", this.baseUrl, tenni);
+  }
+
+  async deleteTennis(id: number): Promise<void> {
+    await this.sendRequest("DELETE", `${this.baseUrl}/${id}`);
+  }
+
+  async updateTennis(tennis: inserTennis, id: number): Promise<inserTennis | { success: false; error: any }> {
+    return this.sendRequest("PUT", `${this.baseUrl}/${id}`, tennis);
+  }
+
+  private extractTennisData(formData: FormData): inserTennis {
+    return {
+      marca: formData.get("marca") as string,
+      modelo: formData.get("modelo") as string,
+      precio: Number(formData.get("precio")),
     };
-  
+  }
+
+  private async sendRequest(method: string, url: string, body?: any): Promise<any> {
     try {
-      const response = await fetch("http://localhost:3000/tennis", {
-        method: "POST",
+      const response = await fetch(url, {
+        method,
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(tenni),
+        body: body ? JSON.stringify(body) : undefined,
       });
-  
+
       if (!response.ok) {
-        const errorData = await response.json(); // Parseamos la respuesta con el error
-        console.log(errorData, "errorData");
+        const errorData = await response.json();
+        console.error(errorData, "errorData");
+        if(errorData.error){
+          return { success: false, error: errorData.error };
+        }
         return { success: false, error: errorData };
       }
-  
-      const data: inserTennis = await response.json();
+
+      const data = await response.json();
       return data;
+
     } catch (error) {
       return {
         success: false,
         error: {
-          message: "Error al crear el tenis",
+          message: "Network error",
           details: error,
         },
       };
     }
   }
-
-  async deleteTennis(id: number): Promise<void> {
-    const response = await fetch(`http://localhost:3000/tennis/${id}`, {
-      method: "DELETE",
-    });
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-  }
-
-  async updateTennis(tennis: inserTennis, id: number): Promise<inserTennis | { success: false; error: any }> {
-    const response = await fetch(`http://localhost:3000/tennis/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(tennis),
-    });
-    if (!response.ok) {
-      const errorData = await response.json(); // Parseamos la respuesta con el error
-      console.log(errorData, "errorData");
-        return { success: false, error: errorData.error };
-    }
-    const data: inserTennis = await response.json();
-
-    if(data === null){
-      return {
-        success: false,
-        error: {
-          message: "Error al actualizar el tenis",
-        },
-      };
-    }
-
-    return data;
-  }
-
-  
-  
-
 }
