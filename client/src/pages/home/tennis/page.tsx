@@ -1,13 +1,14 @@
 // TennisPage.tsx
 import { ActionFunction, Form, redirect, useActionData, useLoaderData, useNavigation, useRevalidator } from "react-router-dom";
 import { useTennisLogic } from "./hook";
-import { TennisActions } from "./actions";
-import { selectTennis } from "@t/schema/tennis";
+import { TennisService } from "./service";
+import { selectTennis } from "@server/schema/tennis";
+import { Suspense } from "react";
 
 
 export const Actions: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
-  const actions = new TennisActions();
+  const actions = new TennisService();
   
   const result = await actions.createTenis(formData);
   
@@ -49,6 +50,7 @@ function TennisPage() {
   return (
     <main>
       <h1>Tennis</h1>
+      <Suspense fallback={<div>Loading...</div>}>
       {isLoading && <p style={{ fontSize: "5em" }}>Loading...</p>}
       
       {data.map((item) => (
@@ -57,7 +59,7 @@ function TennisPage() {
           <p>{item.marca}</p>
           <span>
             <button onClick={() => onClickEdit(item)}>Edit</button>
-            <button onClick={() => handleDelete(item.id, revalidator)}>Delete</button>
+            <button onClick={() => handleDelete(item.id)}>Delete</button>
           </span>
         </div>
       ))}
@@ -137,6 +139,7 @@ function TennisPage() {
           }
         </Form>
       </section>
+      </Suspense>
     </main>
   );
 }

@@ -1,7 +1,8 @@
 
 import { useState } from "react";
-import { TennisActions } from "./actions";
-import { inserTennis, selectTennis } from "@t/schema/tennis";
+import { TennisService } from "./service";
+import { inserTennis, selectTennis } from "@server/schema/tennis";
+import { useSubmit } from "react-router-dom";
 
 export function useTennisLogic() {
   const [selectedItem, setSelectedItem] = useState<selectTennis>({
@@ -12,13 +13,18 @@ export function useTennisLogic() {
     descripcion: null,
     imagen: null,
   });
-
+  const submit = useSubmit();
   const [errors, setErrors] = useState<{ issues: { path: string; message: string }[] } | null>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
-  const handleDelete = async (id: number, revalidator: { revalidate: () => void }) => {
-    await new TennisActions().deleteTennis(id);
-    revalidator.revalidate();
+  const handleDelete = async (id: number) => {
+    submit({
+      id: id,
+    },{
+      action: `/tennis/delete/${id}`, // Asegúrate de incluir el id en la URL
+      method: 'POST',
+    });
+
   };
 
   const onClickEdit = (item: selectTennis) => {
@@ -33,7 +39,7 @@ export function useTennisLogic() {
       precio: selectedItem.precio,
       id: selectedItem.id,
     };
-    const result = await new TennisActions().updateTennis(editTenni, selectedItem.id);
+    const result = await new TennisService().updateTennis(editTenni, selectedItem.id);
     if ('success' in result && !result.success) {
       setErrors(result.error.error);
       return result.error.error;

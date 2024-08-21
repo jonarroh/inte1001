@@ -1,5 +1,5 @@
 {
   "dialect": "sqlite",
-  "schema": "./functions/db/schema/*.ts",
+  "schema": "./server/db/schema/*.ts",
   "url": "sqlite.db"
 }

@@ -1,7 +1,7 @@
 import { sendRequest } from "../../../lib/sendRequest";
-import { inserTennis } from "@t/schema/tennis";
+import { inserTennis } from "@server/schema/tennis";
 
-export class TennisActions {
+export class TennisService {
   private baseUrl: string = "http://localhost:3000/tennis";
 
   async createTenis(newTenni: FormData): Promise<inserTennis | { success: false; error: any }> {

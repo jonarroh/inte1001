@@ -4,15 +4,15 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev:client": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "generate": "drizzle-kit generate",
     "migrate": "drizzle-kit migrate",
-    "seed": "bun run ./functions/db/seed.ts",
-    "dev:server": "bun --watch ./functions/index.ts",
-    "dev:both": "bun --watch ./functions/index.ts & vite"
+    "seed": "bun run ./server/db/seed.ts",
+    "dev:server": "bun --watch ./server/index.ts",
+    "dev:app": "bun --watch ./server/index.ts & vite"
   },
   "dependencies": {
     "@elysiajs/eden": "^1.1.2",

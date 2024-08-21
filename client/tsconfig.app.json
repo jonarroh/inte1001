@@ -21,7 +21,11 @@
     "noFallthroughCasesInSwitch": true,
     "paths": {
      "@/*": ["./src/*"],
-     "@t/*": ["./functions/db/*"]
+     "@server/*": ["./server/db/*"],
+     "@shared/*": ["./shared/*"],
+     "@utils/*": ["./utils/*"],
+     "@lib/*": ["./src/lib/*"],
+     "@pages/*": ["./src/pages/*"],
    }
   },
   "include": ["src"]

@@ -4,6 +4,7 @@ import {
 import Home from "./pages/home/page";
 import TennisPage, {loader as TennisLoader, Actions as TennisActions} from "./pages/home/tennis/page";
 import TennisErrorPage from "./pages/home/tennis/error";
+import { ActionTennisDelete } from "./pages/home/tennis/actions/delete";
 
 
 const router = createBrowserRouter([
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
     errorElement: <TennisErrorPage />,
     loader: TennisLoader,
     action: TennisActions
+  },
+  {
+    path: "/tennis/delete/:id",
+    action:  ActionTennisDelete
   }
 ]);
 
