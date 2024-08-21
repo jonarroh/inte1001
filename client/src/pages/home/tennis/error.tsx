@@ -9,6 +9,9 @@ export default function ErrorPage() {
       <p>Sorry, an unexpected error has occurred.</p>
       <p>
       <i>
+          {/* 
+          manejo de errores en la pagina de error hacer de esta manera
+          */}
           {(error as Error)?.message ||
             (error as { statusText?: string })?.statusText}
         </i>

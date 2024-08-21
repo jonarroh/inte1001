@@ -1,21 +1,12 @@
-
-import { useState } from "react";
-import { TennisService } from "./service";
-import { inserTennis, selectTennis } from "@server/schema/tennis";
-import { useSubmit } from "react-router-dom";
+import { useNavigate, useSubmit } from "react-router-dom";
 
 export function useTennisLogic() {
-  const [selectedItem, setSelectedItem] = useState<selectTennis>({
-    modelo: '',
-    id: 0,
-    marca: '',
-    precio: 0,
-    descripcion: null,
-    imagen: null,
-  });
+  //el hook useSubmit() nos permite de manera programática enviar una petición al servidor
+  //documentación: https://reactrouter.com/en/main/hooks/use-submit
   const submit = useSubmit();
-  const [errors, setErrors] = useState<{ issues: { path: string; message: string }[] } | null>(null);
-  const [isEditing, setIsEditing] = useState<boolean>(false);
+  //el hook useNavigate() nos permite navegar a una ruta de manera programática
+  //documentación: https://reactrouter.com/en/main/hooks/use-navigate
+  const navigate = useNavigate();
 
   const handleDelete = async (id: number) => {
     submit({
@@ -27,48 +18,13 @@ export function useTennisLogic() {
 
   };
 
-  const onClickEdit = (item: selectTennis) => {
-    setSelectedItem(item);
-    setIsEditing(true);
-  };
-
-  const handleEdit = async (revalidator: { revalidate: () => void }) => {
-    const editTenni: inserTennis = {
-      marca: selectedItem.marca,
-      modelo: selectedItem.modelo,
-      precio: selectedItem.precio,
-      id: selectedItem.id,
-    };
-    const result = await new TennisService().updateTennis(editTenni, selectedItem.id);
-    if ('success' in result && !result.success) {
-      setErrors(result.error.error);
-      return result.error.error;
-    }
-    setSelectedItem({
-      modelo: '',
-      id: 0,
-      marca: '',
-      precio: 0,
-      descripcion: null,
-      imagen: null,
-    });
-    setIsEditing(false);
-    revalidator.revalidate();
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type } = e.target;
-    const newValue = type === 'number' ? parseFloat(value) : value;
-    setSelectedItem(prev => prev ? { ...prev, [name]: newValue } : prev);
+  const onClickEdit = (id: number) => {
+    console.log(id);
+    navigate(`/tennis/update/${id}`);
   };
 
   return {
-    selectedItem,
-    isEditing,
-    errors,
     handleDelete,
     onClickEdit,
-    handleEdit,
-    handleInputChange,
   };
 }
