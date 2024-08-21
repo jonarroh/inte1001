@@ -28,10 +28,10 @@ tennis.get('/:id', async (c) => {
 
 
 //el zValidator es un middleware que se encarga de validar los datos que se envian en el body
-// y obtiene el resultado de la validacion con c.req.valid('form')
-tennis.post('/', zValidator('form', tennisDTO), async (c) => {
+// y obtiene el resultado de la validacion con c.req.valid('json')
+tennis.post('/', zValidator('json', tennisDTO), async (c) => {
   const controller = new TennisController();
-  const validated = c.req.valid('form') ;
+  const validated = c.req.valid('json') ;
   const result = await controller.insertTennis(validated);
   if (result.isOk) {
     return c.json(result.value);
@@ -40,12 +40,14 @@ tennis.post('/', zValidator('form', tennisDTO), async (c) => {
   }
 });
 
-tennis.put('/:id', zValidator('form', tennisDTO), async (c) => {
+tennis.put('/:id', zValidator('json', tennisDTO), async (c) => {
   const controller = new TennisController();
   const id = c.req.param('id');
-  const validated = c.req.valid('form');
+  console.log(id);
+  const validated = c.req.valid('json');
   const result = await controller.updateTennis(validated, Number(id));
   if (result.isOk) {
+    console.log(result.value);
     return c.json(result.value);
   } else {
     return c.json({ error: result.error }, 500);
