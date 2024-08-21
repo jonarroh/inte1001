@@ -3,7 +3,7 @@ import { ActionFunction, Form, redirect, useActionData, useLoaderData, useNaviga
 import { useTennisLogic } from "./hook";
 import { TennisActions } from "./actions";
 import { selectTennis } from "@t/schema/tennis";
-import { error } from "elysia";
+
 
 export const Actions: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
@@ -15,6 +15,7 @@ export const Actions: ActionFunction = async ({ request }) => {
     console.log(result.error);
     return result.error.error;
   }
+  console.log(result);
   
   return redirect("/tennis");
 };
@@ -44,9 +45,7 @@ function TennisPage() {
     handleEdit,
     handleInputChange,
   } = useTennisLogic();
-
-  console.log(errors)
-
+  
   return (
     <main>
       <h1>Tennis</h1>
