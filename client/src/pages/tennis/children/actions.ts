@@ -1,6 +1,13 @@
 import { ActionFunction, json, redirect } from "react-router-dom";
 import { TennisService } from "../service";
-import { inserTennis } from "@server/schema/tennis";
+import { type inserTennis } from "@server/schema/tennis";
+
+export const ActionTennisDelete: ActionFunction = async ({ params }) => {
+  const id = Number(params.id);
+  const actions = new TennisService();
+  await actions.deleteTennis(id);
+  return redirect("/tennis");
+}
 
 export const ActionTennisUpdate: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
@@ -24,3 +31,16 @@ export const ActionTennisUpdate: ActionFunction = async ({ request }) => {
   return redirect("/tennis");
 
 }
+
+export const ActionCreateTennis: ActionFunction = async ({ request }) => {
+  const formData = await request.formData();
+  const actions = new TennisService();
+  const result = await actions.createTenis(formData);
+  
+  if ('success' in result && !result.success) {
+    console.log(result.error);
+    return result.error.error;
+  }
+  console.log(result);
+  return redirect("/tennis");
+};

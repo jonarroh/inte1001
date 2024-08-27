@@ -1,4 +1,4 @@
-import { sendRequest } from "../../../lib/sendRequest";
+import { sendRequest } from "../../lib/sendRequest";
 import { inserTennis } from "@server/schema/tennis";
 
 /*

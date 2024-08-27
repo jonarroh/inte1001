@@ -1,5 +1,5 @@
 import useFetch from "./lib/useFetcht";
-import { selectTennis } from "@t/schema/tennis";
+import { selectTennis } from "@server/schema/tennis";
 
 
 

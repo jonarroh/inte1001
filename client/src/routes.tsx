@@ -2,13 +2,11 @@ import {
   createBrowserRouter
 } from "react-router-dom";
 import Home from "./pages/home/page";
-import TennisPage, {loader as TennisLoader} from "./pages/home/tennis/page";
-import TennisErrorPage from "./pages/home/tennis/error";
-import { ActionTennisDelete } from "./pages/home/tennis/actions/delete";
-import { ActionTennisUpdate } from "./pages/home/tennis/actions/update";
-import {loader as updateLoader} from "./pages/home/tennis/children/updatepage";
-import Updatepage from "./pages/home/tennis/children/updatepage";
-import { ActionCreateTennis } from "./pages/home/tennis/actions/post";
+import TennisPage, {loader as TennisLoader} from "./pages/tennis/page";
+import TennisErrorPage from "./pages/tennis/error";
+import {loader as updateLoader} from "./pages/tennis/children/updatepage";
+import Updatepage from "./pages/tennis/children/updatepage";
+import { ActionCreateTennis, ActionTennisDelete, ActionTennisUpdate } from "./pages/tennis/children/actions";
 
 
 const router = createBrowserRouter([
