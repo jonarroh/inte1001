@@ -93,4 +93,87 @@ await db.insert(schema.users).values([
   },
 ]);
 
+const badgesData = [
+  {
+    name: 'Novato',
+    description: 'Gana tu primer badge.',
+    pointsRequired: 10,
+  },
+  {
+    name: 'Intermedio',
+    description: 'Alcanza 50 puntos.',
+    pointsRequired: 50,
+  },
+  {
+    name: 'Avanzado',
+    description: 'Alcanza 100 puntos.',
+    pointsRequired: 100,
+  },
+  {
+    name: 'Experto',
+    description: 'Alcanza 200 puntos.',
+    pointsRequired: 200,
+  },
+];
+
+const leaguesData = [
+  {
+    name: 'Bronce',
+    pointsRequired: 0, // Liga inicial
+  },
+  {
+    name: 'Plata',
+    pointsRequired: 100,
+  },
+  {
+    name: 'Oro',
+    pointsRequired: 250,
+  },
+  {
+    name: 'Platino',
+    pointsRequired: 500,
+  },
+  {
+    name: 'Diamante',
+    pointsRequired: 1000,
+  },
+];
+
+const userLeaguesData = [
+  {
+    userId: 1,  // ID del usuario en tu base de datos
+    leagueId: 1, // ID de la liga (Bronce)
+    pointsAccumulated: 50,
+  },
+  {
+    userId: 2,
+    leagueId: 1,
+    pointsAccumulated: 120
+  },
+  {
+    userId: 3,
+    leagueId: 2, // Liga Plata
+    pointsAccumulated: 300,
+  },
+  {
+    userId: 4,
+    leagueId: 3, // Liga Oro
+    pointsAccumulated: 700
+  },
+];
+
+
+
+
+await db.insert(schema.badges).values(badgesData);
+await db.insert(schema.leagues).values(leaguesData);
+await db.insert(schema.userBadges).values([
+  { userId: 1, badgeId: 1 }, // Novato
+  { userId: 2, badgeId: 2 }, // Intermedio
+  { userId: 3, badgeId: 3 }, // Avanzado
+  { userId: 4, badgeId: 4 }, // Experto
+]);
+await db.insert(schema.userLeagues).values(userLeaguesData);
+
+
 console.log(`Seeding complete for table`);
