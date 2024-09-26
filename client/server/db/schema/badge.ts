@@ -17,14 +17,30 @@ export const userBadges = sqliteTable('user_badges', {
 });
 
 
+export const userBadgesPoints = sqliteTable('user_badges_points', {
+  id: integer('id').primaryKey(),
+  userId: integer('user_id').notNull(),
+  pointsAccumulated: integer('points_accumulated').notNull().default(0),
+  month: text('month').notNull().default(sql`(current_timestamp)`),
+});
+
+
 // Inferencia de tipos
 type insertBadge = typeof badges.$inferInsert;
 type selectBadge = typeof badges.$inferSelect;
 
+
 type insertUserBadge = typeof userBadges.$inferInsert;
+type selectUserBadge = typeof userBadges.$inferSelect;
+
+type insertUserBadgePoints = typeof userBadgesPoints.$inferInsert;
+type selectUserBadgePoints = typeof userBadgesPoints.$inferSelect;
 
 export type {
   insertBadge,
   selectBadge,
-  insertUserBadge
+  insertUserBadge,
+  selectUserBadge,
+  insertUserBadgePoints,
+  selectUserBadgePoints
 }

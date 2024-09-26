@@ -176,4 +176,19 @@ await db.insert(schema.userBadges).values([
 await db.insert(schema.userLeagues).values(userLeaguesData);
 
 
+await db.insert(schema.userBadgesPoints).values([
+  { userId: 1, pointsAccumulated: 50 },
+  { userId: 2, pointsAccumulated: 120 },
+  { userId: 3, pointsAccumulated: 300 },
+  { userId: 4, pointsAccumulated: 700 },
+]);
+
+await db.insert(schema.userLeaguesPoints).values([
+  { userId: 1, pointsAccumulated: 50 },
+  { userId: 2, pointsAccumulated: 120 },
+  { userId: 3, pointsAccumulated: 300 },
+  { userId: 4, pointsAccumulated: 700 },
+]);
+
+
 console.log(`Seeding complete for table`);

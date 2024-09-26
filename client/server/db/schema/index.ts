@@ -5,5 +5,7 @@ export { tennisCategories } from './categorias';
 export { default as users } from './users';
 export { badges } from './badge';
 export { userBadges } from './badge';
+export {userBadgesPoints} from './badge'
 export { leagues } from './leagues';
 export {userLeagues} from './leagues'
+export {userLeaguesPoints} from './leagues'

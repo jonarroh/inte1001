@@ -11,12 +11,14 @@
     "generate": "drizzle-kit generate",
     "migrate": "drizzle-kit migrate",
     "seed": "bun run ./server/db/seed.ts",
+    "db" : "bun generate && bun migrate && bun seed",
     "dev:server": "bun --watch ./server/index.ts",
     "dev:app": "bun --watch ./server/index.ts & vite",
     "new": "bun run create.ts"
   },
   "dependencies": {
     "@elysiajs/eden": "^1.1.2",
+    "@hono/swagger-ui": "^0.4.1",
     "@hono/zod-validator": "^0.2.2",
     "@libsql/client": "^0.9.0",
     "@radix-ui/react-icons": "^1.3.0",
