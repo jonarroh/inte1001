@@ -5,6 +5,7 @@ import taco from "./routes/taco";
 import auth from "./routes/auth";
 import badge from "./routes/badge";
 import leagues  from "./routes/leagues";
+import location from "./routes/location";
 
 const app = new Hono();
 
@@ -20,4 +21,5 @@ app.route('/taco', taco);
 app.route('/auth', auth);
 app.route('/badge', badge);
 app.route('/leagues', leagues);
+app.route('/location', location);
 export default app;

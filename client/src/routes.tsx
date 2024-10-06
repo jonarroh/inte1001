@@ -2,11 +2,13 @@ import {
   createBrowserRouter
 } from "react-router-dom";
 import Home from "./pages/home/page";
-import TennisPage, {loader as TennisLoader} from "./pages/tennis/page";
+import TennisPage, { loader as TennisLoader } from "./pages/tennis/page";
 import TennisErrorPage from "./pages/tennis/error";
-import {loader as updateLoader} from "./pages/tennis/children/updatepage";
+import { loader as updateLoader } from "./pages/tennis/children/updatepage";
 import Updatepage from "./pages/tennis/children/updatepage";
 import { ActionCreateTennis, ActionTennisDelete, ActionTennisUpdate } from "./pages/tennis/children/actions";
+import UserPage from "./pages/user/page";
+import { loader as LocationsLoader } from "./pages/user/page";
 
 
 const router = createBrowserRouter([
@@ -15,6 +17,11 @@ const router = createBrowserRouter([
     path: "/",
     // element es el componente que se renderiza en la ruta
     element: <Home />
+  },
+  {
+    path: "/globe",
+    element: <UserPage />,
+    loader: LocationsLoader
   },
   {
     path: "/tennis",
@@ -36,9 +43,9 @@ const router = createBrowserRouter([
       {
         // el path es la ruta de la subpágina seria /tennis/update/:id
         path: "update/:id",
-        element:<Updatepage />,
+        element: <Updatepage />,
         action: ActionTennisUpdate,
-        loader:updateLoader
+        loader: updateLoader
       }
     ]
   }

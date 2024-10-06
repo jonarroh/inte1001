@@ -9,3 +9,4 @@ export {userBadgesPoints} from './badge'
 export { leagues } from './leagues';
 export {userLeagues} from './leagues'
 export {userLeaguesPoints} from './leagues'
+export { location } from './location';
