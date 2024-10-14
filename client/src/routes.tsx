@@ -9,6 +9,7 @@ import { ActionCreateTennis, ActionTennisDelete, ActionTennisUpdate } from "./pa
 import UserPage from "./pages/user/page";
 import { loader as LocationsLoader } from "./pages/user/page";
 import LoginPage from "./pages/login/page";
+import BadgesPage, { loader as BadgesLoader } from "./pages/badges/page";
 
 
 const router = createBrowserRouter([
@@ -17,6 +18,11 @@ const router = createBrowserRouter([
     path: "/",
     // element es el componente que se renderiza en la ruta
     element: <LoginPage />
+  },
+  {
+    path: "/badges",
+    element: <BadgesPage />,
+    loader: BadgesLoader
   },
   {
     path: "/globe",
