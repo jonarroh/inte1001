@@ -10,6 +10,7 @@ import UserPage from "./pages/user/page";
 import { loader as LocationsLoader } from "./pages/user/page";
 import LoginPage from "./pages/login/page";
 import BadgesPage, { loader as BadgesLoader } from "./pages/badges/page";
+import { ActionBadgesCreate } from "./pages/badges/children/actions";
 
 
 const router = createBrowserRouter([
@@ -22,7 +23,8 @@ const router = createBrowserRouter([
   {
     path: "/badges",
     element: <BadgesPage />,
-    loader: BadgesLoader
+    loader: BadgesLoader,
+    action: ActionBadgesCreate
   },
   {
     path: "/globe",

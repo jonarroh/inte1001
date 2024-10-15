@@ -2,17 +2,17 @@ import DashboardLayout from "@/components/layout/app";
 import { Credenza, CredenzaBody, CredenzaClose, CredenzaContent, CredenzaDescription, CredenzaFooter, CredenzaHeader, CredenzaTitle, CredenzaTrigger } from "@/components/templates/credenza";
 import PageContainer from "@/components/templates/page-container";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
-import { selectBadge } from "@server/schema/badge";
-import { Plus } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { insertBadge, selectBadge } from "@server/schema/badge";
 import { useState } from "react";
-import { Link, LoaderFunction, useLoaderData } from "react-router-dom"
+import { Form, LoaderFunction, useFetcher, useLoaderData } from "react-router-dom"
 
 
-export const loader: LoaderFunction = async ({ request }) => {
+export const loader: LoaderFunction = async () => {
   const response = await fetch('http://localhost:3000/badge');
   if (!response.ok) {
     throw new Error('Network response was not ok');
@@ -51,28 +51,7 @@ export default function BadgesPage() {
               <Input placeholder="Search"
                 onChange={(e) => setsearch(e.target.value)}
               />
-              <Credenza>
-                <CredenzaTrigger asChild>
-                  <Button>Open modal</Button>
-                </CredenzaTrigger>
-                <CredenzaContent>
-                  <CredenzaHeader>
-                    <CredenzaTitle>Credenza</CredenzaTitle>
-                    <CredenzaDescription>
-                      A responsive modal component for shadcn/ui.
-                    </CredenzaDescription>
-                  </CredenzaHeader>
-                  <CredenzaBody>
-                    This component is built using shadcn/ui&apos;s dialog and drawer
-                    component, which is built on top of Vaul.
-                  </CredenzaBody>
-                  <CredenzaFooter>
-                    <CredenzaClose asChild>
-                      <Button>Close</Button>
-                    </CredenzaClose>
-                  </CredenzaFooter>
-                </CredenzaContent>
-              </Credenza>
+              <NewBadgeModal />
             </div>
             {
               filteredData.map((badge) => (
@@ -88,4 +67,114 @@ export default function BadgesPage() {
       </PageContainer>
     </DashboardLayout>
   )
-} 
+}
+
+
+
+import { useActionData } from "react-router-dom";
+import { a } from "react-spring";
+type ActionData = {
+  errors?: {
+    name?: { _errors: string[] };
+    requiredPoint?: { _errors: string[] };
+    message?: { _errors: string[] };
+    picture?: { _errors: string[] };
+  };
+};
+
+
+const NewBadgeModal = () => {
+  const actionData = useActionData() as ActionData;
+  ;
+  const fetcher = useFetcher();
+
+  return (
+    <Credenza>
+      <CredenzaTrigger asChild>
+        <Button>Nuevo</Button>
+      </CredenzaTrigger>
+      <CredenzaContent>
+        <CredenzaHeader>
+          <CredenzaTitle>Credenza</CredenzaTitle>
+          <CredenzaDescription>
+            A responsive modal component for shadcn/ui.
+          </CredenzaDescription>
+        </CredenzaHeader>
+        <CredenzaBody>
+          <fetcher.Form action="/badges" method="post">
+            <div className="grid grid-cols-6 grid-rows-9 gap-0">
+              <div className="col-start-1 col-end-4 row-start-1 row-end-3 ">
+                <div className="grid w-full max-w-sm items-center gap-1.5">
+                  <Label htmlFor="name">Nombre</Label>
+                  <Input type="text" id="name" placeholder="Nombre" name="name" />
+                  {actionData?.errors?.name && (
+                    <p className="text-red-500 text-sm">{actionData.errors.name._errors[0]}</p>
+                  )}
+                </div>
+              </div>
+              <div className="col-start-1 col-end-4 row-start-3 row-end-5 ">
+                <div className="grid w-full max-w-sm items-center gap-1.5">
+                  <Label htmlFor="requiredPoint">Puntos requeridos</Label>
+                  <Input
+                    type="number"
+                    id="requiredPoint"
+                    placeholder="Puntos requeridos"
+                    name="requiredPoint"
+                  />
+                  {actionData?.errors?.requiredPoint && (
+                    <p className="text-red-500 text-sm">
+                      {actionData.errors.requiredPoint._errors[0]}
+                    </p>
+                  )}
+                </div>
+              </div>
+              <div className="col-start-1 col-end-4 row-start-5 row-end-8 ">
+                <div className="grid w-full gap-1.5">
+                  <Label htmlFor="message">Descripción</Label>
+                  <Textarea
+                    className="resize-none"
+                    placeholder="Type your message here."
+                    id="message"
+                    name="message"
+                  />
+                  {actionData?.errors?.message && (
+                    <p className="text-red-500 text-sm">
+                      {actionData.errors.message._errors[0]}
+                    </p>
+                  )}
+                </div>
+              </div>
+              <div className="col-start-4 col-end-7 row-start-1 row-end-8">
+                <div className="grid w-full max-w-sm items-center gap-1.5">
+                  <Label htmlFor="picture">Picture</Label>
+                  <Input
+                    id="picture"
+                    type="file"
+                    name="picture"
+                    accept="image/jpg, image/jpeg, image/png"
+                  />
+                  {actionData?.errors?.picture && (
+                    <p className="text-red-500 text-sm">
+                      {actionData.errors.picture._errors[0]}
+                    </p>
+                  )}
+                </div>
+              </div>
+              <div className="col-start-1 col-end-4 row-start-8 row-end-10 ">
+                <Button variant={"default"}>Enviar</Button>
+              </div>
+              <div className="col-start-4 col-end-7 row-start-8 row-end-10 ">
+                <Button variant={"default"}>Limpiar</Button>
+              </div>
+            </div>
+          </fetcher.Form>
+        </CredenzaBody>
+        <CredenzaFooter>
+          <CredenzaClose asChild>
+            <Button>Cerrar</Button>
+          </CredenzaClose>
+        </CredenzaFooter>
+      </CredenzaContent>
+    </Credenza>
+  );
+};

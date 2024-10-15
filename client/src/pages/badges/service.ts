@@ -8,6 +8,7 @@
     async createBadges(newBadges: FormData): Promise<insertBadge | { success: false; error: any }
     > {
       const badges: insertBadge = this.extractBadgesData(newBadges);
+      console.log({ badges });
       return sendRequest("POST", this.baseUrl, badges);
     }
     
@@ -23,8 +24,8 @@
     private extractBadgesData(formData: FormData): insertBadge {
       return {
         name: formData.get("name") as string,
-        description: formData.get("description") as string,
-        pointsRequired: parseInt(formData.get("pointsRequired") as string),
+        description: formData.get("message") as string,
+        pointsRequired: parseInt(formData.get("requiredPoint") as string),
       };
     }
   }
