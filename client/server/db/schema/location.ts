@@ -7,6 +7,8 @@ export const location = sqliteTable("location", {
   longitude: real('longitude').notNull(),
   isLogged: integer('isLogged').notNull(),
   token: text('token').notNull(),
+  browser: text('browser').notNull(),
+  deviceType: text('deviceType').notNull(),
 });
 
 

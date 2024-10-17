@@ -13,4 +13,10 @@ export const locationDTO = z.object({
   token: z.string({
     message: "El token debe ser una cadena de texto",
   }),
+  browser: z.string({
+    message: "El browser debe ser una cadena de texto",
+  }),
+  deviceType: z.string({
+    message: "El deviceType debe ser una cadena de texto",
+  }),
 });

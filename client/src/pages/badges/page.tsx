@@ -56,6 +56,12 @@ export default function BadgesPage() {
             {
               filteredData.map((badge) => (
                 <div key={badge.id}>
+                  <img src={`http://localhost:5000/static/badge/${badge.id}.webp`} alt=""
+                    onError={(e: any) => {
+
+                      e.target.src = "https://via.placeholder.com/150"; // URL del placeholder
+                    }}
+                  />
                   <p>{badge.name}</p>
                   <p>{badge.description}</p>
                   <p>{badge.pointsRequired}</p>
