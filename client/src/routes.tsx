@@ -11,6 +11,7 @@ import { loader as LocationsLoader } from "./pages/user/page";
 import LoginPage from "./pages/login/page";
 import BadgesPage, { loader as BadgesLoader } from "./pages/badges/page";
 import { ActionBadgesCreate } from "./pages/badges/children/actions";
+import OfertasPage from "./pages/ofertas/page";
 
 
 const router = createBrowserRouter([
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
     path: "/globe",
     element: <UserPage />,
     loader: LocationsLoader
+  },
+  {
+    path: "/ofertas",
+    element: <OfertasPage />,
   },
   {
     path: "/tennis",
