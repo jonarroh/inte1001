@@ -2,6 +2,7 @@ import { Result } from "../../utils/types";
 import { db } from "../db";
 import { insertBadge, selectBadge, selectUserBadge } from "../db/schema/badge";
 
+
 import * as schema from "../db/schema";
 import { eq , and } from "drizzle-orm";
 
@@ -30,11 +31,14 @@ export default class BadgeController{
 
   async insertBadge(body: insertBadge): Promise<Result<selectBadge, string>> {
     try {
+      
       await db.transaction(async (trx) => {
         await trx.insert(schema.badges).values(body).execute();
       });
       const result = db.select().from(schema.badges).where(eq(schema.badges.name, body.name)).get();
+
       return { isOk: true, value: result };
+
     } catch (error) {
       console.error(error);
       return { isOk: false, error: 'Failed to insert badge' };
@@ -47,6 +51,7 @@ export default class BadgeController{
         await trx.update(schema.badges).set(newBadge).where(eq(schema.badges.id, id)).execute();
       });
       const result = db.select().from(schema.badges).where(eq(schema.badges.id, id)).get();
+      console.log(result);
       return { isOk: true, value: result };
     } catch (error) {
       console.error(error);
