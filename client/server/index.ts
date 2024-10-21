@@ -8,8 +8,8 @@ import leagues  from "./routes/leagues";
 import location from "./routes/location";
 import email from "./routes/email";
 import { createBunWebSocket } from 'hono/bun'
-import type { ServerWebSocket } from 'bun'
 import LocationController from "./controller/location";
+import web from "./routes/webPush";
 import { insertLocation } from "./db/schema/location";
 
 const app = new Hono();
@@ -31,6 +31,7 @@ app.route('/badge', badge);
 app.route('/leagues', leagues);
 app.route('/location', location);
 app.route('/email',email);
+app.route('/web', web);
 app.get(
   '/ws',
   upgradeWebSocket((c) => {

@@ -4,6 +4,9 @@ import { sql } from 'drizzle-orm';
 export const leagues = sqliteTable("leagues", {
   id: integer('id').primaryKey(),
   name: text('name').notNull(),
+  productos: text('productos',{
+    mode: 'json',
+  }),
   pointsRequired: integer('points_required').notNull(),
 });
 

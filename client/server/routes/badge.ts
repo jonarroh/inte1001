@@ -44,6 +44,7 @@ badge.put('/:id', zValidator('json', badgeDTO), async (c) => {
   const controller = new BadgeController();
   const id = c.req.param('id');
   const validated = c.req.valid('json');
+  console.log(validated);
   const result = await controller.updateBadge(validated, Number(id));
   if (result.isOk) {
     return c.json(result.value);
