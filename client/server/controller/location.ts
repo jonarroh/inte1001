@@ -58,11 +58,24 @@ export default class LocationController {
   async addNewLocation(body: insertLocation): Promise<Result<selectLocation, string>> {
     try {
       await db.transaction(async (trx) => {
-        await trx.insert(schema.location).values(body).execute();
+        //antes de insertar, se debe verificar si el token ya existe
+        const tokenExists = trx
+          .select()
+          .from(schema.location)
+          .where(eq(schema.location.token, body.token))
+          .get();
+          
+        if (tokenExists) {
+          console.log('Token already exists');
+          return { isOk: false, error: 'Token already exists' };
+        }
+        else {
+          await trx.insert(schema.location).values(body).execute();
+        }
       });
 
       // Obtener la ubicación insertada para asegurarse de que se agregó correctamente
-      const result = await db
+      const result = db
         .select()
         .from(schema.location)
         .where(
@@ -92,10 +105,10 @@ export default class LocationController {
     }
   }
 
-  async deleteLocation(id: number): Promise<Result<boolean, string>> {
+  async deleteLocation(token:string): Promise<Result<boolean, string>> {
     try {
       await db.transaction(async (trx) => {
-        await trx.delete(schema.location).where(eq(schema.location.id, id)).execute();
+        await trx.delete(schema.location).where(eq(schema.location.token, token)).execute();
       });
       return { isOk: true, value: true };
     } catch (error) {
