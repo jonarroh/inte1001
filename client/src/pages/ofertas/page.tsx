@@ -25,7 +25,26 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useFetcher, useLoaderData } from "react-router-dom";
-import { selectLocation } from "@server/schema/location";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 
 const frameworks = [
@@ -51,20 +70,47 @@ const frameworks = [
   },
 ];
 
-export async function loader() {
+type OfertasData = {
+  id: number;
+  nombre: string;
+  descripcion: string;
+  fechainicio: string;
+  fechafin: string;
+  descuento: number;
+  estado: number;
+  productos: number;
+  badgepromoid: number;
+  limitecanje: number;
+}
+
+export const loader: LoaderFunction = async () => {
   const response = await fetch("https://localhost:7268/api/Promociones/allPromociones");
 
   if (!response.ok) {
     throw new Error("Failed to fetch data");
   }
 
-  const data = await response.json();
+  const data: OfertasData[] = await response.json();
 
   return data;
 }
 
 export default function OfertasPage() {
-  const data = useLoaderData() as selectLocation[];
+  const data = useLoaderData() as OfertasData[];
+
+  // Estado para el valor de búsqueda
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Función para manejar el cambio en el campo de búsqueda
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value.toLowerCase());
+  };
+
+  // Filtrar las ofertas en base al valor del campo de búsqueda
+  const filteredData = data.filter((item) =>
+    item.nombre.toLowerCase().includes(searchQuery) ||
+    item.descripcion.toLowerCase().includes(searchQuery)
+  );
 
   return <>
     <DashboardLayout>
@@ -81,47 +127,60 @@ export default function OfertasPage() {
 
           <div>
             <div className="flex justify-between gap-x-10">
-              <Input placeholder="Search" />
+              {/* Input para búsqueda */}
+              <Input
+                placeholder="Search"
+                value={searchQuery}
+                onChange={handleSearchChange}
+              />
               {/* new offer modal */}
               <NewOfferModal />
             </div>
 
           </div>
           <div>
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descripción</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha de inicio</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha de fin</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descuento</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Productos</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Badges</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Limite de canje</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {data.map((item) => (
-                  <tr key={item.id}>
-                    <td className="px-6 py-4 whitespace-nowrap">{item.id}</td>
-                    {/* <td className="px-6 py-4 whitespace-nowrap">{item.descripcion}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{item.fechainicio}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{item.dateend}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{item.descuento}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{item.productos}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{item.badge}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{item.limitecanje}</td> */}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            {/* grid responsive para 5 cards por cada row */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+              {/* datos filtrados por la busqueda */}
+              {filteredData.map((item) => (
+                <Card key={item.id}>
+                  <CardHeader>
+                    <CardTitle>{item.nombre}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription>{item.descripcion}</CardDescription>
+                  </CardContent>
+                  <CardFooter>
+                    <Button variant="outline">Editar</Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="outline">Eliminar</Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently delete your
+                            account and remove your data from our servers.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction>Continue</AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
           </div>
         </div>
       </PageContainer>
     </DashboardLayout>
   </>
 }
+
 
 const NewOfferModal = () => {
   const fetcher = useFetcher();
@@ -140,118 +199,128 @@ const NewOfferModal = () => {
           <CredenzaTitle>Nueva oferta</CredenzaTitle>
         </CredenzaHeader>
         <CredenzaBody>
-          <fetcher.Form action="/ofertas" method="post">
-            <div className="grid grid-cols-6 grid-rows-10 gap-0">
-              <div className="col-start-1 col-end-4 row-start-1 row-end-3">
+          <fetcher.Form method="post" action="">
+            {/* grid para 2 columnas */}
+            <div className="grid grid-cols-2 gap-4 mb-5 mt-2">
+              <div>
                 <div className="grid w-full max-w-sm items-center gap-1.5">
                   <Label htmlFor="nombre">Nombre</Label>
                   <Input type="text" id="nombre" placeholder="Nombre" name="nombre" />
                 </div>
               </div>
-              <div className="col-start-1 col-end-4 row-start-3 row-end-5">
+              <div>
                 <div className="grid w-full max-w-sm items-center gap-1.5">
-                  <Label htmlFor="descripcion">Descripci&oacute;n</Label>
-                  <Input type="text" id="descripcion" placeholder="Descripción" name="descripcion" />
+                  <Label htmlFor="descripcion">Descripcion</Label>
+                  <Textarea id="descripcion" placeholder="Descripcion" name="descripcion" />
                 </div>
               </div>
-              <div className="col-start-1 col-end-4 row-start-5 row-end-8">
+            </div>
+            {/* grid para 2 columnas */}
+            <div className="grid grid-cols-2 gap-4 mb-5">
+              <div>
                 <div className="grid w-full max-w-sm items-center gap-1.5">
                   <Label htmlFor="fechainicio">Fecha de inicio</Label>
-                  <Input type="text" id="fechainicio" placeholder="Fecha de inicio" name="fechainicio" />
+                  <Input type="date" id="fechainicio" placeholder="Fecha de inicio" name="fechainicio" />
                 </div>
               </div>
-              <div className="col-start-1 col-end-4 row-start-8 row-end-11">
+              <div>
                 <div className="grid w-full max-w-sm items-center gap-1.5">
-                  <Label htmlFor="dateend">Fecha de Fin</Label>
-                  <Input type="text" id="dateend" placeholder="Fecha de fin" name="dateend" />
+                  <Label htmlFor="fechafin">Fecha de fin</Label>
+                  <Input type="date" id="fechafin" placeholder="Fecha de fin" name="fechafin" />
                 </div>
               </div>
-              <div className="col-start-4 col-end-7 row-start-1 row-end-3 mx-2">
-                <div className="grid w-full max-w-sm items-center gap-1.5">
-                  <Label htmlFor="descuento">Descuento</Label>
-                  <Input type="text" id="descuento" placeholder="Descuento" name="descuento" />
-                </div>
-              </div>
-              <div className="col-start-4 col-end-7 row-start-3 row-end-5 mx-2">
-                <div className="grid w-full max-w-sm items-center gap-1.5">
-                  <Label htmlFor="productos">Productos</Label>
-                  <Popover open={open} onOpenChange={setOpen}>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        role="combobox"
-                        aria-expanded={open}
-                        className="w-[200px] justify-between"
-                      >
-                        {value
-                          ? frameworks.find((framework) => framework.value === value)?.label
-                          : "Seleccionar producto"}
-                        <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-[200px] p-0">
-                      <Command>
-                        <CommandInput placeholder="Buscar..." className="h-9" />
-                        <CommandList>
-                          <CommandEmpty>No framework found.</CommandEmpty>
-                          <CommandGroup>
-                            {frameworks.map((framework) => (
-                              <CommandItem
-                                key={framework.value}
-                                value={framework.value}
-                                onSelect={(currentValue) => {
-                                  setValue(currentValue === value ? "" : currentValue)
-                                  setOpen(false)
-                                }}
-                              >
-                                {framework.label}
-                                <CheckIcon
-                                  className={cn(
-                                    "ml-auto h-4 w-4",
-                                    value === framework.value ? "opacity-100" : "opacity-0"
-                                  )}
-                                />
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </CommandList>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
-                </div>
-              </div>
-              <div className="col-start-4 col-end-7 row-start-5 row-end-8 mx-2">
-                <div className="grid w-full max-w-sm items-center gap-1.5">
-                  <Label htmlFor="badge">Badges</Label>
-                  <Select>
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Seleccionar Badge" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>Badges</SelectLabel>
-                        <SelectItem value="bronce">bronce</SelectItem>
-                        <SelectItem value="plata">plata</SelectItem>
-                        <SelectItem value="oro">oro</SelectItem>
-                        <SelectItem value="platino">platino</SelectItem>
-                        <SelectItem value="star">star</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <div className="col-start-4 col-end-7 row-start-8 row-end-11 mx-2">
+            </div>
+            {/* grid para 2 columnas */}
+            <div className="grid grid-cols-2 gap-4 mb-5">
+              <div className="">
                 <div className="grid w-full max-w-sm items-center gap-1.5">
                   <Label htmlFor="limitecanje">Limite de canje</Label>
-                  <Input type="text" id="limitecanje" placeholder="Limite" name="limitecanje" />
+                  <Input type="number" id="limitecanje" placeholder="Limite" name="limitecanje" max={10} min={1} />
                 </div>
+              </div>
+              <div className="">
+                <div className="grid w-full max-w-sm items-center gap-1.5">
+                  <Label htmlFor="descuento">Descuento</Label>
+                  <Input type="number" id="descuento" placeholder="Descuento" name="descuento" />
+                </div>
+              </div>
+            </div>
+            {/* grid para 2 columnas */}
+            <div className="grid grid-cols-2 gap-4 mb-5">
+              <div>
+                <Label htmlFor="productos">Productos</Label>
+                <Popover open={open} onOpenChange={setOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={open}
+                      className="w-[200px] justify-between"
+                    >
+                      {value
+                        ? frameworks.find((framework) => framework.value === value)?.label
+                        : "Seleccionar producto"}
+                      <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-0">
+                    <Command>
+                      <CommandInput placeholder="Buscar..." className="h-9" />
+                      <CommandList>
+                        <CommandEmpty>No framework found.</CommandEmpty>
+                        <CommandGroup>
+                          {frameworks.map((framework) => (
+                            <CommandItem
+                              key={framework.value}
+                              value={framework.value}
+                              onSelect={(currentValue) => {
+                                setValue(currentValue === value ? "" : currentValue)
+                                setOpen(false)
+                              }}
+                            >
+                              {framework.label}
+                              <CheckIcon
+                                className={cn(
+                                  "ml-auto h-4 w-4",
+                                  value === framework.value ? "opacity-100" : "opacity-0"
+                                )}
+                              />
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              </div>
+              <div>
+                <Label htmlFor="badge">Badges</Label>
+                <Select>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Seleccionar Badge" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Badges</SelectLabel>
+                      <SelectItem value="bronce">bronce</SelectItem>
+                      <SelectItem value="plata">plata</SelectItem>
+                      <SelectItem value="oro">oro</SelectItem>
+                      <SelectItem value="platino">platino</SelectItem>
+                      <SelectItem value="star">star</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           </fetcher.Form>
         </CredenzaBody>
         <CredenzaFooter>
-          <CredenzaClose asChild>
-            <Button>Cerrar</Button>
+          <CredenzaClose>
+            {/* grid de 2 columnas que muestre los 2 botones de cerrar y registrar */}
+            <div className="grid grid-cols-2 gap-4">
+              <Button variant="outline">Cancelar</Button>
+              <Button type="submit">Registrar</Button>
+            </div>
           </CredenzaClose>
         </CredenzaFooter>
       </CredenzaContent>

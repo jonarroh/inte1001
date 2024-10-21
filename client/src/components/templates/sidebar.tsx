@@ -80,12 +80,6 @@ export default function Sidebar({ className }: SidebarProps) {
                 description: 'Correos electrónicos',
                 icon: 'logo'
               },
-              {
-                title: 'Ofertas',
-                href: '/ofertas',
-                description: 'Ofertas de productos',
-                icon: 'help'
-              }
             ]} />
           </div>
         </div>
