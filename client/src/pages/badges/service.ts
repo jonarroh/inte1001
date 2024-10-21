@@ -22,15 +22,8 @@
     //   return sendRequest("PUT", `${this.baseUrl}/${id}`, badges);
     // }
 
-    async updateBadges(badges: insertBadge, id: number): Promise<insertBadge | { success: false; error: any }> {
-      console.log({ badges });
-      const formData = new FormData();
-      formData.append("name", badges.name);
-      formData.append("description", badges.description || "");
-      formData.append("pointsRequired", badges.pointsRequired.toString());
-    
-      
-      return sendForm("PUT", `${this.baseUrl}/${id}`, formData);
+    async updateBadges(badges: FormData, id: number): Promise<insertBadge | { success: false; error: any }> {        
+      return sendForm("PUT", `${this.baseUrl}/${id}`, badges);
     }
     
     

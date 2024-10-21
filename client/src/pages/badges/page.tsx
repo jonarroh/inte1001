@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { insertBadge, selectBadge } from "@server/schema/badge";
 import { Pencil, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Form, LoaderFunction, useFetcher, useLoaderData } from "react-router-dom";
 
 
@@ -19,7 +19,7 @@ export const loader: LoaderFunction = async () => {
     throw new Error('Network response was not ok');
   }
   const data: selectBadge[] = await response.json();
-  
+
   return data;
 }
 
@@ -60,14 +60,14 @@ export default function BadgesPage() {
               <Input placeholder="Search"
                 onChange={(e) => setsearch(e.target.value)}
               />
-              <NewBadgeModal badge={selected} isEditing={isEditing} isModalOpen={isModalOpen} onClose={ () => setIsModalOpen(false)} />
+              <NewBadgeModal badge={selected} isEditing={isEditing} isModalOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
             </div>
 
             <div className="bg-gray-50 min-h-full flex items-center justify-center p-5 ">
               {
                 filteredData.map((badge) => (
                   <div className="bg-white shadow-lg rounded-lg max-w-md mx-auto p-3 grid grid-cols-4 text-center" key={badge.id}>
-                    
+
                     <div className="col-span-4">
                       {/* <img src={badge.picture} alt={badge.name} className="w-20 h-20 mx-auto" /> */}
                     </div>
@@ -85,23 +85,23 @@ export default function BadgesPage() {
                     </div>
 
                     <div className="col-start-1">
-                      <Button variant={"delete"}> 
+                      <Button variant={"delete"}>
                         <Trash2 />
                       </Button>
                     </div>
 
                     <div className="col-start-4">
-                      <Button variant={"edit"} onClick={ () => handleFormView(badge)}>
-                        <Pencil  />
+                      <Button variant={"edit"} onClick={() => handleFormView(badge)}>
+                        <Pencil />
                       </Button>
                     </div>
 
                   </div>
                 ))
-                
+
               }
             </div>
-            
+
           </div>
         </div>
       </PageContainer>
@@ -110,18 +110,18 @@ export default function BadgesPage() {
 }
 
 
-
-import { useActionData } from "react-router-dom";
-import { a } from "react-spring";
+type ValidationError = {
+  _errors: string[];
+};
 
 type ActionData = {
-  errors?: {
-    name?: { _errors: string[] };
-    requiredPoint?: { _errors: string[] };
-    message?: { _errors: string[] };
-    picture?: { _errors: string[] };
-  };
+  _errors: string[];
+  name: ValidationError;
+  requiredPoint: ValidationError;
+  description: ValidationError;
+  image: ValidationError;
 };
+
 
 type BadgeModalProps = {
   badge: selectBadge | null;
@@ -132,18 +132,41 @@ type BadgeModalProps = {
 }
 
 
-const NewBadgeModal = ({badge, isEditing, isModalOpen, onClose} : BadgeModalProps) => {
-  const actionData = useActionData() as ActionData;
+
+const NewBadgeModal = ({ badge, isEditing, isModalOpen, onClose }: BadgeModalProps) => {
+
   const fetcher = useFetcher();
 
-  const formAction = isEditing ? `/badge/update/${badge?.id}` : '/';
-  const formMethod = isEditing ? 'put' : 'post';
+  const actionData = fetcher.data as ActionData | null;
+  console.log("actionData", actionData);
+  const [open, setOpen] = useState(() => {
+    //validar que no haya errores
+    if (actionData) {
+      return true;
+    }
+    return false;
+  });
 
+  useEffect(() => {
+    setOpen(isModalOpen);
+  }, [isModalOpen]);
+
+  // Si no hay actionData, se puede cerrar el modal
+  useEffect(() => {
+    if (!actionData) {
+      setOpen(false);
+    }
+    if (typeof actionData !== "undefined") {
+      setOpen(false);
+    }
+  }, [actionData]);
+
+  const formAction = isEditing ? `/badges/update/${badge?.id}` : '/badges';
 
   return (
-    <Credenza open={isModalOpen}>
+    <Credenza open={open}>
       <CredenzaTrigger asChild>
-        <Button onClick={() => isModalOpen = true}>Nueva</Button>
+        <Button onClick={() => setOpen(true)}>Nueva</Button>
       </CredenzaTrigger>
       <CredenzaContent>
         <CredenzaHeader>
@@ -153,91 +176,89 @@ const NewBadgeModal = ({badge, isEditing, isModalOpen, onClose} : BadgeModalProp
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
-          <fetcher.Form action={formAction} method={formMethod} encType="multipart/form-data" >
+          <fetcher.Form action={formAction} method="POST">
             <div className="grid grid-cols-6 grid-rows-9 gap-0">
 
-              <div className="col-start-1 col-end-4 row-start-1 row-end-3 ">
+              <div className="col-start-1 col-end-4 row-start-1 row-end-3">
                 <div className="grid w-full max-w-sm items-center gap-1.5">
                   <Label htmlFor="name">Nombre</Label>
-                  <Input 
-                    type="text" 
-                    id="name" 
-                    placeholder="Nombre" 
-                    name="name" 
-                    defaultValue={isEditing ? badge?.name : "" }
-                    
+                  <Input
+                    type="text"
+                    id="name"
+                    placeholder="Nombre"
+                    name="name"
+                    defaultValue={isEditing ? badge?.name : ""}
                   />
-                  {actionData?.errors?.name && (
-                    <p className="text-red-500 text-sm">{actionData.errors.name._errors[0]}</p>
+                  {actionData?.name && (
+                    <p className="text-red-500 text-sm">{actionData.name._errors[0]}</p>
                   )}
                 </div>
               </div>
 
-              <div className="col-start-1 col-end-4 row-start-3 row-end-5 ">
+              <div className="col-start-1 col-end-4 row-start-3 row-end-5">
                 <div className="grid w-full max-w-sm items-center gap-1.5">
                   <Label htmlFor="requiredPoint">Puntos requeridos</Label>
                   <Input
                     type="number"
                     id="requiredPoint"
                     placeholder="Puntos requeridos"
-                    name="requiredPoint"
-                    defaultValue={isEditing ? badge?.pointsRequired : "" }
-                    
+                    name="pointsRequired"
+                    defaultValue={isEditing ? badge?.pointsRequired : ""}
                   />
-                  {actionData?.errors?.requiredPoint && (
-                    <p className="text-red-500 text-sm">
-                      {actionData.errors.requiredPoint._errors[0]}
-                    </p>
+                  {actionData?.requiredPoint && (
+                    <p className="text-red-500 text-sm">{actionData.requiredPoint._errors[0]}</p>
                   )}
                 </div>
               </div>
 
-              <div className="col-start-1 col-end-4 row-start-5 row-end-8 ">
+              <div className="col-start-1 col-end-4 row-start-5 row-end-8">
                 <div className="grid w-full gap-1.5">
                   <Label htmlFor="message">Descripción</Label>
                   <Textarea
                     className="resize-none"
-                    placeholder="Type your message here."
+                    placeholder="Descripción"
                     id="message"
-                    name="message"
-                    defaultValue={isEditing ? badge?.description ?? "" : "" }
-                    
+                    name="description"
+                    defaultValue={isEditing ? badge?.description ?? "" : ""}
                   />
-                  {actionData?.errors?.message && (
-                    <p className="text-red-500 text-sm">
-                      {actionData.errors.message._errors[0]}
-                    </p>
+                  {actionData?.description && (
+                    <p className="text-red-500 text-sm">{actionData.description._errors[0]}</p>
                   )}
                 </div>
               </div>
 
               <div className="col-start-4 col-end-7 row-start-1 row-end-8">
                 <div className="grid w-full max-w-sm items-center gap-1.5">
-                  <Label htmlFor="picture">Picture</Label>
+                  <Label htmlFor="picture">Imagen</Label>
                   <Input
                     id="picture"
                     type="file"
-                    name="picture"
-                    accept="image/jpg, image/jpeg, image/png, imgage/svg"
-                    
+                    name="image"
+                    accept="image/jpg, image/jpeg, image/png, image/svg+xml"
                   />
-                  {actionData?.errors?.picture && (
-                    <p className="text-red-500 text-sm">
-                      {actionData.errors.picture._errors[0]}
-                    </p>
+                  {actionData?.image && (
+                    <p className="text-red-500 text-sm">{actionData.image._errors[0]}</p>
                   )}
                 </div>
               </div>
 
-              <div className="col-start-1 col-end-4 row-start-8 row-end-10 ">
-                <Button type="submit" variant={isEditing ? "edit" : "create"} >{isEditing ? "Actualizar" : "Crear"}</Button>
+              <div className="col-start-1 col-end-4 row-start-8 row-end-10">
+                <Button
+                  className="disabled:opacity-50"
+                  disabled={fetcher.state !== "idle"}
+                  type="submit"
+                  variant={isEditing ? "edit" : "create"}
+                >
+                  {isEditing ? "Actualizar" : "Crear"}
+                </Button>
               </div>
 
-              <div className="col-start-4 col-end-7 row-start-8 row-end-10 ">
-                <Button variant={"outline"} >Limpiar</Button>
+              <div className="col-start-4 col-end-7 row-start-8 row-end-10">
+                <Button variant={"outline"} type="button">
+                  Limpiar
+                </Button>
               </div>
             </div>
-
           </fetcher.Form>
         </CredenzaBody>
         <CredenzaFooter>

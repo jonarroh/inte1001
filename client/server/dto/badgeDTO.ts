@@ -10,9 +10,9 @@ export const badgeDTO = z.object({
   description: z.string({
     message: "La descripcion debe ser una cadena de texto",
   }).optional(),
-  pointsRequired: z.number({
+  pointsRequired: z.string({
     message: "Los puntos requeridos deben ser un numero",
-  }).refine((value) => value > 0, {
+  }).refine((value) => parseInt(value) > 0, {
     message: "Los puntos requeridos deben ser mayor a 0",
   }),
   image: z.any().optional(),

@@ -1,41 +1,60 @@
 
-import { ActionFunction, json, Navigate, redirect } from "react-router-dom";
+import { ActionFunction, json, redirect } from "react-router-dom";
 import { BadgesService } from "../service";
 import { z } from "zod";
-import { insertBadge } from "@server/schema/badge";
 
 const badgeSchema = z.object({
   id: z.number().optional(),
-  name: z.string().min(1, { message: "El nombre es obligatorio" }),
-  requiredPoint: z
-    .number({ invalid_type_error: "Debe ser un número" })
+  name: z.string({
+    message: "El nombre debe ser una cadena de texto",
+  }).min(1, { message: "El nombre es obligatorio" }),
+  pointsRequired: z
+    .number({ message: "Los puntos requeridos deben ser un número" })
     .min(1, { message: "Los puntos requeridos deben ser al menos 1" }),
-  message: z.string().min(1, { message: "La descripción es obligatoria" }),
-  picture: z.string().min(1, { message: "La imagen es obligatoria" }),
+    description: z.string().min(1, { message: "La descripción es obligatoria" }),
+  image: z.any({
+    message: "La imagen es obligatoria",
+  }),
 });
 
 
   export const ActionBadgesDelete: ActionFunction = async ({ params }) => {
     console.log(params);
+
+
     return redirect("/badges");
   }
 
-  export const ActionBadgesUpdate: ActionFunction = async ({ request }) => {
+  export const ActionBadgesUpdate: ActionFunction = async ({ request,params }) => {
     console.log({ request });
+    console.log('update');
 
     const formData = await request.formData();
-    
-    const updatedBadge : insertBadge  = {
-      id: Number(formData.get("id")),
-      name: formData.get("name") as string,
-      pointsRequired: Number(formData.get("requiredPoint")) as number,
-      description: formData.get("message") as string,
-      // picture: formData.get("picture") as string,
-    }
+   const formFields = {
+    name:String(formData.get("name")),
+    pointsRequired: Number(formData.get("pointsRequired")),
+    description: String(formData.get("description")),
+    image: formData.get("image"),
+  };
 
-    const id = Number(formData.get("id"));
+  console.log(formFields);
+
+  console.log(typeof formFields.image);
+
+  const validation = badgeSchema.safeParse(formFields);
+
+  if (!validation.success) {  
+    console.log("Errores de validación", validation.error.format());
+    const errors = validation.error.format();
+    return errors;
+  }
+
+    
+
+    const id = params.id as string;
+
     const service = new BadgesService();
-    const result = await service.updateBadges(updatedBadge, id);
+    const result = await service.updateBadges(formData, Number(id));
 
     if ('success' in result && !result.success) {
       console.log(result.error, "error");
@@ -46,24 +65,26 @@ const badgeSchema = z.object({
   }
 
   export const ActionBadgesCreate: ActionFunction = async ({ request }) => {
+    console.log('create');
     console.log({ request });
     const formData = await request.formData();
     // Extraer los datos del formulario
   const formFields = {
     name: formData.get("name"),
-    requiredPoint: Number(formData.get("requiredPoint")),
-    message: formData.get("message"),
-    picture: formData.get("picture"),
+    pointsRequired: Number(formData.get("pointsRequired")),
+    description: formData.get("description"),
+    image: formData.get("image"),
   };
 
-  console.log(typeof formFields.picture);
+  console.log(typeof formFields.image);
 
   const validation = badgeSchema.safeParse(formFields);
 
   if (!validation.success) {
     // Si hay errores, devuelve el objeto de errores a la interfaz
+    console.log("Errores de validación", validation.error.format());
     const errors = validation.error.format();
-    return json({ errors }, { status: 400 });
+    return errors;
   }
 
   const service = new BadgesService();
