@@ -10,7 +10,7 @@ import UserPage from "./pages/user/page";
 import { loader as LocationsLoader } from "./pages/user/page";
 import LoginPage from "./pages/login/page";
 import BadgesPage, { loader as BadgesLoader } from "./pages/badges/page";
-import { ActionBadgesCreate } from "./pages/badges/children/actions";
+import { ActionBadgesCreate, ActionBadgesDelete } from "./pages/badges/children/actions";
 
 
 const router = createBrowserRouter([
@@ -24,7 +24,19 @@ const router = createBrowserRouter([
     path: "/badges",
     element: <BadgesPage />,
     loader: BadgesLoader,
-    action: ActionBadgesCreate
+    action: ActionBadgesCreate,
+    children: [
+      {
+        path: "delete/:id",
+        action: ActionBadgesDelete
+      },
+      {
+        path: "update/:id",
+        element: <Updatepage />,
+        action: ActionBadgesCreate,
+        loader: updateLoader
+      }
+    ]
   },
   {
     path: "/globe",
