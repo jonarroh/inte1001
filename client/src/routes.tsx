@@ -35,6 +35,7 @@ const router = createBrowserRouter([
   {
     path: "/ofertas",
     element: <OfertasPage />,
+    loader: LocationsLoader
   },
   {
     path: "/tennis",
