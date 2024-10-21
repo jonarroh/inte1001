@@ -1,7 +1,8 @@
 
-  import { ActionFunction, json, Navigate, redirect } from "react-router-dom";
+import { ActionFunction, json, Navigate, redirect } from "react-router-dom";
 import { BadgesService } from "../service";
 import { z } from "zod";
+import { insertBadge } from "@server/schema/badge";
 
 const badgeSchema = z.object({
   id: z.number().optional(),
@@ -20,6 +21,27 @@ const badgeSchema = z.object({
   }
 
   export const ActionBadgesUpdate: ActionFunction = async ({ request }) => {
+    console.log({ request });
+
+    const formData = await request.formData();
+    
+    const updatedBadge : insertBadge  = {
+      id: Number(formData.get("id")),
+      name: formData.get("name") as string,
+      pointsRequired: Number(formData.get("requiredPoint")) as number,
+      description: formData.get("message") as string,
+      // picture: formData.get("picture") as string,
+    }
+
+    const id = Number(formData.get("id"));
+    const service = new BadgesService();
+    const result = await service.updateBadges(updatedBadge, id);
+
+    if ('success' in result && !result.success) {
+      console.log(result.error, "error");
+      return json({ error: result.error }, { status: 400 });
+    }
+
     return redirect("/badges");
   }
 

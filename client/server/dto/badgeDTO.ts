@@ -15,4 +15,6 @@ export const badgeDTO = z.object({
   }).refine((value) => value > 0, {
     message: "Los puntos requeridos deben ser mayor a 0",
   }),
+  image: z.any().optional(),
+
 });
