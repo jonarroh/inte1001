@@ -10,7 +10,7 @@ type ValidationError = {
 
 type ActionData = {
   name: ValidationError;
-  requiredPoint: ValidationError;
+  pointsRequired: ValidationError;
   description: ValidationError;
   image: ValidationError;
 };
@@ -30,9 +30,9 @@ const CreateBadgePage = () => {
           </div>
 
           <div className="col-start-1 col-end-4">
-            <Label htmlFor="requiredPoint">Puntos requeridos</Label>
-            <Input type="number" id="requiredPoint" name="requiredPoint" />
-            {actionData?.requiredPoint && <p className="text-red-500 text-sm">{actionData.requiredPoint._errors[0]}</p>}
+            <Label htmlFor="pointsRequired">Puntos requeridos</Label>
+            <Input type="number" id="pointsRequired" name="pointsRequired" />
+            {actionData?.pointsRequired && <p className="text-red-500 text-sm">{actionData.pointsRequired._errors[0]}</p>}
           </div>
 
           <div className="col-start-1 col-end-4">

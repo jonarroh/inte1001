@@ -27,58 +27,45 @@ const badgeSchema = z.object({
     return redirect("/badges");
   }
 
-  export const ActionBadgesUpdate: ActionFunction = async ({ request,params }) => {
-    
+  export const ActionBadgesUpdate: ActionFunction = async ({ request, params }) => {
     const formData = await request.formData();
-    console.log("Contenido de formData:", Array.from(formData.entries()));
+
+    //si image esta vacio, se elimina del formData
+    if (!formData.get("image")) {
+      formData.delete("image");
+    }
+  
     const formFields = {
       name: String(formData.get("name")),
       pointsRequired: Number(formData.get("pointsRequired")),
       description: String(formData.get("description")),
       image: formData.get("image"),
     };
-
-    console.log(typeof formFields.image);
-    console.log(formFields.image);
-
+  
     const validation = badgeSchema.safeParse(formFields);
-
     if (!validation.success) {  
       console.log("Errores de validación", validation.error.format());
       const errors = validation.error.format();
-      return errors;
+      return json({ error: errors }, { status: 400 }); // Devuelve errores en formato JSON
     }
-
+  
+  
+    // Crear FormData para la imagen si es necesario
     const uploadImage = new FormData();
     uploadImage.append("id", params.id as string);
     uploadImage.append("imagen", formFields.image as Blob);
-
-    const response = await fetch("http://127.0.0.1:5000/badge/upload", {
-      method: "POST",
-      body: uploadImage,
-    });
-
-    const resultImage = await response.json();
-    console.log(resultImage);
-
-    if (!response.ok) {
-      console.log(resultImage.error, "error al subir la magen");
-      return json({ error: resultImage.error }, { status: 500 });
-    }
-
-    const id = params.id as string;
-
+  
     const service = new BadgesService();
-    const result = await service.updateBadges(formData, Number(id));
-
+    const result = await service.updateBadges(formData, Number(params.id));
+  
     if ('success' in result && !result.success) {
       console.log(result.error, "error");
       return json({ error: result.error }, { status: 400 });
     }
-
-    return redirect("/badges");
   
-  }
+    return redirect("/badges");
+  };
+  
 
   export const ActionBadgesCreate: ActionFunction = async ({ request }) => {
     
@@ -87,7 +74,7 @@ const badgeSchema = z.object({
     // Extraer los datos del formulario
     const formFields = {
       name: String(formData.get("name")),
-      pointsRequired: Number(formData.get("requiredPoint")),
+      pointsRequired: Number(formData.get("pointsRequired")),
       description: String(formData.get("description")),
       image: formData.get("image"),
     };

@@ -52,6 +52,7 @@ export default class BadgeController{
 
   async updateBadge(newBadge: insertBadge, id: number): Promise<Result<selectBadge, string>> {
     try {
+      console.log("updateBadge", newBadge);
       await db.transaction(async (trx) => {
         //validar que el nombre no exista
         const badge = db.select().from(schema.badges).where(eq(schema.badges.name, newBadge.name)).get();

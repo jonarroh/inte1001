@@ -31,14 +31,11 @@ const UpdateBadgePage = () => {
   const actionData = fetcher.data as ActionData | null;
   const badge = useLoaderData() as selectBadge;
 
-  const handleFileChange = (event) => {
-    console.log(event.target.files[0]); // Esto debería mostrar el archivo si se seleccionó uno
-  };
 
   return (
     <div className="space-y-4">
       <div className="bg-gray-50 min-h-full flex items-center justify-center p-5">
-        <fetcher.Form method="POST">
+        <fetcher.Form method="POST" action={`/badges/update/${badge.id}`} encType="multipart/form-data">
           <div className="grid grid-cols-6 grid-rows-9 gap-0">
             <div className="col-start-1 col-end-4">
               <Label htmlFor="name">Nombre</Label>
@@ -60,7 +57,7 @@ const UpdateBadgePage = () => {
 
             <div className="col-start-4 col-end-7">
               <Label htmlFor="picture">Imagen</Label>
-              <input id="picture" type="file" name="image" accept="image/jpg, image/jpeg, image/png, image/svg+xml" onChange={handleFileChange}/>
+              <Input id="picture" type="file" name="image" accept="image/jpg, image/jpeg, image/png, image/svg+xml" />
               {actionData?.image && <p className="text-red-500 text-sm">{actionData.image._errors[0]}</p>}
             </div>
 

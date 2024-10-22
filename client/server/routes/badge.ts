@@ -83,14 +83,9 @@ badge.put('/:id', async (c) => {
 
   const { name, description, pointsRequired, image } = validate.data;
 
-  // Validar que la imagen sea un Blob y tenga un tipo MIME válido si se proporciona
+  // Solo validar la imagen si está presente
   if (image && !(image instanceof File)) {
     return c.json({ error: 'Invalid image file' }, 400);
-  }
-
-  // Si se proporciona una imagen, verificar que sea una imagen válida
-  if (image && !image.type.startsWith('image/')) {
-    return c.json({ error: 'El archivo debe ser una imagen válida (JPEG, PNG, etc.)' }, 400);
   }
 
   // Crear el objeto de actualización, incluyendo el ID
@@ -110,7 +105,6 @@ badge.put('/:id', async (c) => {
     return c.json({ error: result.error }, 500);
   }
 });
-
 
 
 

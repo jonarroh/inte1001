@@ -16,11 +16,5 @@ export const badgeDTO = z.object({
   }),
   image: z
     .any()
-    .refine((file:File) => file instanceof File, {
-      message: "Debe ser un archivo",
-    })
-    .refine((file:File) => file.type.startsWith("image/"), {
-      message: "Debe ser una imagen",
-    })
-    .optional(),
+    .optional()
 });
