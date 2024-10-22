@@ -10,8 +10,10 @@ import UserPage from "./pages/user/page";
 import { loader as LocationsLoader } from "./pages/user/page";
 import LoginPage from "./pages/login/page";
 import BadgesPage, { loader as BadgesLoader } from "./pages/badges/page";
+import OfertasPage, { loader as OfertasLoader } from "./pages/ofertas/page";
 import { ActionBadgesCreate, ActionBadgesDelete, ActionBadgesUpdate } from "./pages/badges/children/actions";
 import { ActionLogin } from "./pages/login/children/actions";
+import { ActionOfertasCreate, ActionOfertasDelete, ActionOfertasUpdate } from "./pages/ofertas/children/actions";
 import CreateBadgePage from "./pages/badges/children/create";
 import UpdateBadgePage, { loaderUpdateBadge } from "./pages/badges/children/update";
 
@@ -50,6 +52,21 @@ const router = createBrowserRouter([
     path: "/globe",
     element: <UserPage />,
     loader: LocationsLoader
+  },
+  {
+    path: "/ofertas",
+    element: <OfertasPage />,
+    loader: OfertasLoader,
+    action: ActionOfertasCreate,
+    children: [
+      {
+        path: "delete/:id",
+        action: ActionOfertasDelete
+      },{
+        path: "update/:id",
+        action: ActionOfertasUpdate
+      }
+    ]
   },
   {
     path: "/tennis",
