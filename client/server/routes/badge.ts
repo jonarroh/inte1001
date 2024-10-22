@@ -29,9 +29,9 @@ badge.get('/:id', async (c) => {
 });
 
 
-badge.post('/', zValidator('form', badgeDTO), async (c) => {
+badge.post('/', zValidator('json', badgeDTO), async (c) => {
   const controller = new BadgeController();
-  const validated = c.req.valid('form') ;
+  const validated = c.req.valid('json') ;
   const result = await controller.insertBadge({ ...validated, pointsRequired: Number(validated.pointsRequired) });
   if (result.isOk) {
     console.log(result.value);

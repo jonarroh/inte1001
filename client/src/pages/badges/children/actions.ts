@@ -10,7 +10,7 @@ const badgeSchema = z.object({
   }).min(1, { message: "El nombre es obligatorio" }),
   pointsRequired: z
     .number({ message: "Los puntos requeridos deben ser un número" })
-    .min(1, { message: "Los puntos requeridos deben ser al menos 1" }),
+    .min(1, { message: "Los puntos requeridos son obligatorios" }),
     description: z.string().min(1, { message: "La descripción es obligatoria" }),
   image: z.any({
     message: "La imagen es obligatoria",
@@ -20,8 +20,9 @@ const badgeSchema = z.object({
 
   export const ActionBadgesDelete: ActionFunction = async ({ params }) => {
     console.log(params);
-
-
+    const id = params.id as string;
+    const service = new BadgesService();
+    await service.deleteBadges(Number(id));
     return redirect("/badges");
   }
 
@@ -30,12 +31,12 @@ const badgeSchema = z.object({
     console.log('update');
 
     const formData = await request.formData();
-   const formFields = {
-    name:String(formData.get("name")),
-    pointsRequired: Number(formData.get("pointsRequired")),
-    description: String(formData.get("description")),
-    image: formData.get("image"),
-  };
+    const formFields = {
+      name: String(formData.get("name")),
+      pointsRequired: Number(formData.get("pointsRequired")),
+      description: String(formData.get("description")),
+      image: String(formData.get("image")),
+    };
 
   console.log(formFields);
 
@@ -70,10 +71,10 @@ const badgeSchema = z.object({
     const formData = await request.formData();
     // Extraer los datos del formulario
   const formFields = {
-    name: formData.get("name"),
+    name: String(formData.get("name")),
     pointsRequired: Number(formData.get("pointsRequired")),
-    description: formData.get("description"),
-    image: formData.get("image"),
+    description: String(formData.get("description")),
+    image: String(formData.get("image")),
   };
 
   console.log(typeof formFields.image);
@@ -88,7 +89,7 @@ const badgeSchema = z.object({
   }
 
   const service = new BadgesService();
-  await service.createBadges(formData);
-  return window.location.reload();
+  await service.createBadges(formFields);
+  return redirect("/badges");
   };
   
