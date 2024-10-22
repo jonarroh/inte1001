@@ -42,8 +42,6 @@ badge.post('/', zValidator('form', badgeDTO), async (c) => {
 });
 
 badge.put('/:id', zValidator('form', badgeDTO), async (c) => {
-  console.log("peticion recibida");
-
   const validated = c.req.valid('form');
   console.log('Datos validados:', validated);
 
@@ -53,7 +51,7 @@ badge.put('/:id', zValidator('form', badgeDTO), async (c) => {
 
   const controller = new BadgeController();
   const id = c.req.param('id');
-  console.log(validated);  
+  console.log("validado",validated);  
   const result = await controller.updateBadge({ ...validated, pointsRequired: Number(validated.pointsRequired) }, Number(id));
 
   if (result.isOk) {

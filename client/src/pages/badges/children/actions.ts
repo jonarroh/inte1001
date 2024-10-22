@@ -20,36 +20,33 @@ const badgeSchema = z.object({
 
   export const ActionBadgesDelete: ActionFunction = async ({ params }) => {
     console.log(params);
-
-
+    const service = new BadgesService();
+    await service.deleteBadges(Number(params.id));
+    
     return redirect("/badges");
   }
 
   export const ActionBadgesUpdate: ActionFunction = async ({ request,params }) => {
-    console.log({ request });
-    console.log('update');
-
-    const formData = await request.formData();
-   const formFields = {
-    name:String(formData.get("name")),
-    pointsRequired: Number(formData.get("pointsRequired")),
-    description: String(formData.get("description")),
-    image: formData.get("image"),
-  };
-
-  console.log(formFields);
-
-  console.log(typeof formFields.image);
-
-  const validation = badgeSchema.safeParse(formFields);
-
-  if (!validation.success) {  
-    console.log("Errores de validación", validation.error.format());
-    const errors = validation.error.format();
-    return errors;
-  }
-
     
+    const formData = await request.formData();
+    const formFields = {
+      name:String(formData.get("name")),
+      pointsRequired: Number(formData.get("pointsRequired")),
+      description: String(formData.get("description")),
+      image: formData.get("image"),
+    };
+
+    console.log(formFields);
+
+    console.log(typeof formFields.image);
+
+    const validation = badgeSchema.safeParse(formFields);
+
+    if (!validation.success) {  
+      console.log("Errores de validación", validation.error.format());
+      const errors = validation.error.format();
+      return errors;
+    }
 
     const id = params.id as string;
 
@@ -62,6 +59,7 @@ const badgeSchema = z.object({
     }
 
     return redirect("/badges");
+  
   }
 
   export const ActionBadgesCreate: ActionFunction = async ({ request }) => {
