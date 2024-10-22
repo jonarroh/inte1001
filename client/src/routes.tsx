@@ -13,6 +13,8 @@ import BadgesPage, { loader as BadgesLoader } from "./pages/badges/page";
 import OfertasPage, { loader as OfertasLoader } from "./pages/ofertas/page";
 import { ActionBadgesCreate, ActionBadgesDelete, ActionBadgesUpdate } from "./pages/badges/children/actions";
 import { ActionLogin } from "./pages/login/children/actions";
+import CreateBadgePage from "./pages/badges/children/create";
+import UpdateBadgePage, { loaderUpdateBadge } from "./pages/badges/children/update";
 
 
 const router = createBrowserRouter([
@@ -30,12 +32,18 @@ const router = createBrowserRouter([
     action: ActionBadgesCreate,
     children: [
       {
+        path: "create",
+        element: <CreateBadgePage />
+      },
+      {
         path: "delete/:id",
         action: ActionBadgesDelete
       },
       {
         path: "update/:id",
         action: ActionBadgesUpdate,
+        loader: loaderUpdateBadge,
+        element: <UpdateBadgePage />
       }
     ]
   },
