@@ -31,6 +31,10 @@ const UpdateBadgePage = () => {
   const actionData = fetcher.data as ActionData | null;
   const badge = useLoaderData() as selectBadge;
 
+  const handleFileChange = (event) => {
+    console.log(event.target.files[0]); // Esto debería mostrar el archivo si se seleccionó uno
+  };
+
   return (
     <div className="space-y-4">
       <div className="bg-gray-50 min-h-full flex items-center justify-center p-5">
@@ -56,7 +60,7 @@ const UpdateBadgePage = () => {
 
             <div className="col-start-4 col-end-7">
               <Label htmlFor="picture">Imagen</Label>
-              <Input id="picture" type="file" name="image" accept="image/jpg, image/jpeg, image/png, image/svg+xml" />
+              <input id="picture" type="file" name="image" accept="image/jpg, image/jpeg, image/png, image/svg+xml" onChange={handleFileChange}/>
               {actionData?.image && <p className="text-red-500 text-sm">{actionData.image._errors[0]}</p>}
             </div>
 

@@ -21,7 +21,7 @@ const CreateBadgePage = () => {
 
   return (
     <div className="bg-gray-50 min-h-full flex items-center justify-center p-5">
-      <fetcher.Form method="POST" action="/badges">
+      <fetcher.Form method="POST" action="/badges" encType="multipart/form-data">
         <div className="grid grid-cols-6 grid-rows-9 gap-0">
           <div className="col-start-1 col-end-4">
             <Label htmlFor="name">Nombre</Label>

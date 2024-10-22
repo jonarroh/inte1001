@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
-import { tennisDTO} from '../dto/tennisDTO';
+// import { tennisDTO} from '../dto/tennisDTO';
 import BadgeController from '../controller/badge';
 import { badgeDTO } from '../dto/badgeDTO';
 
@@ -29,9 +29,9 @@ badge.get('/:id', async (c) => {
 });
 
 
-badge.post('/', zValidator('json', badgeDTO), async (c) => {
+badge.post('/', zValidator('form', badgeDTO), async (c) => {
   const controller = new BadgeController();
-  const validated = c.req.valid('json') ;
+  const validated = c.req.valid('form') ;
   const result = await controller.insertBadge({ ...validated, pointsRequired: Number(validated.pointsRequired) });
   if (result.isOk) {
     console.log(result.value);
@@ -42,8 +42,6 @@ badge.post('/', zValidator('json', badgeDTO), async (c) => {
 });
 
 badge.put('/:id', zValidator('form', badgeDTO), async (c) => {
-  console.log("peticion recibida");
-
   const validated = c.req.valid('form');
   console.log('Datos validados:', validated);
 
@@ -53,7 +51,8 @@ badge.put('/:id', zValidator('form', badgeDTO), async (c) => {
 
   const controller = new BadgeController();
   const id = c.req.param('id');
-  console.log(validated);  
+  console.log("validado",validated);  
+  
   const result = await controller.updateBadge({ ...validated, pointsRequired: Number(validated.pointsRequired) }, Number(id));
 
   if (result.isOk) {
