@@ -5,11 +5,10 @@
   export class BadgesService {
     private baseUrl: string = "http://localhost:3000/badge";
 
-    async createBadges(newBadges: FormData): Promise<insertBadge | { success: false; error: any }
+    async createBadges(newBadges: insertBadge): Promise<insertBadge | { success: false; error: any }
     > {
-      const badges: insertBadge = this.extractBadgesData(newBadges);
-      console.log({ badges });
-      return sendRequest("POST", this.baseUrl, badges);
+      
+      return sendRequest("POST", this.baseUrl, newBadges);
     }
     
     async deleteBadges(id: number): Promise<void> {
@@ -32,7 +31,7 @@
       return {
         name: formData.get("name") as string,
         description: formData.get("message") as string,
-        pointsRequired: parseInt(formData.get("requiredPoint") as string),
+        pointsRequired: parseInt(formData.get("pointsRequired") as string),
       };
     }
   }

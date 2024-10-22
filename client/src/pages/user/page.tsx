@@ -5,7 +5,7 @@ import { Marker } from "cobe";
 
 
 export async function loader() {
-  const response = await fetch('http://localhost:3000/location');
+  const response = await fetch('https://localhost:7268/api/Productos');
   if (!response.ok) {
     throw new Error('Network response was not ok');
   }

@@ -12,8 +12,8 @@ export const badgeDTO = z.object({
   }).optional(),
   pointsRequired: z.string({
     message: "Los puntos requeridos deben ser un numero",
-  }).refine((value) => parseInt(value) > 0, {
-    message: "Los puntos requeridos deben ser mayor a 0",
+  }).refine((value) => !isNaN(Number(value)), {
+    message: "Los puntos requeridos deben ser un numero",
   }),
   image: z.any().optional(),
 
