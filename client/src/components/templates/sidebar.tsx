@@ -79,7 +79,7 @@ export default function Sidebar({ className }: SidebarProps) {
                 href: '/emails',
                 description: 'Correos electrónicos',
                 icon: 'logo'
-              }
+              },
             ]} />
           </div>
         </div>
