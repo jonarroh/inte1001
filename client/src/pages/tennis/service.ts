@@ -7,7 +7,7 @@ este archivo solo tendra peticiones de mutación(POST, PUT, DELETE) y no de cons
 las peticiones de consulta se haran el page directamente
 */
 export class TennisService {
-  private baseUrl: string = "http://localhost:3000/tennis";
+  private baseUrl: string = "https://localhost:7268/api/Productos";
 
   async createTenis(newTenni: FormData): Promise<inserTennis | { success: false; error: any }> {
     const tenni: inserTennis = this.extractTennisData(newTenni);
