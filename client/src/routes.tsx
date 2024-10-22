@@ -13,6 +13,7 @@ import BadgesPage, { loader as BadgesLoader } from "./pages/badges/page";
 import OfertasPage, { loader as OfertasLoader } from "./pages/ofertas/page";
 import { ActionBadgesCreate, ActionBadgesDelete, ActionBadgesUpdate } from "./pages/badges/children/actions";
 import { ActionLogin } from "./pages/login/children/actions";
+import { ActionOfertasCreate, ActionOfertasDelete, ActionOfertasUpdate } from "./pages/ofertas/children/actions";
 
 
 const router = createBrowserRouter([
@@ -47,7 +48,17 @@ const router = createBrowserRouter([
   {
     path: "/ofertas",
     element: <OfertasPage />,
-    loader: OfertasLoader
+    loader: OfertasLoader,
+    action: ActionOfertasCreate,
+    children: [
+      {
+        path: "delete/:id",
+        action: ActionOfertasDelete
+      },{
+        path: "update/:id",
+        action: ActionOfertasUpdate
+      }
+    ]
   },
   {
     path: "/tennis",
