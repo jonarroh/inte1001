@@ -1,5 +1,4 @@
-import {z} from "zod";
-
+import { z } from "zod";
 
 export const badgeDTO = z.object({
   name: z.string({
@@ -15,6 +14,13 @@ export const badgeDTO = z.object({
   }).refine((value) => !isNaN(Number(value)), {
     message: "Los puntos requeridos deben ser un numero",
   }),
-  image: z.any().optional(),
-
+  image: z
+    .any()
+    .refine((file:File) => file instanceof File, {
+      message: "Debe ser un archivo",
+    })
+    .refine((file:File) => file.type.startsWith("image/"), {
+      message: "Debe ser una imagen",
+    })
+    .optional(),
 });
