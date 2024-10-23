@@ -16,6 +16,8 @@ import { ActionLogin } from "./pages/login/children/actions";
 import { ActionOfertasCreate, ActionOfertasDelete, ActionOfertasUpdate } from "./pages/ofertas/children/actions";
 import CreateBadgePage from "./pages/badges/children/create";
 import UpdateBadgePage, { loaderUpdateBadge } from "./pages/badges/children/update";
+import CreateOfferPage, { loader as loaderOfferPage } from "./pages/ofertas/children/create";
+import UpdateOfferPage, { loaderUpdateOffer } from "./pages/ofertas/children/update";
 
 
 const router = createBrowserRouter([
@@ -64,7 +66,14 @@ const router = createBrowserRouter([
         action: ActionOfertasDelete
       },{
         path: "update/:id",
-        action: ActionOfertasUpdate
+        action: ActionOfertasUpdate,
+        loader: loaderUpdateOffer,
+        element: <UpdateOfferPage />
+      },
+      {
+        path: "create",
+        loader: loaderOfferPage,
+        element: <CreateOfferPage />
       }
     ]
   },

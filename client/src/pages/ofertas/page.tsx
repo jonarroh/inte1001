@@ -1,30 +1,12 @@
 import DashboardLayout from "@/components/layout/app";
-import { cn } from "@/lib/utils";
-import { Credenza, CredenzaBody, CredenzaClose, CredenzaContent, CredenzaFooter, CredenzaHeader, CredenzaTitle, CredenzaTrigger } from "@/components/templates/credenza";
 import PageContainer from "@/components/templates/page-container";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { useState } from "react";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useFetcher, useLoaderData } from "react-router-dom";
+import { Outlet, useLoaderData, useNavigate, useFetcher } from "react-router-dom";
+import { async } from '../../lib/sendRequest';
 import {
   Card,
   CardContent,
@@ -33,42 +15,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar";
 
-
-const frameworks = [
-  {
-    value: "next.js",
-    label: "Next.js",
-  },
-  {
-    value: "sveltekit",
-    label: "SvelteKit",
-  },
-  {
-    value: "nuxt.js",
-    label: "Nuxt.js",
-  },
-  {
-    value: "remix",
-    label: "Remix",
-  },
-  {
-    value: "astro",
-    label: "Astro",
-  },
-];
 
 type OfertasData = {
   id: number;
@@ -81,6 +33,7 @@ type OfertasData = {
   productos: number;
   badgepromoid: number;
   limitecanje: number;
+  imagen: string;
 }
 
 export const loader: LoaderFunction = async () => {
@@ -96,6 +49,9 @@ export const loader: LoaderFunction = async () => {
 }
 
 export default function OfertasPage() {
+  const fetcher = useFetcher();
+  // http://localhost:5000/static/products/id.webp
+
   const data = useLoaderData() as OfertasData[];
 
   // Estado para el valor de búsqueda
@@ -112,6 +68,8 @@ export default function OfertasPage() {
     item.descripcion.toLowerCase().includes(searchQuery)
   );
 
+  const navigate = useNavigate();
+
   return <>
     <DashboardLayout>
       <PageContainer scrollable>
@@ -127,14 +85,14 @@ export default function OfertasPage() {
 
           <div>
             <div className="flex justify-between gap-x-10">
-              {/* Input para búsqueda */}
+              <Outlet />
               <Input
                 placeholder="Search"
                 value={searchQuery}
                 onChange={handleSearchChange}
               />
-              {/* new offer modal */}
-              <NewOfferModal />
+
+              <Button onClick={() => navigate("/ofertas/create")}>Neuva</Button>
             </div>
 
           </div>
@@ -148,28 +106,14 @@ export default function OfertasPage() {
                     <CardTitle>{item.nombre}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <CardDescription>{item.descripcion}</CardDescription>
+                    <CardDescription>
+                      {item.descripcion}
+                      <img src={`http://localhost:5000/static/products/${item.productos}.webp`} alt={item.nombre} />
+                    </CardDescription>
                   </CardContent>
                   <CardFooter>
-                    <Button variant="outline">Editar</Button>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button variant="outline">Eliminar</Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This action cannot be undone. This will permanently delete your
-                            account and remove your data from our servers.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction>Continue</AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
+                    <Button variant="edit" onClick={() => navigate(`/ofertas/update/${item.id}`)}>Editar</Button>
+                    <Button variant="delete" onClick={() => fetcher.submit({ idle: true }, { method: "post", action: `/ofertas/delete/${item.id}` })}>Eliminar</Button>
                   </CardFooter>
                 </Card>
               ))}
@@ -178,152 +122,5 @@ export default function OfertasPage() {
         </div>
       </PageContainer>
     </DashboardLayout>
-  </>
-}
-
-
-const NewOfferModal = () => {
-  const fetcher = useFetcher();
-  const [open, setOpen] = useState(false)
-  const [value, setValue] = useState("")
-
-
-
-  return <>
-    <Credenza>
-      <CredenzaTrigger asChild>
-        <Button>Agregar</Button>
-      </CredenzaTrigger>
-      <CredenzaContent>
-        <CredenzaHeader>
-          <CredenzaTitle>Nueva oferta</CredenzaTitle>
-        </CredenzaHeader>
-        <CredenzaBody>
-          <fetcher.Form method="post" action="">
-            {/* grid para 2 columnas */}
-            <div className="grid grid-cols-2 gap-4 mb-5 mt-2">
-              <div>
-                <div className="grid w-full max-w-sm items-center gap-1.5">
-                  <Label htmlFor="nombre">Nombre</Label>
-                  <Input type="text" id="nombre" placeholder="Nombre" name="nombre" />
-                </div>
-              </div>
-              <div>
-                <div className="grid w-full max-w-sm items-center gap-1.5">
-                  <Label htmlFor="descripcion">Descripcion</Label>
-                  <Textarea id="descripcion" placeholder="Descripcion" name="descripcion" />
-                </div>
-              </div>
-            </div>
-            {/* grid para 2 columnas */}
-            <div className="grid grid-cols-2 gap-4 mb-5">
-              <div>
-                <div className="grid w-full max-w-sm items-center gap-1.5">
-                  <Label htmlFor="fechainicio">Fecha de inicio</Label>
-                  <Input type="date" id="fechainicio" placeholder="Fecha de inicio" name="fechainicio" />
-                </div>
-              </div>
-              <div>
-                <div className="grid w-full max-w-sm items-center gap-1.5">
-                  <Label htmlFor="fechafin">Fecha de fin</Label>
-                  <Input type="date" id="fechafin" placeholder="Fecha de fin" name="fechafin" />
-                </div>
-              </div>
-            </div>
-            {/* grid para 2 columnas */}
-            <div className="grid grid-cols-2 gap-4 mb-5">
-              <div className="">
-                <div className="grid w-full max-w-sm items-center gap-1.5">
-                  <Label htmlFor="limitecanje">Limite de canje</Label>
-                  <Input type="number" id="limitecanje" placeholder="Limite" name="limitecanje" max={10} min={1} />
-                </div>
-              </div>
-              <div className="">
-                <div className="grid w-full max-w-sm items-center gap-1.5">
-                  <Label htmlFor="descuento">Descuento</Label>
-                  <Input type="number" id="descuento" placeholder="Descuento" name="descuento" />
-                </div>
-              </div>
-            </div>
-            {/* grid para 2 columnas */}
-            <div className="grid grid-cols-2 gap-4 mb-5">
-              <div>
-                <Label htmlFor="productos">Productos</Label>
-                <Popover open={open} onOpenChange={setOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      aria-expanded={open}
-                      className="w-[200px] justify-between"
-                    >
-                      {value
-                        ? frameworks.find((framework) => framework.value === value)?.label
-                        : "Seleccionar producto"}
-                      <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-full p-0">
-                    <Command>
-                      <CommandInput placeholder="Buscar..." className="h-9" />
-                      <CommandList>
-                        <CommandEmpty>No framework found.</CommandEmpty>
-                        <CommandGroup>
-                          {frameworks.map((framework) => (
-                            <CommandItem
-                              key={framework.value}
-                              value={framework.value}
-                              onSelect={(currentValue) => {
-                                setValue(currentValue === value ? "" : currentValue)
-                                setOpen(false)
-                              }}
-                            >
-                              {framework.label}
-                              <CheckIcon
-                                className={cn(
-                                  "ml-auto h-4 w-4",
-                                  value === framework.value ? "opacity-100" : "opacity-0"
-                                )}
-                              />
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-              </div>
-              <div>
-                <Label htmlFor="badge">Badges</Label>
-                <Select>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Seleccionar Badge" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Badges</SelectLabel>
-                      <SelectItem value="bronce">bronce</SelectItem>
-                      <SelectItem value="plata">plata</SelectItem>
-                      <SelectItem value="oro">oro</SelectItem>
-                      <SelectItem value="platino">platino</SelectItem>
-                      <SelectItem value="star">star</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </fetcher.Form>
-        </CredenzaBody>
-        <CredenzaFooter>
-          <CredenzaClose>
-            {/* grid de 2 columnas que muestre los 2 botones de cerrar y registrar */}
-            <div className="grid grid-cols-2 gap-4">
-              <Button variant="outline">Cancelar</Button>
-              <Button type="submit">Registrar</Button>
-            </div>
-          </CredenzaClose>
-        </CredenzaFooter>
-      </CredenzaContent>
-    </Credenza>
   </>
 }
