@@ -18,15 +18,19 @@ jobs:
         git config --global user.name "${{ secrets.GIT_USER }}"
         git config --global user.email "${{ secrets.GIT_EMAIL }}"
 
-    - name: Add and Commit changes
+    - name: Remove existing remote if it exists
       run: |
-        git add .
-        git commit -m "Actualización automática desde GitHub Actions" || echo "No changes to commit"
+        git remote remove origin || echo "No remote 'origin' to remove"
 
     - name: Add remote Azure DevOps repository with token authentication
       run: |
         git remote add origin https://rsz9:${{ secrets.AZURE_DEVOPS_TOKEN }}@dev.azure.com/rsz9/HEAVEN/_git/HEAVEN
 
+    - name: Add and Commit changes
+      run: |
+        git add .
+        git commit -m "Actualización automática desde GitHub Actions" || echo "No changes to commit"
+
     - name: Push code to Azure DevOps
       run: |
-        git push -u azure --all
+        git push -u origin --all
