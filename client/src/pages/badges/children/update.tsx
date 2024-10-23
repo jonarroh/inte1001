@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { LoaderFunction, useFetcher, useLoaderData } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -32,7 +33,7 @@ const UpdateBadgePage = () => {
   const badge = useLoaderData() as selectBadge;
 
   const handleFileChange = (event) => {
-    console.log(event.target.files[0]); // Esto debería mostrar el archivo si se seleccionó uno
+    console.log(event.target.files[0]); 
   };
 
   return (
