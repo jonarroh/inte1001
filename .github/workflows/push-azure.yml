@@ -1,0 +1,29 @@
+name: Push to Azure DevOps
+
+on:
+  push:
+    branches:
+      - stable  # Ejecuta este workflow en cada push a la rama stable
+
+jobs:
+  push-to-azure:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3  # Esto chequea el código del repo actual
+
+    - name: Set up Git
+      run: |
+        git config --global user.name "${{ secrets.GIT_USER }}"
+        git config --global user.email "${{ secrets.GIT_EMAIL }}"
+
+    - name: Add remote Azure DevOps repository
+      run: |
+        git remote add azure https://rsz9@dev.azure.com/rsz9/HEAVEN/_git/HEAVEN
+
+    - name: Push code to Azure DevOps
+      run: |
+        git push -u azure --all
+      env:
+        AZURE_DEVOPS_TOKEN: ${{ secrets.AZURE_DEVOPS_TOKEN }}

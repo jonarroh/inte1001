@@ -41,3 +41,13 @@ Para comenzar, asegúrate de tener [Bun](https://bun.sh/) instalado en tu sistem
 Esto instalará todas las dependencias tanto para el servidor como para el cliente. ¡Y listo! Ya estás preparado para empezar a trabajar en el proyecto. 🎉
 
 ---
+
+
+# Tecnologías utilizadas 🛠️
+- [Bun](https://bun.sh/)
+- [Drizzel](https://orm.drizzle.team/)
+- [React](https://react.dev/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Vite](https://vitejs.dev/)
+- [Shadcn](https://ui.shadcn.com/)
