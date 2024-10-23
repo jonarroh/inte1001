@@ -18,12 +18,10 @@ jobs:
         git config --global user.name "${{ secrets.GIT_USER }}"
         git config --global user.email "${{ secrets.GIT_EMAIL }}"
 
-    # Aquí puedes agregar comandos que modifiquen archivos en el repositorio si es necesario
-
     - name: Add and Commit changes
       run: |
-        git add .   # Añade todos los archivos modificados
-        git commit -m "Actualización automática desde GitHub Actions"
+        git add .
+        git commit -m "Actualización automática desde GitHub Actions" || echo "No changes to commit"
 
     - name: Add remote Azure DevOps repository with token authentication
       run: |
