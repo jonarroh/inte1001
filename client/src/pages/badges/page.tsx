@@ -18,7 +18,6 @@ import {
   CredenzaClose,
 } from "@/components/templates/credenza";
 
-// import { is } from "drizzle-orm";
 
 export const loader: LoaderFunction = async () => {
   const response = await fetch('http://localhost:3000/badge');
@@ -32,10 +31,11 @@ export const loader: LoaderFunction = async () => {
 export default function BadgesPage() {
   const data = useLoaderData() as selectBadge[];
   const [search, setSearch] = useState<string>('');
-  const [badgeToDelete, setBadgeToDelete] = useState<{ id: number; name: string } | null>(null); 
+  const [badgeToDelete, setBadgeToDelete] = useState<{ id: number; name: string } | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
-  
+
+
   const filteredData = data.filter((badge) =>
     badge.name.toLowerCase().includes(search.toLowerCase())
   );
@@ -43,11 +43,11 @@ export default function BadgesPage() {
   const isCreateorUpdate = location.pathname.includes("/create") || location.pathname.includes("/update");
 
   const openDeleteModal = (badgeId: number, badgeName: string) => {
-    setBadgeToDelete({ id: badgeId, name: badgeName }); 
+    setBadgeToDelete({ id: badgeId, name: badgeName });
   };
 
   const closeDeleteModal = () => {
-    setBadgeToDelete(null); 
+    setBadgeToDelete(null);
   };
 
   return (
@@ -58,10 +58,10 @@ export default function BadgesPage() {
             items={[
               { title: "Dashboard", link: "/dashboard" },
               { title: "Insignias", link: "/badges" },
-              ...(location.pathname.includes("/create") ? 
-                  [{ title: "Crear", link: "/badges/create" }] : 
-                  location.pathname.includes("/update") ?
-                  [{title: "Editar", link: "/badges/update"}] :
+              ...(location.pathname.includes("/create") ?
+                [{ title: "Crear", link: "/badges/create" }] :
+                location.pathname.includes("/update") ?
+                  [{ title: "Editar", link: "/badges/update" }] :
                   []),
             ]}
           />
@@ -75,7 +75,7 @@ export default function BadgesPage() {
               <Input placeholder="Buscar" onChange={(e) => setSearch(e.target.value)} />
               <Button onClick={() => navigate("/badges/create")}>Nueva</Button>
             </div>
-            
+
             <div className="">
               <Outlet />
               {!isCreateorUpdate && (
@@ -86,7 +86,11 @@ export default function BadgesPage() {
                       className="bg-white shadow-lg rounded-lg max-w-lg mx-auto p-3 grid grid-cols-4 text-center"
                     >
                       <div className="col-span-4">
-                        <img src={`http://127.0.0.1:5000/badge/${badge.id}.webp`} alt={badge.name} />
+                        <div className="flex justify-center">
+                          <img src={`http://127.0.0.1:5000/static/badge/${badge.id}.webp`} alt={badge.name}
+                            width={100} height={100}
+                          />
+                        </div>
                       </div>
                       <div className="col-span-4">{badge.name}</div>
                       <div className="col-span-4">{badge.description}</div>
@@ -95,7 +99,7 @@ export default function BadgesPage() {
                       <div className="col-start-1">
                         <Button
                           variant={"delete"}
-                          onClick={() => openDeleteModal(badge.id, badge.name)} 
+                          onClick={() => openDeleteModal(badge.id, badge.name)}
                         >
                           <Trash2 />
                         </Button>
@@ -115,12 +119,12 @@ export default function BadgesPage() {
             </div>
           </div>
         </div>
-        
+
         {badgeToDelete && (
-          <DeleteBadgeModal 
-            badgeId={badgeToDelete.id} 
-            badgeName={badgeToDelete.name} 
-            closeModal={closeDeleteModal} 
+          <DeleteBadgeModal
+            badgeId={badgeToDelete.id}
+            badgeName={badgeToDelete.name}
+            closeModal={closeDeleteModal}
           />
         )}
 
@@ -140,7 +144,8 @@ const DeleteBadgeModal = ({ badgeId, badgeName, closeModal }: DeleteModalProps) 
 
   const handleDelete = () => {
     fetcher.submit(null, { method: "post", action: `/badges/delete/${badgeId}` });
-    closeModal(); 
+
+    closeModal();
   };
 
   return (

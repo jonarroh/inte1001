@@ -1,5 +1,5 @@
 
-import { ActionFunction, json, redirect } from "react-router-dom";
+import { ActionFunction, json, redirect, } from "react-router-dom";
 import { BadgesService } from "../service";
 import { z } from "zod";
 
@@ -24,7 +24,7 @@ const badgeSchema = z.object({
     const service = new BadgesService();
     console.log(`id ${id}`);
     await service.deleteBadges(Number(id));
-    return redirect("/badges");
+    return window.location.reload();
   }
 
   export const ActionBadgesUpdate: ActionFunction = async ({ request, params }) => {
@@ -48,12 +48,6 @@ const badgeSchema = z.object({
       const errors = validation.error.format();
       return json({ error: errors }, { status: 400 }); // Devuelve errores en formato JSON
     }
-  
-  
-    // Crear FormData para la imagen si es necesario
-    const uploadImage = new FormData();
-    uploadImage.append("id", params.id as string);
-    uploadImage.append("imagen", formFields.image as Blob);
   
     const service = new BadgesService();
     const result = await service.updateBadges(formData, Number(params.id));

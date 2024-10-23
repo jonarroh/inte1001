@@ -64,6 +64,16 @@ badge.post('/', async (c) => {
   const result = await controller.insertBadge(badge);
   if (result.isOk) {
     console.log(result.value);
+    // Subir la imagen al CDN
+   if(result.value?.id){
+    const uploadResult = await controller.sendToCDN(image, String(result.value.id));
+    if (uploadResult.isOk) {
+      console.log('Imagen subida a CDN:', uploadResult.value);
+    } else {
+      console.error('Error al subir imagen a CDN:', uploadResult.error);
+    }
+   }
+    
     return c.json(result.value);
   } else {
     return c.json({ error: result.error }, 500);
@@ -93,13 +103,21 @@ badge.put('/:id', async (c) => {
     id: Number(badgeId), // Convertir badgeId a número
     name,
     description,
-    pointsRequired: Number(pointsRequired), // Asegúrate de convertir a número
+    pointsRequired: Number(pointsRequired), 
   };
 
   const controller = new BadgeController();
   const result = await controller.updateBadge(badgeUpdate, Number(badgeId));
   if (result.isOk) {
-    console.log(result.value);
+    if (image && image.size > 0) {
+      console.log(`Recibido archivo de imagen: ${image.name}, tamaño: ${image.size} bytes`);
+      const uploadResult = await controller.sendToCDN(image, badgeId);
+      if (uploadResult.isOk) {
+        console.log('Imagen subida a CDN:', uploadResult.value);
+      } else {
+        console.error('Error al subir imagen a CDN:', uploadResult.error);
+      }
+    }
     return c.json(result.value);
   } else {
     return c.json({ error: result.error }, 500);
@@ -111,6 +129,7 @@ badge.put('/:id', async (c) => {
 badge.delete('/:id', async (c) => {
   const controller = new BadgeController();
   const id = c.req.param('id');
+  console.log("se borra",id)
   const result = await controller.deleteBadge(Number(id));
   if (result.isOk) {
     return c.json(result.value);
