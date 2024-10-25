@@ -11,7 +11,8 @@ import { createBunWebSocket } from 'hono/bun'
 import LocationController from "./controller/location";
 import web from "./routes/webPush";
 import { insertLocation } from "./db/schema/location";
-
+import password from "./routes/password";
+import logger from "./routes/logger";
 const app = new Hono();
 const { upgradeWebSocket, websocket } =
   createBunWebSocket()
@@ -32,6 +33,8 @@ app.route('/leagues', leagues);
 app.route('/location', location);
 app.route('/email',email);
 app.route('/web', web);
+app.route('/logging', logger)
+app.route('/password', password)
 app.get(
   '/ws',
   upgradeWebSocket((c) => {

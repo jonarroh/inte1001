@@ -102,9 +102,11 @@ export default class BadgeController{
 
 export class UserBadges{
 
-  async getUserBadges(userId: number): Promise<Result<selectUserBadge[], string>> {
+  async getUserBadges(userId: number): Promise<Result<any[], string>> {
     try {
-      const result = await db.select().from(schema.userBadges).where(eq(schema.userBadges.userId, userId));
+      const result = (await db.select().from(schema.userBadges)
+      .innerJoin(schema.badges, eq(schema.userBadges.badgeId, schema.badges.id))
+      .where(eq(schema.userBadges.userId, userId)));
       if (result) {
         return { isOk: true,value: result };
       }

@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 // import { tennisDTO} from '../dto/tennisDTO';
-import BadgeController from '../controller/badge';
+import BadgeController, { UserBadges } from '../controller/badge';
 import { badgeDTO } from '../dto/badgeDTO';
 
 const badge = new Hono();
@@ -137,5 +137,21 @@ badge.delete('/:id', async (c) => {
     return c.json({ error: result.error }, 500);
   }
 });
+
+
+badge.get('/user/:id', async (c) => {
+  const controller = new UserBadges();
+  const id = c.req.param('id');
+  const result = await controller.getUserBadges(Number(id));
+  if (result.isOk) {
+    return c.json(result.value);
+  } else {
+    return c.json({ error: result.error }, 500);
+  }
+});
+
+
+
+
 
 export default badge;
