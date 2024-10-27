@@ -1,9 +1,9 @@
 import { z } from "zod";
 export const ChangePasswordDTO = z.object({
-  userId: z.number({
-    message: "El ID del usuario debe ser un número",
-  }).int().positive({
-    message: "El ID del usuario debe ser un número positivo",
+  email: z.string({
+    message: "El correo electrónico debe ser una cadena de texto",
+  }).email({
+    message: "El correo electrónico debe ser válido",
   }),
   newPassword: z.string({
     message: "La nueva contraseña debe ser una cadena de texto",
@@ -21,11 +21,7 @@ export const ChangePasswordDTO = z.object({
 
 
 export const createPasswordRecoveryDTO = z.object({
-  userId: z.number({
-    message: "El ID del usuario debe ser un número",
-  }).int().positive({
-    message: "El ID del usuario debe ser un número positivo",
-  })  , email: z.string({
+  email: z.string({
     message: "El correo electrónico debe ser una cadena de texto",
   }).email({
     message: "El correo electrónico debe ser válido",

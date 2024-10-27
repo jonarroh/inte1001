@@ -13,7 +13,8 @@ password.post('/create', zValidator('json',createPasswordRecoveryDTO), async (c)
   const validated = c.req.valid('json')
   const controller = new PasswordController()
 
-  const result = await controller.createRecoveryCode(validated.userId,validated.email)
+  console.log("es valido",validated);
+  const result = await controller.createRecoveryCode(validated.email)
 
   if(result.isOk){
     return c.json({message:'Correo enviado correctamente'})
@@ -26,7 +27,7 @@ password.post('/change', zValidator('json',ChangePasswordDTO), async (c) => {
     const validated = c.req.valid('json')
     const controller = new PasswordController()
   
-    const result = await controller.changePassword(validated.userId,validated.newPassword,validated.code)
+    const result = await controller.changePassword(validated.email,validated.newPassword,validated.code)
   
     if(result.isOk){
       return c.json({message:'Contraseña cambiada correctamente'})

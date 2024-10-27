@@ -6,10 +6,17 @@ import { insertPasswordRecovery } from '../db/schema/password';
 
 export default class PasswordController {
 
-  async createRecoveryCode(userId: number, email: string): Promise<Result<null, string>> {
+  async createRecoveryCode(email: string): Promise<Result<null, string>> {
     const code = this.generateRecoveryCode(); // Genera un código de recuperación único
     const createdAt = new Date().toISOString(); // Captura la fecha actual
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000).toISOString(); // Define la expiración del código (5 minutos)
+
+    const userId = await this.getUserByEmail(email); // Obtiene el ID del usuario
+    console.log(userId);
+
+    if (!userId) {
+      return { isOk: false, error: 'User not found' };
+    }
     const recoveryData: insertPasswordRecovery = {
       code,
       userId,
@@ -33,9 +40,37 @@ export default class PasswordController {
     }
   }
 
-  async changePassword(userId: number, newPassword: string, code: string): Promise<Result<null, string>> {
+
+private async getUserByEmail(email: string): Promise<number | null> {
+    try{
+      console.log("getUserByEmail", email);
+      const resp = await fetch('http://192.168.100.30:5275/api/Users/getId',{
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(email),
+      })
+      const userId = await resp.json();
+      console.log(userId);
+      return userId.id; 
+    }
+    catch (error){
+      console.error(error);
+      return null;
+    }
+}
+
+
+  async changePassword(email: string, newPassword: string, code: string): Promise<Result<null, string>> {
     try {
       // Verifica el código de recuperación
+      const userId = await this.getUserByEmail(email);
+
+      if (!userId) {
+        return { isOk: false, error: 'User not found' };
+      }
+
       const recoveryRecord = await db.select().from(schema.passwordRecovery).where(eq(schema.passwordRecovery.code, code)).get();
 
       if (!recoveryRecord || recoveryRecord.isUsed === 1 || new Date(recoveryRecord.expiresAt) < new Date()) {

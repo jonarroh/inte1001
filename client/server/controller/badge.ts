@@ -205,7 +205,6 @@ export class UserBadges{
         if (lastMonth) {
             const newPoints = lastMonth.pointsAccumulated - points;
 
-            // Asegurarse de que los puntos no bajen de 0
             if (newPoints < 0) {
                 return { isOk: false, error: 'No se puede reducir los puntos por debajo de 0.' };
             }
