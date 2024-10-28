@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { zValidator } from '@hono/zod-validator';
+//import { zValidator } from '@hono/zod-validator';
 // import { tennisDTO} from '../dto/tennisDTO';
 import BadgeController from '../controller/badge';
 import { badgeDTO } from '../dto/badgeDTO';
