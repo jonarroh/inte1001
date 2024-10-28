@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { zValidator } from '@hono/zod-validator';
+// import { zValidator } from '@hono/zod-validator';
 // import { tennisDTO} from '../dto/tennisDTO';
 import BadgeController, { UserBadges } from '../controller/badge';
 import { badgeDTO } from '../dto/badgeDTO';
@@ -48,7 +48,7 @@ badge.post('/', async (c) => {
 
   // Aquí puedes verificar el tipo MIME si es necesario
   if (!image.type.startsWith('image/')) {
-    return c.json({ error: 'El archivo debe ser una imagen válida (JPEG, PNG, etc.)' }, 400);
+    return c.json({ error: 'El archivo debe ser una imagen válida (JPEG, PNG o JPG)' }, 400);
   }
 
   console.log(`Recibido archivo de imagen: ${image.name}, tamaño: ${image.size} bytes`);
@@ -57,7 +57,7 @@ badge.post('/', async (c) => {
   const badge = {
     name,
     description,
-    pointsRequired: Number(pointsRequired), // Asegúrate de convertir a número
+    pointsRequired: Number(pointsRequired),
   };
 
   const controller = new BadgeController();
@@ -65,14 +65,14 @@ badge.post('/', async (c) => {
   if (result.isOk) {
     console.log(result.value);
     // Subir la imagen al CDN
-   if(result.value?.id){
-    const uploadResult = await controller.sendToCDN(image, String(result.value.id));
-    if (uploadResult.isOk) {
-      console.log('Imagen subida a CDN:', uploadResult.value);
-    } else {
-      console.error('Error al subir imagen a CDN:', uploadResult.error);
+    if(result.value?.id){
+      const uploadResult = await controller.sendToCDN(image, String(result.value.id));
+      if (uploadResult.isOk) {
+        console.log('Imagen subida a CDN:', uploadResult.value);
+      } else {
+        console.error('Error al subir imagen a CDN:', uploadResult.error);
+      }
     }
-   }
     
     return c.json(result.value);
   } else {
@@ -100,7 +100,7 @@ badge.put('/:id', async (c) => {
 
   // Crear el objeto de actualización, incluyendo el ID
   const badgeUpdate = {
-    id: Number(badgeId), // Convertir badgeId a número
+    id: Number(badgeId), 
     name,
     description,
     pointsRequired: Number(pointsRequired), 
