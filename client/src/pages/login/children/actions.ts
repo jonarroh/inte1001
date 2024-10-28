@@ -1,26 +1,79 @@
+import { ActionFunction, redirect } from "react-router-dom";
 
-  import { ActionFunction, redirect } from "react-router-dom";
- import { useNavigate } from "react-router-dom";
+export const ActionLogin: ActionFunction = async ({ request }) => {
+  const formData = await request.formData();
+  const email = formData.get("email");
+  const password = formData.get("password");
 
-  export const ActionLogin: ActionFunction = async ({ params,request }) => {
-    const formData = await request.formData();
-    console.log({ formData });
-    const BASE_URL = "https://localhost:7268/Account/login";
-    console.log(Object.fromEntries(formData));
-    const response = await fetch(BASE_URL, {
-      method: "POST",
-      body: JSON.stringify(Object.fromEntries(formData)),
-    });
+  const BASE_URL = "https://localhost:7268/Account/login";
 
-    if (response.ok) {
-      console.log(response);
+  const response = await fetch(BASE_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "*/*"
+    },
+    body: JSON.stringify({ email, password }),
+  });
+
+  if (response.ok) {
+    console.log("Login successful", response);
+
+    const data = await response.json();
+    const jwtToken = data.jwtToken;
+    localStorage.setItem("token", jwtToken);
+
+    // Función para decodificar el JWT y obtener el ID de usuario
+    function parseJwt(token:string) {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+      return JSON.parse(jsonPayload);
     }
 
-    else {
-      console.log(response);
+    const decodedToken = parseJwt(jwtToken);
+    const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
+
+    // Realiza la petición para obtener los datos del usuario
+    try {
+      const userResponse = await fetch(`https://localhost:7268/api/Users/${userId}`, {
+        method: 'GET',
+        headers: {
+          'accept': 'text/plain',
+          'Authorization': `Bearer ${jwtToken}`
+        }
+      });
+
+      if (userResponse.ok) {
+        const userData = await userResponse.json();
+        localStorage.setItem('user', JSON.stringify(userData));
+        console.log('Datos del usuario guardados en localStorage:', userData);
+
+        if (userData.role === 'Admin') {
+          return redirect("/badges");
+        }
+
+      } else {
+        console.log("Error al obtener los datos del usuario", userResponse);
+        return {
+          error: "Error al obtener los datos del usuario",
+        }
+      }
+    } catch (error) {
+      console.log("Error al obtener los datos del usuario", error);
+      return {
+        error: "Error al obtener los datos del usuario",
+      }
     }
 
-
-    return redirect("/");
+    return {
+      error: "Error al obtener los datos del usuario",
+      
+    }
+  } else {
+    console.log("Login failed");
+    return response;
   }
-
+};

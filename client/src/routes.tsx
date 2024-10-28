@@ -1,5 +1,6 @@
 import {
-  createBrowserRouter
+  createBrowserRouter,
+  redirect
 } from "react-router-dom";
 import TennisPage from "./pages/tennis/page";
 import TennisErrorPage from "./pages/tennis/error";
@@ -46,7 +47,8 @@ const router = createBrowserRouter([
         path: "update/:id",
         action: ActionBadgesUpdate,
         loader: loaderUpdateBadge,
-        element: <UpdateBadgePage />
+        element: <UpdateBadgePage />,
+
       }
     ]
   },
@@ -64,7 +66,7 @@ const router = createBrowserRouter([
       {
         path: "delete/:id",
         action: ActionOfertasDelete
-      },{
+      }, {
         path: "update/:id",
         action: ActionOfertasUpdate,
         loader: loaderUpdateOffer,
@@ -76,6 +78,14 @@ const router = createBrowserRouter([
         element: <CreateOfferPage />
       }
     ]
+  },
+  {
+    "path": "/auth",
+    loader: () => {
+      const token = localStorage.getItem("token");
+      if (!token) return redirect("/");
+      return null;
+    },
   },
   {
     path: "/tennis",
