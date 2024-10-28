@@ -4,7 +4,7 @@ import { insertBadge, selectBadge, selectUserBadge } from "../db/schema/badge";
 
 
 import * as schema from "../db/schema";
-import { eq , and } from "drizzle-orm";
+import { eq , and, lt, gt, gte } from "drizzle-orm";
 
 export default class BadgeController{
 
@@ -178,6 +178,23 @@ export class UserBadges{
   async addUserPoints(userId: number, points: number): Promise<Result<boolean, string>> {
     try {
       const lastMonth = db.select().from(schema.userBadgesPoints).where(and(eq(schema.userBadgesPoints.userId, userId), eq(schema.userBadgesPoints.month, new Date().getMonth().toString()))).get();
+
+      //agregar los badges en los que tenga los puntos requeridos
+      const badges = db.select().from(schema.badges)
+      .where(gte(schema.badges.pointsRequired, points))
+      .all();
+
+      //agregar los badges que no tenga
+      const userBadges = db.select().from(schema.userBadges)
+      .where(eq(schema.userBadges.userId, userId))
+      .all();
+
+      const badgesToAdd = badges.filter((badge) => !userBadges.some((userBadge) => userBadge.badgeId === badge.id));
+
+      for (const badge of badgesToAdd) {
+        await this.addUserBadge(userId, badge.id);
+      }
+
       if (lastMonth) {
         await db.transaction(async (trx) => {
           await trx.update(schema.userBadgesPoints).set({ pointsAccumulated: lastMonth.pointsAccumulated + points }).where(and(eq(schema.userBadgesPoints.userId, userId), eq(schema.userBadgesPoints.month, new Date().getMonth().toString()))).execute();
