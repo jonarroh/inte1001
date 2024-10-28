@@ -8,14 +8,51 @@ const badgeSchema = z.object({
   name: z.string({
     message: "El nombre debe ser una cadena de texto",
   }).min(1, { message: "El nombre es obligatorio" }),
+
   pointsRequired: z.number({ 
     message: "Los puntos requeridos deben ser un número" })
-    .min(1, { message: "Los puntos requeridos son obligatorios" }),
+    .min(1, { message: "Los puntos requeridos son obligatorios y/o deben ser positivos" }),
+
   description: z.string().min(1, { message: "La descripción es obligatoria" }),
+  
   image: z.any({
     message: "La imagen es obligatoria",
-  }),
+  })
+  .refine((value) => value instanceof File, { message: "La imagen debe ser un archivo válido" }) 
+  .refine((value) => value == null && value == undefined, { message: "La imagen es obligatoria" }) 
+  .refine((file: File) => {
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+    return allowedTypes.includes(file.type);
+  }, { message: "Solo se permiten archivos PNG, JPEG o JPG" })
+
 });
+
+const badgeUpdateSchema = z.object({
+  id: z.number().optional(),
+  name: z.string({
+    message: "El nombre debe ser una cadena de texto",
+  }).min(1, { message: "El nombre es obligatorio" }),
+
+  pointsRequired: z.number({
+    message: "Los puntos requeridos deben ser un número"
+  })
+  .min(1, { message: "Los puntos requeridos son obligatorios y/o deben ser positivos" }),
+  description: z.string().min(1, { message: "La descripción es obligatoria" }),
+
+  // Si no se envía una imagen, se permite que sea nula. Si se envía, se valida que sea un archivo válido
+  image: z.any({
+    message: "La imagen es obligatoria",
+  })
+  .optional()
+  .refine((value) => value instanceof File, { message: "La imagen debe ser un archivo válido" })
+  .refine((value) => value == null && value == undefined, { message: "La imagen es obligatoria" })
+  .refine((file: File) => {
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+    return allowedTypes.includes(file.type);
+  }, { message: "Solo se permiten archivos PNG, JPEG o JPG" })
+  
+});
+
 
 
   export const ActionBadgesDelete: ActionFunction = async ({ params }) => {
@@ -32,6 +69,7 @@ const badgeSchema = z.object({
 
     //si image esta vacio, se elimina del formData
     if (!formData.get("image")) {
+      console.log(formData.get("image"), "image");
       formData.delete("image");
     }
   
@@ -42,11 +80,11 @@ const badgeSchema = z.object({
       image: formData.get("image"),
     };
   
-    const validation = badgeSchema.safeParse(formFields);
-    if (!validation.success) {  
+    const validation = badgeUpdateSchema.safeParse(formFields);
+    if (!validation.success) {
       console.log("Errores de validación", validation.error.format());
       const errors = validation.error.format();
-      return json({ error: errors }, { status: 400 }); // Devuelve errores en formato JSON
+      return json({ error: errors }, { status: 400 });
     }
   
     const service = new BadgesService();
@@ -72,9 +110,11 @@ const badgeSchema = z.object({
       description: String(formData.get("description")),
       image: formData.get("image"),
     };
-    
-    console.log(formFields.pointsRequired);
-    console.log(typeof formFields.pointsRequired);
+
+    //Validar que hay imagen en el formData si no que pida una
+    if (!formFields.image) {
+      return json({ error: "La imagen es obligatoria" }, { status: 400 });
+    }
 
     const validation = badgeSchema.safeParse(formFields);
     

@@ -1,5 +1,6 @@
+
 import { useState } from "react";
-import { useNavigate, useLoaderData, Outlet, LoaderFunction, useFetcher, useLocation } from "react-router-dom";
+import { useNavigate, useLoaderData, Outlet, LoaderFunction, useFetcher, useLocation, useMatches } from "react-router-dom";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
@@ -17,6 +18,7 @@ import {
   CredenzaFooter,
   CredenzaClose,
 } from "@/components/templates/credenza";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 
 
 export const loader: LoaderFunction = async () => {
@@ -50,19 +52,26 @@ export default function BadgesPage() {
     setBadgeToDelete(null);
   };
 
+  function Breadcrumbs2() {
+    const matches = useMatches();
+    return console.log(matches);
+  }
+  Breadcrumbs2();
+
   return (
+    
     <DashboardLayout>
       <PageContainer scrollable>
         <div className="space-y-4">
+          
           <Breadcrumbs
             items={[
               { title: "Dashboard", link: "/dashboard" },
               { title: "Insignias", link: "/badges" },
-              ...(location.pathname.includes("/create") ?
-                [{ title: "Crear", link: "/badges/create" }] :
-                location.pathname.includes("/update") ?
-                  [{ title: "Editar", link: "/badges/update" }] :
-                  []),
+              
+              { title: "Crear", link: "/badges/create" },
+              { title: "Editar", link: "/badges/update" }
+
             ]}
           />
 
@@ -72,47 +81,47 @@ export default function BadgesPage() {
 
           <div>
             <div className="flex justify-between gap-x-10 mb-3">
-              <Input placeholder="Buscar" onChange={(e) => setSearch(e.target.value)} />
+              <Input placeholder="Buscar" onChange={(e) => setSearch(e.target.value)}  className="border-gray-400"/>
               <Button onClick={() => navigate("/badges/create")}>Nueva</Button>
             </div>
 
             <div className="">
               <Outlet />
               {!isCreateorUpdate && (
-                <div className="bg-gray-50 min-h-full flex items-center justify-center p-5">
+                <div className="min-h-full flex items-center justify-center p-5 ">
                   {filteredData.map((badge) => (
-                    <div
+                    <Card
                       key={badge.id}
-                      className="bg-white shadow-lg rounded-lg max-w-lg mx-auto p-3 grid grid-cols-4 text-center"
+                      className="shadow-lg min-w-min max-w-lg mx-auto "
                     >
-                      <div className="col-span-4">
-                        <div className="flex justify-center">
+                      <CardContent >
+                        <div className="flex justify-center my-2">
                           <img src={`http://127.0.0.1:5000/static/badge/${badge.id}.webp`} alt={badge.name}
                             width={100} height={100}
                           />
                         </div>
-                      </div>
-                      <div className="col-span-4">{badge.name}</div>
-                      <div className="col-span-4">{badge.description}</div>
-                      <div className="col-span-4">{badge.pointsRequired}</div>
+                        <div className="text-center font-semibold">{badge.name}</div>
+                        <div className="">{badge.description}</div>
+                        <div className="text-center">{badge.pointsRequired}</div>
+                      </CardContent>
 
-                      <div className="col-start-1">
-                        <Button
-                          variant={"delete"}
-                          onClick={() => openDeleteModal(badge.id, badge.name)}
-                        >
-                          <Trash2 />
-                        </Button>
-                      </div>
-                      <div className="col-start-4">
-                        <Button
-                          variant={"edit"}
-                          onClick={() => navigate(`/badges/update/${badge.id}`)}
-                        >
-                          <Pencil />
-                        </Button>
-                      </div>
-                    </div>
+                      <CardFooter className="flex justify-between">
+                          <Button
+                            variant={"delete"}
+                            onClick={() => openDeleteModal(badge.id, badge.name)}
+                          >
+                            <Trash2 />
+                          </Button>
+                        
+                          <Button
+                            variant={"edit"}
+                            onClick={() => navigate(`/badges/update/${badge.id}`)}
+                          >
+                            <Pencil />
+                          </Button>
+                      
+                      </CardFooter>
+                    </Card>
                   ))}
                 </div>
               )}

@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, redirect } from "react-router-dom";
 import TennisPage from "./pages/tennis/page";
 import TennisErrorPage from "./pages/tennis/error";
 import { loader as updateLoader } from "./pages/tennis/children/updatepage";
@@ -43,6 +43,11 @@ const router = createBrowserRouter([
     // element es el componente que se renderiza en la ruta
     element: <LoginPage />,
     action: ActionLogin,
+    loader: () => {
+      const token = localStorage.getItem("token");
+      if (token) return redirect("/badges");
+      return null;
+    },
   },
   {
     path: "/badges",
@@ -93,6 +98,14 @@ const router = createBrowserRouter([
         element: <CreateOfferPage />,
       },
     ],
+  },
+  {
+    path: "/auth",
+    loader: () => {
+      const token = localStorage.getItem("token");
+      if (!token) return redirect("/");
+      return null;
+    },
   },
   {
     path: "/tennis",
