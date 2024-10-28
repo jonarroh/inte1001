@@ -1,5 +1,6 @@
 import {
-  createBrowserRouter
+  createBrowserRouter,
+  redirect
 } from "react-router-dom";
 import TennisPage from "./pages/tennis/page";
 import TennisErrorPage from "./pages/tennis/error";
@@ -16,6 +17,8 @@ import { ActionLogin } from "./pages/login/children/actions";
 import { ActionOfertasCreate, ActionOfertasDelete, ActionOfertasUpdate } from "./pages/ofertas/children/actions";
 import CreateBadgePage from "./pages/badges/children/create";
 import UpdateBadgePage, { loaderUpdateBadge } from "./pages/badges/children/update";
+import CreateOfferPage, { loader as loaderOfferPage } from "./pages/ofertas/children/create";
+import UpdateOfferPage, { loaderUpdateOffer } from "./pages/ofertas/children/update";
 
 
 const router = createBrowserRouter([
@@ -44,7 +47,8 @@ const router = createBrowserRouter([
         path: "update/:id",
         action: ActionBadgesUpdate,
         loader: loaderUpdateBadge,
-        element: <UpdateBadgePage />
+        element: <UpdateBadgePage />,
+
       }
     ]
   },
@@ -62,11 +66,26 @@ const router = createBrowserRouter([
       {
         path: "delete/:id",
         action: ActionOfertasDelete
-      },{
+      }, {
         path: "update/:id",
-        action: ActionOfertasUpdate
+        action: ActionOfertasUpdate,
+        loader: loaderUpdateOffer,
+        element: <UpdateOfferPage />
+      },
+      {
+        path: "create",
+        loader: loaderOfferPage,
+        element: <CreateOfferPage />
       }
     ]
+  },
+  {
+    "path": "/auth",
+    loader: () => {
+      const token = localStorage.getItem("token");
+      if (!token) return redirect("/");
+      return null;
+    },
   },
   {
     path: "/tennis",

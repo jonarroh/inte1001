@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 // import { zValidator } from '@hono/zod-validator';
 // import { tennisDTO} from '../dto/tennisDTO';
-import BadgeController from '../controller/badge';
+import BadgeController, { UserBadges } from '../controller/badge';
 import { badgeDTO } from '../dto/badgeDTO';
 
 const badge = new Hono();
@@ -137,5 +137,49 @@ badge.delete('/:id', async (c) => {
     return c.json({ error: result.error }, 500);
   }
 });
+
+
+badge.get('/user/:id', async (c) => {
+  const controller = new UserBadges();
+  const id = c.req.param('id');
+  const result = await controller.getUserBadges(Number(id));
+  console.log("result",result);
+  if (result.isOk) {
+    return c.json(result.value);
+  } else {
+    return c.json({ error: result.error }, 500);
+  }
+});
+
+
+badge.get('/user/poinst/:id', async (c) => {
+  const controller = new UserBadges();
+  const id = c.req.param('id');
+  const result = await controller.getUserPoints(Number(id));
+  console.log("result",result);
+  if (result.isOk) {
+    return c.json(result.value);
+  } else {
+    return c.json({ error: result.error }, 500);
+  }
+}
+);
+
+badge.post('/poinst', async (c) => {
+  const controller = new UserBadges();
+  const body = await c.req.json();
+  console.log(body);
+  const result = await controller.addUserPoints(body.userId,body.points);
+  if (result.isOk) {
+    return c.json(result.value);
+  } else {
+    return c.json({ error: result.error }, 500);
+  }
+});
+
+
+
+
+
 
 export default badge;
