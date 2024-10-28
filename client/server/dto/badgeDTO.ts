@@ -1,5 +1,4 @@
-import {z} from "zod";
-
+import { z } from "zod";
 
 export const badgeDTO = z.object({
   name: z.string({
@@ -15,6 +14,7 @@ export const badgeDTO = z.object({
   }).refine((value) => !isNaN(Number(value)), {
     message: "Los puntos requeridos deben ser un numero",
   }),
-  image: z.any().optional(),
-
+  image: z
+    .any()
+    .optional()
 });

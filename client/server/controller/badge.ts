@@ -33,10 +33,15 @@ export default class BadgeController{
     try {
       
       await db.transaction(async (trx) => {
+        //validar que el nombre no exista
+        const badge = db.select().from(schema.badges).where(eq(schema.badges.name, body.name)).get();
+        if (badge) {
+          return { isOk: false, error: 'Badge already exists' };
+        }
         await trx.insert(schema.badges).values(body).execute();
       });
       const result = db.select().from(schema.badges).where(eq(schema.badges.name, body.name)).get();
-
+      
       return { isOk: true, value: result };
 
     } catch (error) {
@@ -47,7 +52,9 @@ export default class BadgeController{
 
   async updateBadge(newBadge: insertBadge, id: number): Promise<Result<selectBadge, string>> {
     try {
+      console.log("updateBadge", newBadge);
       await db.transaction(async (trx) => {
+       
         await trx.update(schema.badges).set(newBadge).where(eq(schema.badges.id, id)).execute();
       });
       const result = db.select().from(schema.badges).where(eq(schema.badges.id, id)).get();
@@ -68,6 +75,26 @@ export default class BadgeController{
     } catch (error) {
       console.error(error);
       return { isOk: false, error: 'Failed to delete badge' };
+    }
+  }
+
+  async sendToCDN(file: File, idFile: string): Promise<Result<string, string>> {
+    try {
+      const formData = new FormData();
+      formData.append('imagen', file);
+      formData.append('id', idFile);
+      const response = await fetch('http://localhost:5000/badge/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      if (response.ok) {
+        const data = await response.json();
+        return { isOk: true, value: data.url };
+      }
+      return { isOk: false, error: 'Failed to upload image to CDN' };
+    } catch (error) {
+      console.error(error);
+      return { isOk: false, error: 'Failed to upload image to CDN' };
     }
   }
 

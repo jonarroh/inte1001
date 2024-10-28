@@ -7,6 +7,7 @@
 
     async createBadges(newBadges: FormData): Promise<insertBadge | { success: false; error: any }
     > {
+      console.log("createBadges", newBadges);
       return sendForm("POST", this.baseUrl, newBadges);
     }
   
@@ -14,7 +15,8 @@
       await sendRequest("DELETE", `${this.baseUrl}/${id}`);
     }
 
-    async updateBadges(badges: FormData, id: number): Promise<insertBadge | { success: false; error: any }> {        
+    async updateBadges(badges: FormData, id: number): Promise<insertBadge | { success: false; error: any }> { 
+      console.log("updateBadges", badges);       
       return sendForm("PUT", `${this.baseUrl}/${id}`, badges);
     }    
 

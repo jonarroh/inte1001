@@ -1,5 +1,6 @@
+
 import { useState } from "react";
-import { useNavigate, useLoaderData, Outlet, LoaderFunction, useFetcher, useLocation } from "react-router-dom";
+import { useNavigate, useLoaderData, Outlet, LoaderFunction, useFetcher, useLocation, useMatches } from "react-router-dom";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
@@ -17,8 +18,8 @@ import {
   CredenzaFooter,
   CredenzaClose,
 } from "@/components/templates/credenza";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 
-// import { is } from "drizzle-orm";
 
 export const loader: LoaderFunction = async () => {
   const response = await fetch('http://localhost:3000/badge');
@@ -32,10 +33,11 @@ export const loader: LoaderFunction = async () => {
 export default function BadgesPage() {
   const data = useLoaderData() as selectBadge[];
   const [search, setSearch] = useState<string>('');
-  const [badgeToDelete, setBadgeToDelete] = useState<{ id: number; name: string } | null>(null); 
+  const [badgeToDelete, setBadgeToDelete] = useState<{ id: number; name: string } | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
-  
+
+
   const filteredData = data.filter((badge) =>
     badge.name.toLowerCase().includes(search.toLowerCase())
   );
@@ -43,26 +45,32 @@ export default function BadgesPage() {
   const isCreateorUpdate = location.pathname.includes("/create") || location.pathname.includes("/update");
 
   const openDeleteModal = (badgeId: number, badgeName: string) => {
-    setBadgeToDelete({ id: badgeId, name: badgeName }); 
+    setBadgeToDelete({ id: badgeId, name: badgeName });
   };
 
   const closeDeleteModal = () => {
-    setBadgeToDelete(null); 
+    setBadgeToDelete(null);
   };
+
+  function Breadcrumbs2() {
+    const matches = useMatches();
+    return console.log(matches);
+  }
+  Breadcrumbs2();
 
   return (
     <DashboardLayout>
       <PageContainer scrollable>
         <div className="space-y-4">
+          
           <Breadcrumbs
             items={[
               { title: "Dashboard", link: "/dashboard" },
               { title: "Insignias", link: "/badges" },
-              ...(location.pathname.includes("/create") ? 
-                  [{ title: "Crear", link: "/badges/create" }] : 
-                  location.pathname.includes("/update") ?
-                  [{title: "Editar", link: "/badges/update"}] :
-                  []),
+              
+              { title: "Crear", link: "/badges/create" },
+              { title: "Editar", link: "/badges/update" }
+
             ]}
           />
 
@@ -72,55 +80,59 @@ export default function BadgesPage() {
 
           <div>
             <div className="flex justify-between gap-x-10 mb-3">
-              <Input placeholder="Buscar" onChange={(e) => setSearch(e.target.value)} />
+              <Input placeholder="Buscar" onChange={(e) => setSearch(e.target.value)}  className="border-gray-400"/>
               <Button onClick={() => navigate("/badges/create")}>Nueva</Button>
             </div>
-            
+
             <div className="">
               <Outlet />
               {!isCreateorUpdate && (
-                <div className="bg-gray-50 min-h-full flex items-center justify-center p-5">
+                <div className="min-h-full flex items-center justify-center p-5 ">
                   {filteredData.map((badge) => (
-                    <div
+                    <Card
                       key={badge.id}
-                      className="bg-white shadow-lg rounded-lg max-w-lg mx-auto p-3 grid grid-cols-4 text-center"
+                      className="shadow-lg min-w-min max-w-lg mx-auto "
                     >
-                      <div className="col-span-4">
-                        <img src={`http://127.0.0.1:5000/badge/${badge.id}.webp`} alt={badge.name} />
-                      </div>
-                      <div className="col-span-4">{badge.name}</div>
-                      <div className="col-span-4">{badge.description}</div>
-                      <div className="col-span-4">{badge.pointsRequired}</div>
+                      <CardContent >
+                        <div className="flex justify-center my-2">
+                          <img src={`http://127.0.0.1:5000/static/badge/${badge.id}.webp`} alt={badge.name}
+                            width={100} height={100}
+                          />
+                        </div>
+                        <div className="text-center font-semibold">{badge.name}</div>
+                        <div className="">{badge.description}</div>
+                        <div className="text-center">{badge.pointsRequired}</div>
+                      </CardContent>
 
-                      <div className="col-start-1">
-                        <Button
-                          variant={"delete"}
-                          onClick={() => openDeleteModal(badge.id, badge.name)} 
-                        >
-                          <Trash2 />
-                        </Button>
-                      </div>
-                      <div className="col-start-4">
-                        <Button
-                          variant={"edit"}
-                          onClick={() => navigate(`/badges/update/${badge.id}`)}
-                        >
-                          <Pencil />
-                        </Button>
-                      </div>
-                    </div>
+                      <CardFooter className="flex justify-between">
+                          <Button
+                            variant={"delete"}
+                            onClick={() => openDeleteModal(badge.id, badge.name)}
+                          >
+                            <Trash2 />
+                          </Button>
+                        
+                          <Button
+                            variant={"edit"}
+                            onClick={() => navigate(`/badges/update/${badge.id}`)}
+                          >
+                            <Pencil />
+                          </Button>
+                      
+                      </CardFooter>
+                    </Card>
                   ))}
                 </div>
               )}
             </div>
           </div>
         </div>
-        
+
         {badgeToDelete && (
-          <DeleteBadgeModal 
-            badgeId={badgeToDelete.id} 
-            badgeName={badgeToDelete.name} 
-            closeModal={closeDeleteModal} 
+          <DeleteBadgeModal
+            badgeId={badgeToDelete.id}
+            badgeName={badgeToDelete.name}
+            closeModal={closeDeleteModal}
           />
         )}
 
@@ -140,7 +152,8 @@ const DeleteBadgeModal = ({ badgeId, badgeName, closeModal }: DeleteModalProps) 
 
   const handleDelete = () => {
     fetcher.submit(null, { method: "post", action: `/badges/delete/${badgeId}` });
-    closeModal(); 
+
+    closeModal();
   };
 
   return (
