@@ -51,6 +51,7 @@ export default function BadgesPage() {
   };
 
   return (
+    
     <DashboardLayout>
       <PageContainer scrollable>
         <div className="space-y-4">

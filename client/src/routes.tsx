@@ -27,7 +27,12 @@ const router = createBrowserRouter([
     path: "/",
     // element es el componente que se renderiza en la ruta
     element: <LoginPage />,
-    action: ActionLogin
+    action: ActionLogin,
+    loader: () => {
+      const token = localStorage.getItem("token");
+      if (token) return redirect("/badges");
+      return null;
+    }
   },
   {
     path: "/badges",
