@@ -1,3 +1,4 @@
+
 export { default as tennis } from './tennis';
 export { default as reviews } from './reviews';
 export { categories } from './categorias';
@@ -13,3 +14,4 @@ export { location } from './location';
 export {passwordRecovery} from "./password"
 export {logger} from "./logger"
  
+

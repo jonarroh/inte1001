@@ -4,7 +4,7 @@ import { insertBadge, selectBadge, selectUserBadge } from "../db/schema/badge";
 
 
 import * as schema from "../db/schema";
-import { eq , and, lt, gt, gte } from "drizzle-orm";
+import { eq , and, gte } from "drizzle-orm";
 
 export default class BadgeController{
 

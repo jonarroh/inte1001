@@ -1,5 +1,7 @@
 import { Hono } from 'hono';
+
 // import { zValidator } from '@hono/zod-validator';
+
 // import { tennisDTO} from '../dto/tennisDTO';
 import BadgeController, { UserBadges } from '../controller/badge';
 import { badgeDTO } from '../dto/badgeDTO';
@@ -176,10 +178,6 @@ badge.post('/poinst', async (c) => {
     return c.json({ error: result.error }, 500);
   }
 });
-
-
-
-
 
 
 export default badge;

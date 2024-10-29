@@ -37,7 +37,7 @@ app.route('/logging', logger)
 app.route('/password', password)
 app.get(
   '/ws',
-  upgradeWebSocket((c) => {
+  upgradeWebSocket(() => {
     return {
        onMessage(event, ws) {
         const message = JSON.parse( event.data.toString())
@@ -45,7 +45,7 @@ app.get(
         // Identificar el tipo de evento y manejarlo
         const controller = new LocationController();
         switch (message.type) {
-          case 'onLogin':
+          case 'onLogin': {
             console.log(`User logged in: ${message.username}`)
             const location:insertLocation = {
               isLogged: message.isLogged,
@@ -59,6 +59,7 @@ app.get(
 
             ws.send(`Welcome ${message.username}!`)
             break
+          }
           case 'onLogout':
             controller.deleteLocation(message.token);
             ws.send(`Goodbye ${message.username}!`)
