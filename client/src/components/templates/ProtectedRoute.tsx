@@ -8,7 +8,9 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      navigate("/"); // Redirige a la ruta raíz si no hay token
+      navigate("/", {
+        replace: true,
+      }); // Redirige a la ruta raíz si no hay token
     }
   }, [navigate]);
 
