@@ -24,7 +24,7 @@ export default class AuthController {
     const payload = {
       role:user.role,
       email:user.email,
-      exp: Math.floor(Date.now() / 1000) + (60 * 60), // 1 hour
+      exp: Math.floor(Date.now() / 1000) + (60 * 60), 
     }
     const secret = '4uT0M4t1cS0l-Th3-4uT0M4t1cS0l'
     return await sign(payload,secret)

@@ -11,7 +11,8 @@ import { createBunWebSocket } from 'hono/bun'
 import LocationController from "./controller/location";
 import web from "./routes/webPush";
 import { insertLocation } from "./db/schema/location";
-
+import password from "./routes/password";
+import logger from "./routes/logger";
 const app = new Hono();
 const { upgradeWebSocket, websocket } =
   createBunWebSocket()
@@ -32,9 +33,11 @@ app.route('/leagues', leagues);
 app.route('/location', location);
 app.route('/email',email);
 app.route('/web', web);
+app.route('/logging', logger)
+app.route('/password', password)
 app.get(
   '/ws',
-  upgradeWebSocket((c) => {
+  upgradeWebSocket(() => {
     return {
        onMessage(event, ws) {
         const message = JSON.parse( event.data.toString())
@@ -42,7 +45,7 @@ app.get(
         // Identificar el tipo de evento y manejarlo
         const controller = new LocationController();
         switch (message.type) {
-          case 'onLogin':
+          case 'onLogin': {
             console.log(`User logged in: ${message.username}`)
             const location:insertLocation = {
               isLogged: message.isLogged,
@@ -56,6 +59,7 @@ app.get(
 
             ws.send(`Welcome ${message.username}!`)
             break
+          }
           case 'onLogout':
             controller.deleteLocation(message.token);
             ws.send(`Goodbye ${message.username}!`)

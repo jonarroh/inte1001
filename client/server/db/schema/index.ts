@@ -1,4 +1,4 @@
-export { carrito } from './carrito';
+
 export { default as tennis } from './tennis';
 export { default as reviews } from './reviews';
 export { categories } from './categorias';
@@ -11,4 +11,7 @@ export { leagues } from './leagues';
 export {userLeagues} from './leagues'
 export {userLeaguesPoints} from './leagues'
 export { location } from './location';
+export {passwordRecovery} from "./password"
+export {logger} from "./logger"
+ 
 

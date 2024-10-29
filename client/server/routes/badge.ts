@@ -1,7 +1,9 @@
 import { Hono } from 'hono';
-//import { zValidator } from '@hono/zod-validator';
+
+// import { zValidator } from '@hono/zod-validator';
+
 // import { tennisDTO} from '../dto/tennisDTO';
-import BadgeController from '../controller/badge';
+import BadgeController, { UserBadges } from '../controller/badge';
 import { badgeDTO } from '../dto/badgeDTO';
 
 const badge = new Hono();
@@ -48,7 +50,7 @@ badge.post('/', async (c) => {
 
   // Aquí puedes verificar el tipo MIME si es necesario
   if (!image.type.startsWith('image/')) {
-    return c.json({ error: 'El archivo debe ser una imagen válida (JPEG, PNG, etc.)' }, 400);
+    return c.json({ error: 'El archivo debe ser una imagen válida (JPEG, PNG o JPG)' }, 400);
   }
 
   console.log(`Recibido archivo de imagen: ${image.name}, tamaño: ${image.size} bytes`);
@@ -57,7 +59,7 @@ badge.post('/', async (c) => {
   const badge = {
     name,
     description,
-    pointsRequired: Number(pointsRequired), // Asegúrate de convertir a número
+    pointsRequired: Number(pointsRequired),
   };
 
   const controller = new BadgeController();
@@ -65,14 +67,14 @@ badge.post('/', async (c) => {
   if (result.isOk) {
     console.log(result.value);
     // Subir la imagen al CDN
-   if(result.value?.id){
-    const uploadResult = await controller.sendToCDN(image, String(result.value.id));
-    if (uploadResult.isOk) {
-      console.log('Imagen subida a CDN:', uploadResult.value);
-    } else {
-      console.error('Error al subir imagen a CDN:', uploadResult.error);
+    if(result.value?.id){
+      const uploadResult = await controller.sendToCDN(image, String(result.value.id));
+      if (uploadResult.isOk) {
+        console.log('Imagen subida a CDN:', uploadResult.value);
+      } else {
+        console.error('Error al subir imagen a CDN:', uploadResult.error);
+      }
     }
-   }
     
     return c.json(result.value);
   } else {
@@ -100,7 +102,7 @@ badge.put('/:id', async (c) => {
 
   // Crear el objeto de actualización, incluyendo el ID
   const badgeUpdate = {
-    id: Number(badgeId), // Convertir badgeId a número
+    id: Number(badgeId), 
     name,
     description,
     pointsRequired: Number(pointsRequired), 
@@ -137,5 +139,45 @@ badge.delete('/:id', async (c) => {
     return c.json({ error: result.error }, 500);
   }
 });
+
+
+badge.get('/user/:id', async (c) => {
+  const controller = new UserBadges();
+  const id = c.req.param('id');
+  const result = await controller.getUserBadges(Number(id));
+  console.log("result",result);
+  if (result.isOk) {
+    return c.json(result.value);
+  } else {
+    return c.json({ error: result.error }, 500);
+  }
+});
+
+
+badge.get('/user/poinst/:id', async (c) => {
+  const controller = new UserBadges();
+  const id = c.req.param('id');
+  const result = await controller.getUserPoints(Number(id));
+  console.log("result",result);
+  if (result.isOk) {
+    return c.json(result.value);
+  } else {
+    return c.json({ error: result.error }, 500);
+  }
+}
+);
+
+badge.post('/poinst', async (c) => {
+  const controller = new UserBadges();
+  const body = await c.req.json();
+  console.log(body);
+  const result = await controller.addUserPoints(body.userId,body.points);
+  if (result.isOk) {
+    return c.json(result.value);
+  } else {
+    return c.json({ error: result.error }, 500);
+  }
+});
+
 
 export default badge;
