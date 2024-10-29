@@ -1,25 +1,40 @@
-import {
-  createBrowserRouter,
-  redirect
-} from "react-router-dom";
+import { createBrowserRouter, redirect } from "react-router-dom";
 import TennisPage from "./pages/tennis/page";
 import TennisErrorPage from "./pages/tennis/error";
 import { loader as updateLoader } from "./pages/tennis/children/updatepage";
 import Updatepage from "./pages/tennis/children/updatepage";
-import { ActionCreateTennis, ActionTennisDelete, ActionTennisUpdate } from "./pages/tennis/children/actions";
+import {
+  ActionCreateTennis,
+  ActionTennisDelete,
+  ActionTennisUpdate,
+} from "./pages/tennis/children/actions";
 import UserPage from "./pages/user/page";
 import { loader as LocationsLoader } from "./pages/user/page";
 import LoginPage from "./pages/login/page";
 import BadgesPage, { loader as BadgesLoader } from "./pages/badges/page";
 import OfertasPage, { loader as OfertasLoader } from "./pages/ofertas/page";
-import { ActionBadgesCreate, ActionBadgesDelete, ActionBadgesUpdate } from "./pages/badges/children/actions";
+import {
+  ActionBadgesCreate,
+  ActionBadgesDelete,
+  ActionBadgesUpdate,
+} from "./pages/badges/children/actions";
 import { ActionLogin } from "./pages/login/children/actions";
-import { ActionOfertasCreate, ActionOfertasDelete, ActionOfertasUpdate } from "./pages/ofertas/children/actions";
+import {
+  ActionOfertasCreate,
+  ActionOfertasDelete,
+  ActionOfertasUpdate,
+} from "./pages/ofertas/children/actions";
 import CreateBadgePage from "./pages/badges/children/create";
-import UpdateBadgePage, { loaderUpdateBadge } from "./pages/badges/children/update";
-import CreateOfferPage, { loader as loaderOfferPage } from "./pages/ofertas/children/create";
-import UpdateOfferPage, { loaderUpdateOffer } from "./pages/ofertas/children/update";
-
+import UpdateBadgePage, {
+  loaderUpdateBadge,
+} from "./pages/badges/children/update";
+import CreateOfferPage, {
+  loader as loaderOfferPage,
+} from "./pages/ofertas/children/create";
+import UpdateOfferPage, {
+  loaderUpdateOffer,
+} from "./pages/ofertas/children/update";
+import ChatPage, { ChatLoader } from "./pages/chat/page";
 
 const router = createBrowserRouter([
   {
@@ -32,7 +47,7 @@ const router = createBrowserRouter([
       const token = localStorage.getItem("token");
       if (token) return redirect("/badges");
       return null;
-    }
+    },
   },
   {
     path: "/badges",
@@ -42,25 +57,24 @@ const router = createBrowserRouter([
     children: [
       {
         path: "create",
-        element: <CreateBadgePage />
+        element: <CreateBadgePage />,
       },
       {
         path: "delete/:id",
-        action: ActionBadgesDelete
+        action: ActionBadgesDelete,
       },
       {
         path: "update/:id",
         action: ActionBadgesUpdate,
         loader: loaderUpdateBadge,
         element: <UpdateBadgePage />,
-
-      }
-    ]
+      },
+    ],
   },
   {
     path: "/globe",
     element: <UserPage />,
-    loader: LocationsLoader
+    loader: LocationsLoader,
   },
   {
     path: "/ofertas",
@@ -70,22 +84,23 @@ const router = createBrowserRouter([
     children: [
       {
         path: "delete/:id",
-        action: ActionOfertasDelete
-      }, {
+        action: ActionOfertasDelete,
+      },
+      {
         path: "update/:id",
         action: ActionOfertasUpdate,
         loader: loaderUpdateOffer,
-        element: <UpdateOfferPage />
+        element: <UpdateOfferPage />,
       },
       {
         path: "create",
         loader: loaderOfferPage,
-        element: <CreateOfferPage />
-      }
-    ]
+        element: <CreateOfferPage />,
+      },
+    ],
   },
   {
-    "path": "/auth",
+    path: "/auth",
     loader: () => {
       const token = localStorage.getItem("token");
       if (!token) return redirect("/");
@@ -106,17 +121,22 @@ const router = createBrowserRouter([
         //el path es la ruta de la subpágina al no tener element solo sirve para definir la acción
         path: "delete/:id",
         //action es la acción que se ejecuta en la subpágina
-        action: ActionTennisDelete
+        action: ActionTennisDelete,
       },
       {
         // el path es la ruta de la subpágina seria /tennis/update/:id
         path: "update/:id",
         element: <Updatepage />,
         action: ActionTennisUpdate,
-        loader: updateLoader
-      }
-    ]
-  }
+        loader: updateLoader,
+      },
+    ],
+  },
+  {
+    path: "/chat",
+    element: <ChatPage />,
+    loader: ChatLoader,
+  },
 ]);
 
 export default router;
