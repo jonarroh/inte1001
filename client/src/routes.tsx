@@ -36,6 +36,7 @@ import UpdateOfferPage, {
 } from "./pages/ofertas/children/update";
 import ChatPage, { ChatLoader } from "./pages/chat/page";
 import EmailsPage from "./pages/emails/page";
+import { ActionEmailsCreate } from "./pages/emails/children/actions";
 
 const router = createBrowserRouter([
   {
@@ -141,6 +142,7 @@ const router = createBrowserRouter([
   {
     path: "/emails",
     element: <EmailsPage />,
+    action: ActionEmailsCreate
   }
 ]);
 

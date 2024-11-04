@@ -21,7 +21,7 @@ export default function LoginPage() {
   }
 
   const [email, setEmail] = useState("jonarrodi99@gmail.com");
-  const [password, setPassword] = useState("Ganondorf02@");
+  const [password, setPassword] = useState("Ganondorf09#");
   const [errors, setErrors] = useState({ email: "", password: "" });
 
   // Función para validar los campos usando Zod

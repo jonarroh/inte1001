@@ -35,4 +35,36 @@ export class EmailController {
 			return false;
 		}
 	}
+
+	public async getEmailsByFramework(framework: string): Promise<string[]> {
+		const api = "http://192.168.100.30:5275/api/Users/getEmails"
+
+		const resp = await fetch(api);
+
+
+		return await resp.json();
+	}
+
+	async sendEmailTo({
+		message,
+		framework,
+	}: {
+		message: string;
+		framework: string;
+	}): Promise<boolean> {
+		const emails = await this.getEmailsByFramework(framework);
+
+		if (!emails.length) {
+			return false;
+		}
+
+		const emailConfig = {
+			to: emails,
+			subject: "Mensaje de la aplicación",
+			htmlBody: `<p>${message}</p>`,
+		};
+
+		return await this.sendEmail(emailConfig);
+	}
+
 }

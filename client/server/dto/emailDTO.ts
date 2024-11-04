@@ -18,3 +18,12 @@ export const emailDTO = z.object({
     message: "El cuerpo del correo no puede estar vacio",
   }),
 });
+
+export const sendToEmailDTO = z.object({
+  message: z.string({
+    message: "El mensaje debe ser una cadena de texto",
+  }).refine((value) => value.length > 0, {
+    message: "El mensaje no puede estar vacio",
+  }),
+  framework: z.enum(["todos", "lessActivity", "MoreActivity"]),
+});

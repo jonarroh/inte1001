@@ -1,15 +1,10 @@
 
-  import { ActionFunction, json, redirect } from "react-router-dom";
+  import { ActionFunction, redirect } from "react-router-dom";
 
-  export const ActionEmailsDelete: ActionFunction = async ({ params }) => {
-    return redirect("/emails");
-  }
-
-  export const ActionEmailsUpdate: ActionFunction = async ({ request }) => {
-    return redirect("/emails");
-  }
-
+  
   export const ActionEmailsCreate: ActionFunction = async ({ request }) => {
+    console.log("ActionEmailsCreate");
+    console.log(await request.formData());
     return redirect("/emails");
   };
   
