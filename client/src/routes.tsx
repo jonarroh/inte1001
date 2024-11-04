@@ -35,6 +35,7 @@ import UpdateOfferPage, {
   loaderUpdateOffer,
 } from "./pages/ofertas/children/update";
 import ChatPage, { ChatLoader } from "./pages/chat/page";
+import EmailsPage from "./pages/emails/page";
 
 const router = createBrowserRouter([
   {
@@ -137,6 +138,10 @@ const router = createBrowserRouter([
     element: <ChatPage />,
     loader: ChatLoader,
   },
+  {
+    path: "/emails",
+    element: <EmailsPage />,
+  }
 ]);
 
 export default router;

@@ -80,6 +80,12 @@ export default function Sidebar({ className }: SidebarProps) {
                 description: 'Correos electrónicos',
                 icon: 'logo'
               },
+              {
+                title: 'Chat',
+                href: '/chat',
+                description: 'Historial de chat',
+                icon: 'help'
+              }
             ]} />
           </div>
         </div>
