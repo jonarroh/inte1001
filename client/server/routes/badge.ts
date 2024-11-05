@@ -157,6 +157,7 @@ badge.get('/user/:id', async (c) => {
 badge.post('/user/poinst', async (c) => {
   const controller = new UserBadges();
   const {userId} =await c.req.json();
+  console.log(userId);
   const result = await controller.getUserPoints(Number(userId));
   console.log("result",result);
   if (result.isOk) {
@@ -164,15 +165,16 @@ badge.post('/user/poinst', async (c) => {
       points:result.value
     });
   } else {
-    return c.json({ error: result.error }, 500);
+    return c.json({ points: 0}, 200);
   }
 }
 );
 
 badge.post('/poinst', async (c) => {
+  console.log("entra");
   const controller = new UserBadges();
   const body = await c.req.json();
-  console.log(body);
+  console.log({body});
   const result = await controller.addUserPoints(body.userId,body.points);
   if (result.isOk) {
     return c.json(result.value);

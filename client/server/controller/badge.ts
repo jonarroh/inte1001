@@ -165,81 +165,46 @@ export class UserBadges{
 
   async getUserPoints(userId: number): Promise<Result<number, string>> {
     try {
-      const result = await db.select().from(schema.userBadgesPoints).where(eq(schema.userBadgesPoints.userId, userId));
+      const month = new Date().getMonth().toString();
+
+      const result = db.select().from(schema.userBadgesPoints).where(and(eq(schema.userBadgesPoints.userId, userId), eq(schema.userBadgesPoints.month, month))).get();
       if (result) {
-        return { isOk: true,value: result[0].pointsAccumulated };
+        return { isOk: true, value: result.pointsAccumulated };
       }
-      return { isOk: false, error: 'No se encontraron puntos' };
+
+
+      //si no hay puntos, devolver 0 y registrar el mes
+      return { isOk: true, value: 0 }
     } catch (error) {
+      //si hay error, devolver 0 y registrar el mes
       return { isOk: false, error: 'Error al obtener los puntos' };
     }
   }
 
-  async addUserPoints(userId: number, points: number): Promise<Result<boolean, string>> {
+  async addUserPoints(userId: number, points: number): Promise<Result<number, string>> {
     try {
-      const lastMonth = db.select().from(schema.userBadgesPoints).where(and(eq(schema.userBadgesPoints.userId, userId), eq(schema.userBadgesPoints.month, new Date().getMonth().toString()))).get();
-
-      //agregar los badges en los que tenga los puntos requeridos
-      const badges = db.select().from(schema.badges)
-      .where(gte(schema.badges.pointsRequired, points))
-      .all();
-
-      //agregar los badges que no tenga
-      const userBadges = db.select().from(schema.userBadges)
-      .where(eq(schema.userBadges.userId, userId))
-      .all();
-
-      const badgesToAdd = badges.filter((badge) => !userBadges.some((userBadge) => userBadge.badgeId === badge.id));
-
-      for (const badge of badgesToAdd) {
-        await this.addUserBadge(userId, badge.id);
-      }
-
-      if (lastMonth) {
         await db.transaction(async (trx) => {
-          await trx.update(schema.userBadgesPoints).set({ pointsAccumulated: lastMonth.pointsAccumulated + points }).where(and(eq(schema.userBadgesPoints.userId, userId), eq(schema.userBadgesPoints.month, new Date().getMonth().toString()))).execute();
-        });
-      } else {
-        await db.transaction(async (trx) => {
-          await trx.insert(schema.userBadgesPoints).values({ userId, pointsAccumulated: points, month: new Date().getMonth().toString() }).execute();
-        });
-      }
-      return { isOk: true, value: true };
+          //validar que el nombre no exista
+          const badge = db.select().from(schema.userBadgesPoints).where(and(eq(schema.userBadgesPoints.userId, userId), eq(schema.userBadgesPoints.month, new Date().getMonth().toString()))).get();
+          if (badge) {
+            await trx.update(schema.userBadgesPoints).set({ pointsAccumulated: badge.pointsAccumulated + points }).where(and(eq(schema.userBadgesPoints.userId, userId), eq(schema.userBadgesPoints.month, new Date().getMonth().toString()))).execute();
+          } else {
+            await trx.insert(schema.userBadgesPoints).values({ userId, pointsAccumulated: points, month: new Date().getMonth().toString() }).execute();
+          }
+        }
+        );
+
+        const newAccumulatedPoints = db.select().from(schema.userBadgesPoints).where(and(eq(schema.userBadgesPoints.userId, userId), eq(schema.userBadgesPoints.month, new Date().getMonth().toString()))).get();
+          console.log({newAccumulatedPoints});
+        if (newAccumulatedPoints) {
+          return { isOk: true, value: newAccumulatedPoints.pointsAccumulated };
+        } else {
+          return { isOk: false, error: 'Failed to retrieve new accumulated points' };
+        }
     } catch (error) {
       console.error(error);
       return { isOk: false, error: 'Error al insertar los puntos' };
     }
   }
-
-  async removeUserPoints(userId: number, points: number): Promise<Result<boolean, string>> {
-    try {
-        const lastMonth = await db
-            .select()
-            .from(schema.userBadgesPoints)
-            .where(and(eq(schema.userBadgesPoints.userId, userId), eq(schema.userBadgesPoints.month, new Date().getMonth().toString())))
-            .get();
-
-        if (lastMonth) {
-            const newPoints = lastMonth.pointsAccumulated - points;
-
-            if (newPoints < 0) {
-                return { isOk: false, error: 'No se puede reducir los puntos por debajo de 0.' };
-            }
-
-            await db.transaction(async (trx) => {
-                await trx
-                    .update(schema.userBadgesPoints)
-                    .set({ pointsAccumulated: newPoints })
-                    .where(and(eq(schema.userBadgesPoints.userId, userId), eq(schema.userBadgesPoints.month, new Date().getMonth().toString())))
-                    .execute();
-            });
-        }
-
-        return { isOk: true, value: true };
-    } catch (error) {
-        console.error(error);
-        return { isOk: false, error: 'Error al eliminar los puntos' };
-    }
-}
 
 }
