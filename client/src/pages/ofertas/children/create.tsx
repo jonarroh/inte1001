@@ -10,7 +10,6 @@ import { CheckIcon } from "lucide-react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { class } from '../../../../create';
 
 type ValidationError = {
     _errors: string[];
@@ -66,14 +65,14 @@ const CreateOfferPage = () => {
                     <div>
                         <div className="grid w-full max-w-sm items-center gap-1.5">
                             <Label htmlFor="nombre">Nombre</Label>
-                            <Input type="text" id="nombre" placeholder="Nombre" name="nombre" />
+                            <Input type="text" id="nombre" placeholder="Nombre" name="nombre" required/>
                             {actionData?.nombre && <p className="text-red-500 text-sm">{actionData.nombre._errors[0]}</p>}
                         </div>
                     </div>
                     <div>
                         <div className="grid w-full max-w-sm items-center gap-1.5">
                             <Label htmlFor="descripcion">Descripcion</Label>
-                            <Textarea id="descripcion" placeholder="Descripcion" name="descripcion" />
+                            <Textarea id="descripcion" placeholder="Descripcion" name="descripcion" required/>
                             {actionData?.descripcion && <p className="text-red-500 text-sm">{actionData.descripcion._errors[0]}</p>}
                         </div>
                     </div>
@@ -83,14 +82,14 @@ const CreateOfferPage = () => {
                     <div>
                         <div className="grid w-full max-w-sm items-center gap-1.5">
                             <Label htmlFor="fechainicio">Fecha de inicio</Label>
-                            <Input type="date" id="fechainicio" placeholder="Fecha de inicio" name="fechainicio" />
+                            <Input type="date" id="fechainicio" placeholder="Fecha de inicio" name="fechainicio" required/>
                             {actionData?.fechainicio && <p className="text-red-500 text-sm">{actionData.fechainicio._errors[0]}</p>}
                         </div>
                     </div>
                     <div>
                         <div className="grid w-full max-w-sm items-center gap-1.5">
                             <Label htmlFor="fechafin">Fecha de fin</Label>
-                            <Input type="date" id="fechafin" placeholder="Fecha de fin" name="fechafin" />
+                            <Input type="date" id="fechafin" placeholder="Fecha de fin" name="fechafin" required/>
                             {actionData?.fechafin && <p className="text-red-500 text-sm">{actionData.fechafin._errors[0]}</p>}
                         </div>
                     </div>
@@ -100,14 +99,14 @@ const CreateOfferPage = () => {
                     <div className="">
                         <div className="grid w-full max-w-sm items-center gap-1.5">
                             <Label htmlFor="limitecanje">Limite de canje</Label>
-                            <Input type="number" id="limitecanje" placeholder="Limite" name="limitecanje" max={10} min={1} />
+                            <Input type="number" id="limitecanje" placeholder="Limite" name="limitecanje" max={10} min={1} required/>
                             {actionData?.limitecanje && <p className="text-red-500 text-sm">{actionData.limitecanje._errors[0]}</p>}
                         </div>
                     </div>
                     <div className="">
                         <div className="grid w-full max-w-sm items-center gap-1.5">
                             <Label htmlFor="descuento">Descuento</Label>
-                            <Input type="number" id="descuento" placeholder="Descuento" name="descuento" />
+                            <Input type="number" id="descuento" placeholder="Descuento" name="descuento" required/>
                             {actionData?.descuento && <p className="text-red-500 text-sm">{actionData.descuento._errors[0]}</p>}
                         </div>
                     </div>
@@ -162,7 +161,7 @@ const CreateOfferPage = () => {
                     </div>
                     <div>
                         <Label htmlFor="badgepromoid">Badges</Label>
-                        <Select name="badgepromoid">
+                        <Select required name="badgepromoid">
                             <SelectTrigger className="w-full">
                                 <SelectValue placeholder="Seleccionar Badge" />
                             </SelectTrigger>
@@ -181,7 +180,7 @@ const CreateOfferPage = () => {
                 </div>
                 {
                     value && (
-                        <Input type="hidden" name="productos" value={value} />
+                        <Input type="hidden" name="productos" value={value}  required/>
                     )
                 }
 

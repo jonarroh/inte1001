@@ -2,6 +2,8 @@
 import { ActionFunction, json, redirect, } from "react-router-dom";
 import { BadgesService } from "../service";
 import { z } from "zod";
+import { sendLog } from "@utils/sendlog";
+import { a } from "react-spring";
 
 const badgeSchema = z.object({
   id: z.number().optional(),
@@ -61,6 +63,7 @@ const badgeUpdateSchema = z.object({
     const service = new BadgesService();
     console.log(`id ${id}`);
     await service.deleteBadges(Number(id));
+    await sendLog(`Insignia eliminada: ${id}`, "info", "Badges", "CRM");
     return window.location.reload();
   }
 
@@ -92,8 +95,11 @@ const badgeUpdateSchema = z.object({
   
     if ('success' in result && !result.success) {
       console.log(result.error, "error");
+      await sendLog(`Error al actualizar la insignia: ${result.error}`, "error", "Badges", "CRM");
       return json({ error: result.error }, { status: 400 });
     }
+
+    await sendLog(`Insignia actualizada: ${formFields.name}`, "info", "Badges", "CRM");
   
     return redirect("/badges");
   };
@@ -122,11 +128,13 @@ const badgeUpdateSchema = z.object({
       // Si hay errores, devuelve el objeto de errores a la interfaz
       console.log("Errores de validación", validation.error.format());
       const errors = validation.error.format();
+      await sendLog(`Error al crear la insignia: ${errors}`, "error", "Badges", "CRM");
       return errors;
     }    
 
     const service = new BadgesService();
     await service.createBadges(formData);
+    await sendLog(`Insignia creada: ${formFields.name}`, "info", "Badges", "CRM");
     return redirect("/badges");
   };
   

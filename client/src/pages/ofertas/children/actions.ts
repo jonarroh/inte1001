@@ -1,5 +1,6 @@
 import { desc } from "drizzle-orm";
 import { ActionFunction, redirect } from "react-router-dom";
+import { sendLog } from "@utils/sendlog";
 
 export const ActionOfertasDelete: ActionFunction = async ({ params }) => {
   console.log(params);
@@ -10,19 +11,20 @@ export const ActionOfertasDelete: ActionFunction = async ({ params }) => {
 
   const deleteOferta = await fetch(`https://localhost:7268/api/Promociones/deletePromocion/${id}`, {
     method: "PUT",
-  }).then((res) => res.json()).then((data) => {
-    console.log(data);
-
-  }).catch((error) => {
-    console.log(error);
+  }).then((res) => res.json()).then(async (data) => {
+    // console.log(data);
+    await sendLog(`Promoción eliminada: ${data.nombre}`, "info", "Ofertas", "CRM");
+  }).catch(async (error) => {
+    // console.log(error);
+    await sendLog(`Error en la solicitud deletePromocion: ${error.message}`, "error", "Ofertas", "CRM");
   });
 
   return redirect("/ofertas");
 }
 
 export const ActionOfertasUpdate: ActionFunction = async ({ request }) => {
-  console.log({ request });
-  console.log('update');
+  // console.log({ request });
+  // console.log('update');
 
   const formData = await request.formData();
 
@@ -38,7 +40,13 @@ export const ActionOfertasUpdate: ActionFunction = async ({ request }) => {
     productos: String(formData.get("productos")),
   };
 
-  console.log(formFields);
+  // Validar que los campos no estén vacíos
+  if (!formFields.id || !formFields.nombre || !formFields.descripcion || !formFields.fechainicio || !formFields.fechafin || !formFields.descuento || !formFields.badgepromoid || !formFields.limitecanje || !formFields.productos) {
+    alert("Todos los campos son requeridos");
+    return redirect("/ofertas");
+  }
+
+  // console.log(formFields);
 
   const data = {
     id: formFields.id,
@@ -53,7 +61,7 @@ export const ActionOfertasUpdate: ActionFunction = async ({ request }) => {
     limiteCanje: formFields.limitecanje,
   }
 
-  console.log(data);
+  // console.log(data);
 
   const updateOferta = await fetch(`https://localhost:7268/api/Promociones/updatePromocion/${data.id}`, {
     method: "PUT",
@@ -61,18 +69,20 @@ export const ActionOfertasUpdate: ActionFunction = async ({ request }) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
-  }).then((res) => res.json()).then((data) => {
-    console.log(data);
-  }).catch((error) => {
-    console.log(error);
+  }).then((res) => res.json()).then(async (data) => {
+    // console.log(data);
+    await sendLog(`Promoción actualizada: ${data.nombre}`, "info", "Ofertas", "CRM");
+  }).catch(async (error) => {
+    // console.log(error);
+    await sendLog(`Error en la solicitud updatePromocion: ${error.message}`, "error" , "Ofertas", "CRM");
   });
 
   return redirect("/ofertas");
 }
 
 export const ActionOfertasCreate: ActionFunction = async ({ request }) => {
-  console.log({ request });
-  console.log('create');
+  // console.log({ request });
+  // console.log('create');
 
   const formData = await request.formData();
 
@@ -87,7 +97,7 @@ export const ActionOfertasCreate: ActionFunction = async ({ request }) => {
     productos: String(formData.get("productos")),
   }
 
-  console.log(formFields);
+  // console.log(formFields);
 
   const data = {
     nombre: formFields.nombre,
@@ -101,7 +111,7 @@ export const ActionOfertasCreate: ActionFunction = async ({ request }) => {
     limiteCanje: formFields.limitecanje,
   }
 
-  console.log(data);
+  // console.log(data);
 
   const addOferta = await fetch("https://localhost:7268/api/Promociones/addPromocion", {
     method: "POST",
@@ -109,11 +119,13 @@ export const ActionOfertasCreate: ActionFunction = async ({ request }) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
-  }).then((res) => res.json()).then((data) => {
-    console.log(data);
-  }).catch((error) => {
-    console.log(error);
-  });
+  }).then((res) => res.json()).then(async (data) => {
+    // console.log(data);
+    await sendLog(`Promoción creada: ${data.nombre}`, "info", "Ofertas", "CRM");
+  }).catch(async (error) => {
+      // console.log(error);
+      await sendLog(`Error en la solicitud addPromocion: ${error.message}`, "error", "Ofertas", "CRM");
+    });
 
   return redirect("/ofertas");
 };

@@ -1,4 +1,5 @@
 import { ActionFunction, redirect } from "react-router-dom";
+import { sendLog } from "@utils/sendlog";
 
 export const ActionLogin: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
@@ -18,6 +19,7 @@ export const ActionLogin: ActionFunction = async ({ request }) => {
 
   if (response.ok) {
     console.log("Login successful", response);
+    
 
     const data = await response.json();
     const jwtToken = data.jwtToken;
@@ -35,6 +37,8 @@ export const ActionLogin: ActionFunction = async ({ request }) => {
 
     const decodedToken = parseJwt(jwtToken);
     const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
+
+    await sendLog(`Inicio de sesión exitoso: IdUser - ${userId}`, "info", "Login", "CRM");
 
     // Realiza la petición para obtener los datos del usuario
     try {
@@ -74,6 +78,7 @@ export const ActionLogin: ActionFunction = async ({ request }) => {
     }
   } else {
     console.log("Login failed");
+    await sendLog(`Inicio de sesión fallido: ${response.statusText}`, "error", "Login", "CRM");
     return response;
   }
 };
