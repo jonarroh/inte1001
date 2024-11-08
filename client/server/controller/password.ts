@@ -44,7 +44,7 @@ export default class PasswordController {
 private async getUserByEmail(email: string): Promise<number | null> {
     try{
       console.log("getUserByEmail", email);
-      const resp = await fetch('http://localhost:5275/api/Users/getId',{
+      const resp = await fetch('http://192.168.137.120:5275/api/Users/getId',{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -119,7 +119,7 @@ private async getUserByEmail(email: string): Promise<number | null> {
     };
     console.log(data);
     try{
-      await fetch('http://localhost:5275/api/Users/forceChangePassword', {
+      await fetch('http://192.168.137.120:5275/api/Users/forceChangePassword', {
         method: 'POST',
         headers: {
           'accept': 'text/plain',

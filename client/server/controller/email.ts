@@ -37,7 +37,7 @@ export class EmailController {
 	}
 
 	public async getEmailsByFramework(framework: string): Promise<string[]> {
-		const api = "http://192.168.100.30:5275/api/Users/getEmails"
+		const api = "http://192.168.137.120:5275/api/Users/getEmails"
 
 		const resp = await fetch(api);
 
@@ -61,7 +61,25 @@ export class EmailController {
 		const emailConfig = {
 			to: emails,
 			subject: "Mensaje de la aplicación",
-			htmlBody: `<p>${message}</p>`,
+			htmlBody: `
+  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
+    <div style="background-color: #f4f4f4; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">
+      <img src="https://example.com/path/to/logo.png" alt="Heaven Logo" style="max-width: 120px; margin-bottom: 10px;">
+      <h1 style="color: #333; font-size: 24px; margin: 0;">Heaven</h1>
+    </div>
+    <div style="padding: 20px; background-color: #fff; border: 1px solid #ddd; border-top: none;">
+      <p style="font-size: 16px; line-height: 1.5;">
+        ${message}
+      </p>
+    </div>
+    <div style="background-color: #f4f4f4; padding: 10px; text-align: center; border-radius: 0 0 8px 8px;">
+      <p style="font-size: 12px; color: #777;">
+        © 2024 Heaven. All rights reserved.
+      </p>
+    </div>
+  </div>
+`
+
 		};
 
 		return await this.sendEmail(emailConfig);

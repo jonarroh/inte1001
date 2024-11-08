@@ -6,6 +6,8 @@ export const logger = sqliteTable("logger", {
   type: text('type',{
     enum: ['info', 'error', 'warning'],
   }).notNull(),
+  from: text('from').notNull(),
+  origin: text('origin').notNull(),
 });
 
 

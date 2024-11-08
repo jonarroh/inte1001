@@ -11,7 +11,7 @@ logger.post('/writeinfo',zValidator("json",loggerDTO), async (c) => {
 
   const validated = c.req.valid('json');
 
-  const log: { message: string; type: "info"; date: string } = {
+  const log: { message: string; type: "info"; date: string, from: string, origin: string } = {
     ...validated,
     type: 'info'
   }
@@ -31,7 +31,7 @@ logger.post('/writeerror',zValidator("json",loggerDTO), async (c) => {
 
   const validated = c.req.valid('json');
 
-  const log: { message: string; type: "error"; date: string } = {
+  const log: { message: string; type: "error"; date: string, from: string , origin: string } = {
     ...validated,
     type: 'error'
   }
@@ -63,7 +63,7 @@ logger.post('/writewarning',zValidator("json",loggerDTO), async (c) => {
 
   const validated = c.req.valid('json');
 
-  const log: { message: string; type: "warning"; date: string } = {
+  const log: { message: string; type: "warning"; date: string, from: string, origin: string } = {
     ...validated,
     type: 'warning'
   }
