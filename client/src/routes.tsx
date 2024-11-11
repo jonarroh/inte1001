@@ -74,7 +74,7 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "/globe",
+    path: "/stats",
     element: <UserPage />,
     loader: LocationsLoader,
   },

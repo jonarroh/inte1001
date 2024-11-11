@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import { sqliteTable, text, integer,real } from "drizzle-orm/sqlite-core";
 
 
@@ -9,6 +10,8 @@ export const location = sqliteTable("location", {
   token: text('token').notNull(),
   browser: text('browser').notNull(),
   deviceType: text('deviceType').notNull(),
+  createdAt: text('createdAt').default(sql`(CURRENT_TIMESTAMP)`),
+  isActive: integer('isActive').notNull().default(1),
 });
 
 

@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import LocationController from "../controller/location";
 import { zValidator } from "@hono/zod-validator";
-import { locationDTO } from "../dto/locationDTO";
+import { locationDTO, lotationDateDTO } from "../dto/locationDTO";
 
 
 
@@ -32,9 +32,10 @@ locations.delete('/:id', async (c) => {
 });
 
 
-locations.get('/logged', async (c) => {
+locations.post('/logged', zValidator('json', lotationDateDTO), async (c) => {
   const controller = new LocationController();
-  const result = await controller.getOnlyLoggedLocation();
+  const validated = c.req.valid('json');  
+  const result = await controller.getOnlyLoggedLocation(validated.date);
   if (result.isOk) {
     return c.json(result.value);
   } else {
@@ -42,9 +43,10 @@ locations.get('/logged', async (c) => {
   }
 });
 
-locations.get('/not-logged', async (c) => {
+locations.post('/not-logged',zValidator('json', lotationDateDTO), async (c) => {
   const controller = new LocationController();
-  const result = await controller.getOnlyNotLoggedLocation();
+  const validated = c.req.valid('json');
+  const result = await controller.getOnlyNotLoggedLocation(validated.date);
   if (result.isOk) {
     return c.json(result.value);
   } else {
@@ -76,6 +78,30 @@ locations.post('/login', zValidator('json', locationDTO), async (c) => {
   const validated = c.req.valid('json');
 
   const result = await controller.addNewLocation(validated);
+  if (result.isOk) {
+    return c.json(result.value);
+  } else {
+    return c.json({ error: result.error }, 500);
+  }
+}
+);
+
+
+locations.post('/total',zValidator('json', lotationDateDTO), async (c) => {
+  const controller = new LocationController();
+  const validated = c.req.valid('json');
+  const result = await controller.getTotalLocations(validated.date);
+  if (result.isOk) {
+    return c.json(result.value);
+  } else {
+    return c.json({ error: result.error }, 500);
+  }
+});
+
+locations.post('/device',zValidator('json', lotationDateDTO), async (c) => {
+  const controller = new LocationController();
+  const validated = c.req.valid('json');
+  const result = await controller.getDeviceAndBrowserStats(validated.date);
   if (result.isOk) {
     return c.json(result.value);
   } else {

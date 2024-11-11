@@ -57,7 +57,7 @@ export default function Sidebar({ className }: SidebarProps) {
             <DashboardNav items={[
               {
                 title: 'Estadísticas',
-                href: '/dashboard',
+                href: '/stats',
                 description: 'Información general',
                 icon: 'dashboard',
                 label: 'Nuevo'

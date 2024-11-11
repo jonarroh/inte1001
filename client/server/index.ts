@@ -1,5 +1,4 @@
 import { Hono } from "hono";
-import tennis from "./routes/tennis";
 import { cors } from 'hono/cors'
 import taco from "./routes/taco";
 import auth from "./routes/auth";
@@ -25,7 +24,6 @@ app.use(cors(
   }
 ));
 
-app.route('/tennis', tennis);
 app.route('/taco', taco);
 app.route('/auth', auth);
 app.route('/badge', badge);

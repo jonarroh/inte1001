@@ -20,3 +20,10 @@ export const locationDTO = z.object({
     message: "El deviceType debe ser una cadena de texto",
   }),
 });
+
+
+export const lotationDateDTO = z.object({
+  date: z.enum(["today", "yesterday", "lastWeek", "lastMonth", "lastYear"], {
+    message: "La fecha debe ser today, yesterday, lastWeek, lastMonth o lastYear",
+  }),
+});

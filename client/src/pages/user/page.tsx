@@ -1,41 +1,67 @@
-import { useLoaderData } from "react-router-dom";
+import { Await, defer, useLoaderData, useRevalidator } from "react-router-dom";
 import { Globe } from "../../components/ui/globe";
 import { selectLocation } from "@server/schema/location";
 import { Marker } from "cobe";
+import { Suspense, useEffect } from "react";
 
 
 export async function loader() {
-  const response = await fetch('https://localhost:7268/api/Productos');
-  if (!response.ok) {
-    throw new Error('Network response was not ok');
-  }
-  const data: selectLocation[] = await response.json();
-  return data;
+  const response = fetch('http://localhost:3000/location/logged', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      date: 'lastYear'
+    })
+  }).then((res) => res.json());
+
+
+  return defer({
+    p: response
+  })
+
 }
 
 
 export default function UserPage() {
 
-  const data = useLoaderData() as selectLocation[];
+  const data = useLoaderData() as { p: selectLocation[] };
+  let revalidator = useRevalidator();
 
-  const locations: Marker[] = data.map((location) => ({
-    location: [location.latitude, location.longitude],
-    size: 0.1,
-  }));
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (revalidator.state === 'idle') {
+        revalidator.revalidate();
+      }
+    }
+      , 100000);
+    return () => clearInterval(interval);
+  }, [revalidator]);
 
+  console.log(data);
 
 
   return (
-    <Globe
-      baseColor="#777A80"
-      glowColor="#50505A"
-      markerColor="#22d3ee"
-      opacity={0.85}
-      brightness={1}
-      offsetX={320}
-      offsetY={64}
-      scale={1.125}
-      markers={locations}
-    />
+    <>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Await resolve={data.p}>
+          {data => <Globe
+            baseColor="#777A80"
+            glowColor="#50505A"
+            markerColor="#22d3ee"
+            opacity={0.85}
+            brightness={1}
+            offsetX={320}
+            offsetY={64}
+            scale={1.125}
+            markers={data.map((location: any) => ({
+              location: [location.latitude, location.longitude],
+              size: 0.1,
+            }))}
+          />}
+        </Await>
+      </Suspense>
+    </>
   )
 } 

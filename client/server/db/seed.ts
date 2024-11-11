@@ -1,75 +1,30 @@
 
 import { db } from ".";
 import * as schema from "./schema";
+import { faker } from "@faker-js/faker";
 
-await db.insert(schema.tennis).values([
-  {
-    marca: 'Nike',
-    modelo: 'Air Max',
-    precio: 100.00,
-    descripcion: 'Zapatillas de deporte',
-    imagen: 'hhttps://via.placeholder.com/600/92c952'
-  },
-  {
-    marca: 'Adidas',
-    modelo: 'Superstar',
-    precio: 80.00,
-    descripcion: 'Zapatillas de deporte',
-    imagen: 'https://via.placeholder.com/600/771796'
-  },
-  {
-    marca: 'Puma',
-    modelo: 'Suede',
-    precio: 90.00,
-    descripcion: 'Zapatillas de deporte',
-    imagen: 'https://via.placeholder.com/600/24f355'
-  },
-  {
-    marca: 'Reebok',
-    modelo: 'Classic',
-    precio: 70.00,
-    descripcion: 'Zapatillas de deporte',
-    imagen: 'https://via.placeholder.com/600/d32776'
+export async function seedLocationData() {
+  const locations = Array.from({ length: 100 }).map(() => ({
+    latitude: faker.location.latitude(),
+    longitude:faker.location.longitude(),
+    isLogged: faker.number.int({ min: 0, max: 1 }), // 0 or 1
+    token: faker.string.uuid(),
+    browser: faker.internet.userAgent().split(" ")[0], // Gets the browser name from the user agent
+    deviceType: faker.helpers.arrayElement(["Desktop", "Mobile", "Tablet"]),
+    createdAt: faker.date.recent({ days: 365 }).toISOString().replace("T", " ").slice(0, 19) // Formats date as 'YYYY-MM-DD HH:MM:SS'
+  }));
+
+  try {
+    for (const loc of locations) {
+      await db.insert(schema.location).values(loc);
+    }
+    console.log("Seed data inserted successfully!");
+  } catch (error) {
+    console.error("Error seeding location data:", error);
   }
-]);
+}
 
-await db.insert(schema.categories).values([
-  { name: 'Running' },
-  { name: 'Basketball' },
-  { name: 'Lifestyle' },
-]);
-
-// Seed data for reviews table
-await db.insert(schema.reviews).values([
-  {
-    tennisId: 1,
-    rating: 5,
-    comment: 'Great shoes, very comfortable!'
-  },
-  {
-    tennisId: 2,
-    rating: 4,
-    comment: 'Stylish and durable.'
-  },
-  {
-    tennisId: 3,
-    rating: 3,
-    comment: 'Good value for the price.'
-  },
-  {
-    tennisId: 4,
-    rating: 4,
-    comment: 'Classic design, always reliable.'
-  }
-]);
-
-// Seed data for tennisCategories (N:M relationship) table
-await db.insert(schema.tennisCategories).values([
-  { tennisId: 1, categoryId: 1 }, // Nike Air Max in Running
-  { tennisId: 2, categoryId: 3 }, // Adidas Superstar in Lifestyle
-  { tennisId: 3, categoryId: 3 }, // Puma Suede in Lifestyle
-  { tennisId: 4, categoryId: 2 }, // Reebok Classic in Basketball
-]);
+await seedLocationData();
 
 
 await db.insert(schema.users).values([
