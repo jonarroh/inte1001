@@ -1,14 +1,15 @@
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useFetcher } from "react-router-dom";
 import { toast } from "sonner";
 import { z } from "zod";
 import clsx from "clsx";
+import ReCAPTCHA from "react-google-recaptcha";
 
 // Definición del esquema de validación usando Zod
 const loginSchema = z.object({
   email: z.string().email("Debe ser un correo válido"),
-  password: z.string().min(1, "La contraseña es requerida")
+  password: z.string().min(1, "La contraseña es requerida"),
 });
 
 export default function LoginPage() {
@@ -23,6 +24,24 @@ export default function LoginPage() {
   const [email, setEmail] = useState("jonarrodi99@gmail.com");
   const [password, setPassword] = useState("Ganondorf09#");
   const [errors, setErrors] = useState({ email: "", password: "" });
+  const [captchaToken, setCaptchaToken] = useState("");
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+  useEffect(() => {
+    // Escucha cambios de conexión
+    const updateOnlineStatus = () => setIsOnline(navigator.onLine);
+    window.addEventListener("online", updateOnlineStatus);
+    window.addEventListener("offline", updateOnlineStatus);
+
+    return () => {
+      window.removeEventListener("online", updateOnlineStatus);
+      window.removeEventListener("offline", updateOnlineStatus);
+    };
+  }, []);
+
+  const onCaptchaChange = (token) => {
+    setCaptchaToken(token);
+  };
 
   // Función para validar los campos usando Zod
   const validateForm = () => {
@@ -35,7 +54,7 @@ export default function LoginPage() {
         const fieldErrors = e.flatten().fieldErrors;
         setErrors({
           email: fieldErrors.email?.[0] || "",
-          password: fieldErrors.password?.[0] || ""
+          password: fieldErrors.password?.[0] || "",
         });
       }
       return false;
@@ -45,7 +64,10 @@ export default function LoginPage() {
   const handleSubmit = (e: any) => {
     e.preventDefault();
     if (validateForm()) {
-      fetcher.submit(e.target, { method: "post", action: "/" });
+      fetcher.submit(
+        { email, password, captchaToken: isOnline ? captchaToken : "" },
+        { method: "post", action: "/" }
+      );
     }
   };
 
@@ -74,7 +96,9 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
-              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+              )}
             </div>
             <div className="mt-4">
               <label className="block text-gray-700" htmlFor="password">
@@ -91,10 +115,23 @@ export default function LoginPage() {
                   { "border border-red-500": errors.password }
                 )}
               />
-              {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+              {errors.password && (
+                <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+              )}
             </div>
+            {isOnline && (
+              <div className="mt-4">
+                <ReCAPTCHA
+                  sitekey="6LeMsXMqAAAAALfX754Glk1hqsgemJAD9v7J7SjO"
+                  onChange={onCaptchaChange}
+                />
+              </div>
+            )}
             <div className="mt-6">
-              <Button type="submit" className="py-2 px-4 bg-gray-700 text-white rounded hover:bg-gray-600 w-full">
+              <Button
+                type="submit"
+                className="py-2 px-4 bg-gray-700 text-white rounded hover:bg-gray-600 w-full"
+              >
                 Iniciar sesión
               </Button>
             </div>
