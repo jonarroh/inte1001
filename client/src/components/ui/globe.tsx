@@ -147,7 +147,7 @@ export function Globe({
   }, [scale, brightness, dark, baseColor, markerColor, glowColor, opacity, offsetX, offsetY, markers, speed, r])
 
   return (
-    <div className={clsx("absolute inset-0 aspect-square", className)}>
+    <div className={clsx("aspect-square", className)}>
       <canvas
         className={clsx("h-full w-full", isGrabbing ? "cursor-grabbing" : "cursor-grab")}
         ref={canvasRef}
