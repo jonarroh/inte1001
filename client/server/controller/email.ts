@@ -37,12 +37,30 @@ export class EmailController {
 	}
 
 	public async getEmailsByFramework(framework: string): Promise<string[]> {
-		const api = "http://192.168.137.120:5275/api/Users/getEmails"
+		const api = "http://192.168.100.30:5275/api/Users/getEmails"
+		const lessActivityApi = "http://192.168.100.30:5275/api/Users/lessActivity"
+		const moreActivityApi = "http://192.168.100.30:5275/api/Users/moreActivity"
+		let emails = []
 
-		const resp = await fetch(api);
+switch (framework) {
+			case "todos":
+				emails = await fetch(api).then((res) => res.json());
+				console.log(`enviando correo a ${emails}`);
+				break;
+			case "lessActivity":
+				emails = await fetch(lessActivityApi).then((res) => res.json());
+				console.log(`enviando correo a ${emails}`);
+				
+				break;
+				case "MoreActivity":
+					emails = await fetch(moreActivityApi).then((res) => res.json());
+					console.log(`enviando correo a ${emails}`);
+				break;
+			default:
+				emails = [];
+}
 
-
-		return await resp.json();
+		return emails;
 	}
 
 	async sendEmailTo({

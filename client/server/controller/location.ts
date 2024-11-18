@@ -79,6 +79,109 @@ export default class LocationController {
       return { isOk: false, error: 'Failed to fetch not logged location records' };
     }
   }
+  async getLastThreeMonthsLoggedAndNotLoggedLocation(): Promise<Result<{ date: string; loggedCount: number; notLoggedCount: number }[], string>> {
+    try {
+      // Obtener las fechas de los últimos tres meses
+      const dates = this.getLastThreeMonths();
+  
+      // Realizamos la búsqueda para cada mes de la fecha calculada
+      const result = await Promise.all(dates.map(async (currentDate) => {
+        const dateCondition = this.getDateCondition(currentDate);
+  
+        // Obtener el conteo de ubicaciones registradas (isLogged = 1)
+        const loggedCountResult = await db
+          .select({
+            count: sql<number>`COUNT(*)`
+          })
+          .from(schema.location)
+          .where(and(eq(schema.location.isLogged, 1), dateCondition));
+  
+        // Obtener el conteo de ubicaciones no registradas (isLogged = 0)
+        const notLoggedCountResult = await db
+          .select({
+            count: sql<number>`COUNT(*)`
+          })
+          .from(schema.location)
+          .where(and(eq(schema.location.isLogged, 0), dateCondition));
+  
+        // Extraer los conteos de los resultados
+        const loggedCount = loggedCountResult[0]?.count ?? 0;
+        const notLoggedCount = notLoggedCountResult[0]?.count ?? 0;
+  
+        // Retornar los resultados formateados
+        return {
+          date: currentDate,
+          loggedCount,
+          notLoggedCount
+        };
+      }));
+  
+      return { isOk: true, value: result };
+    } catch (error) {
+      return { isOk: false, error: 'Failed to fetch logged and not logged location records for last three months' };
+    }
+  }
+  
+  // Función para obtener los últimos tres meses
+  getLastThreeMonths() {
+    const today = new Date();
+    return [0, 1, 2].map((monthDiff) => {
+      const date = new Date(today);
+      date.setMonth(today.getMonth() - monthDiff);
+      return date.toISOString().split('T')[0]; // Formato "YYYY-MM-DD"
+    });
+  }
+  
+  async getBothLoggedAndNotLoggedLocation(
+    date: string | "today" | "yesterday" | "lastWeek" | "lastMonth" | "lastYear"
+  ): Promise<Result<{  loggedCount: number; notLoggedCount: number ; logged: selectLocation[]; notLogged: selectLocation[] }, string>> {
+    try {
+      const dateCondition = this.getDateCondition(date);
+  
+      // Obtener las ubicaciones registradas (isLogged = 1)
+      const logged = await db
+        .select()
+        .from(schema.location)
+        .where(and(eq(schema.location.isLogged, 1), dateCondition));
+  
+      // Obtener las ubicaciones no registradas (isLogged = 0)
+      const notLogged = await db
+        .select()
+        .from(schema.location)
+        .where(and(eq(schema.location.isLogged, 0), dateCondition));
+  
+      // Obtener los conteos
+      const loggedCountResult = await db
+        .select({
+          count: sql<number>`COUNT(*)`
+        })
+        .from(schema.location)
+        .where(and(eq(schema.location.isLogged, 1), dateCondition));
+  
+      const notLoggedCountResult = await db
+        .select({
+          count: sql<number>`COUNT(*)`
+        })
+        .from(schema.location)
+        .where(and(eq(schema.location.isLogged, 0), dateCondition));
+  
+      // Extraer los conteos de los resultados
+      const loggedCount = loggedCountResult[0]?.count ?? 0;
+      const notLoggedCount = notLoggedCountResult[0]?.count ?? 0;
+  
+      // Combinar los resultados en un solo objeto
+      const result = {
+        logged,
+        notLogged,
+        loggedCount,
+        notLoggedCount
+      };
+  
+      return { isOk: true, value: result };
+    } catch (error) {
+      return { isOk: false, error: 'Failed to fetch both logged and not logged location records' };
+    }
+  }
 
   async addNewLocation(body: insertLocation): Promise<Result<selectLocation, string>> {
     try {
@@ -161,7 +264,7 @@ export default class LocationController {
     }
   }
 
-  async  getDeviceAndBrowserStats(
+  async getDeviceAndBrowserStats(
     date: string | "today" | "yesterday" | "lastWeek" | "lastMonth" | "lastYear"
   ): Promise<Result<{ deviceType: string; browser: string; count: number }[], string>> {
     try {
@@ -177,9 +280,33 @@ export default class LocationController {
         .where(dateCondition)
         .groupBy(schema.location.deviceType, schema.location.browser);
   
-      return { isOk: true, value: stats.map(({ deviceType, browser, count }) => ({ deviceType, browser, count })) };
+      // Procesa los resultados para eliminar la versión del navegador
+      const processedStats = stats.map(({ deviceType, browser, count }) => {
+        // Extrae solo el nombre del navegador (elimina la versión)
+        const browserName = browser.split('/')[0]; // Asumiendo formato "Navegador/Versión"
+        return { deviceType, browser: browserName, count };
+      });
+  
+      // Segundo 'groupBy' usando 'reduce' para agrupar por 'deviceType' y 'browser'
+      const groupedStats = processedStats.reduce((acc, { deviceType, browser, count }) => {
+        // Crea una clave única para cada grupo (combinando deviceType y browser)
+        const key = `${deviceType}-${browser}`;
+        if (!acc[key]) {
+          acc[key] = { deviceType, browser, count: 0 };
+        }
+        acc[key].count += count; // Suma el conteo en caso de que haya múltiples entradas con la misma combinación
+        return acc;
+      }, {});
+  
+      // Convertir el objeto agrupado de vuelta a un array
+      const finalStats = Object.values(groupedStats) as { deviceType: string; browser: string; count: number }[];
+  
+      return { isOk: true, value: finalStats };
     } catch (error) {
       return { isOk: false, error: 'Failed to fetch device and browser statistics' };
     }
   }
+  
+  
+  
 }

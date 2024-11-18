@@ -10,8 +10,7 @@ export const location = sqliteTable("location", {
   token: text('token').notNull(),
   browser: text('browser').notNull(),
   deviceType: text('deviceType').notNull(),
-  createdAt: text('createdAt').default(sql`(CURRENT_TIMESTAMP)`),
-  isActive: integer('isActive').notNull().default(1),
+  createdAt: text('createdAt').default(sql`(CURRENT_TIMESTAMP)`)
 });
 
 

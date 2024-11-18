@@ -43,6 +43,27 @@ locations.post('/logged', zValidator('json', lotationDateDTO), async (c) => {
   }
 });
 
+locations.post('/both', zValidator('json', lotationDateDTO), async (c) => {
+  const controller = new LocationController();
+  const validated = c.req.valid('json');  
+  const result = await controller.getBothLoggedAndNotLoggedLocation(validated.date);
+  if (result.isOk) {
+    return c.json(result.value);
+  } else {
+    return c.json({ error: result.error }, 500);
+  }
+});
+locations.post('/bothTree', zValidator('json', lotationDateDTO), async (c) => {
+  const controller = new LocationController();
+  const validated = c.req.valid('json');  
+  const result = await controller.getLastThreeMonthsLoggedAndNotLoggedLocation();
+  if (result.isOk) {
+    return c.json(result.value);
+  } else {
+    return c.json({ error: result.error }, 500);
+  }
+});
+
 locations.post('/not-logged',zValidator('json', lotationDateDTO), async (c) => {
   const controller = new LocationController();
   const validated = c.req.valid('json');
