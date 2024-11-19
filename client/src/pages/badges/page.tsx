@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { useNavigate, useLoaderData, Outlet, LoaderFunction, useFetcher, useLocation, useMatches } from "react-router-dom";
+import { useNavigate, useLoaderData, Outlet, LoaderFunction, useFetcher, useLocation } from "react-router-dom";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
@@ -52,11 +52,16 @@ export default function BadgesPage() {
     setBadgeToDelete(null);
   };
 
-  function Breadcrumbs2() {
-    const matches = useMatches();
-    return console.log(matches);
+  const items = [
+    {title: "Bashboard", link: "/dashboard"},
+    {title: "Insignias", link: "/badges"}
+  ]
+
+  if (location.pathname.includes("/create")) {
+    items.push({ title: "Crear", link: "/badges/create" });
+  } else if (location.pathname.includes("/update")) {
+    items.push({ title: "Editar", link: `/badges/update/${badgeToDelete?.id || ""}` });
   }
-  Breadcrumbs2();
 
   return (
     
@@ -64,16 +69,9 @@ export default function BadgesPage() {
       <PageContainer scrollable>
         <div className="space-y-4">
           
-          <Breadcrumbs
-            items={[
-              { title: "Dashboard", link: "/dashboard" },
-              { title: "Insignias", link: "/badges" },
-              
-              { title: "Crear", link: "/badges/create" },
-              { title: "Editar", link: "/badges/update" }
+          <Breadcrumbs items={items} />
 
-            ]}
-          />
+
 
           <div className="flex items-start justify-between">
             <Heading description="Información general" title="Insignias" />
@@ -88,22 +86,26 @@ export default function BadgesPage() {
             <div className="">
               <Outlet />
               {!isCreateorUpdate && (
-                <div className="min-h-full flex items-center justify-center p-5 ">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   {filteredData.map((badge) => (
+
                     <Card
                       key={badge.id}
-                      className="shadow-lg min-w-min max-w-lg mx-auto "
+                      className="shadow-lg min-h-full min-w-full mx-auto "
                     >
+                      {/* Card-Body */}
                       <CardContent >
                         <div className="flex justify-center my-2">
                           <img src={`http://127.0.0.1:5000/static/badge/${badge.id}.webp`} alt={badge.name}
                             width={100} height={100}
                           />
                         </div>
-                        <div className="text-center font-semibold">{badge.name}</div>
-                        <div className="">{badge.description}</div>
-                        <div className="text-center">{badge.pointsRequired}</div>
+                        <div className="text-center font-semibold text-xl">{badge.name}</div>
+                        <div className="text-center text-lg">{badge.description}</div>
+                        <div className="text-center text-lg">Puntos necesarios: {badge.pointsRequired}</div>
                       </CardContent>
+
+                      {/* Buttons */}
 
                       <CardFooter className="flex justify-between">
                           <Button

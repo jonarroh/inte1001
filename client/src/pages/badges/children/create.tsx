@@ -21,7 +21,7 @@ const CreateBadgePage = () => {
   const actionData = fetcher.data as ActionData | null;
 
   return (
-    <div className=" min-h-full flex items-center justify-center p-5">
+    <div className=" min-h-full flex items-center justify-center p-5 shadow-xl rounded-lg">
       <fetcher.Form method="POST" action="/badges" encType="multipart/form-data">
         <div className="lg:grid lg:gap-x-3 lg:gap-y-2 md:grid-cols-8 md:grid-rows-6 lg:grid-cols-12 lg:grid-rows-5">
 
