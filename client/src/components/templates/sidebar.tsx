@@ -70,8 +70,14 @@ export default function Sidebar({ className }: SidebarProps) {
               },
               {
                 title: 'Ofertas',
-                href: '/offers',
+                href: '/ofertas',
                 description: 'Ofertas de trabajo',
+                icon: 'help'
+              },
+              {
+                title: 'Personalizadas',
+                href: '/personalizadas',
+                description: 'Ofertas personalizadas',
                 icon: 'help'
               },
               {
