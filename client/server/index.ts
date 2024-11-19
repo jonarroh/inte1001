@@ -31,7 +31,7 @@ app.route('/leagues', leagues);
 app.route('/location', location);
 app.route('/email',email);
 app.route('/web', web);
-app.route('/logging', logger)
+app.route('/api/logger', logger)
 app.route('/password', password)
 app.get(
   '/ws',

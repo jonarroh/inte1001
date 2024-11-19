@@ -1,6 +1,10 @@
+import { badges } from '@server/schema/badge';
 import {
   AlertTriangle,
   ArrowRight,
+  Award,
+  Bot,
+  ChartSpline,
   Check,
   ChevronLeft,
   ChevronRight,
@@ -18,8 +22,10 @@ import {
   LucideIcon,
   LucideProps,
   LucideShoppingBag,
+  Mail,
   Moon,
   MoreVertical,
+  Palette,
   Pizza,
   Plus,
   Settings,
@@ -64,6 +70,12 @@ export const Icons = {
   sun: SunMedium,
   moon: Moon,
   laptop: Laptop,
+  chat: Bot,
+  personalizas: Palette,
+  ofertas: LucideShoppingBag,
+  badges: Award,
+  chart: ChartSpline,
+  mail: Mail,
   gitHub: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"

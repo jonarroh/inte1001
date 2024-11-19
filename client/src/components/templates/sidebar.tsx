@@ -60,37 +60,37 @@ export default function Sidebar({ className }: SidebarProps) {
                 href: '/stats',
                 description: 'Información general',
                 icon: 'dashboard',
-                label: 'Nuevo'
+                label: 'chart'
               },
               {
                 title: 'Insignias',
                 href: '/badges',
                 description: 'Insignias de usuario',
-                icon: 'gitHub'
+                icon: 'badges'
               },
               {
                 title: 'Ofertas',
                 href: '/ofertas',
                 description: 'Ofertas de trabajo',
-                icon: 'help'
+                icon: 'ofertas'
               },
               {
                 title: 'Personalizadas',
                 href: '/personalizadas',
                 description: 'Ofertas personalizadas',
-                icon: 'help'
+                icon: 'personalizas'
               },
               {
                 title: 'Correos',
                 href: '/emails',
                 description: 'Correos electrónicos',
-                icon: 'logo'
+                icon: 'mail'
               },
               {
                 title: 'Chat',
                 href: '/chat',
                 description: 'Historial de chat',
-                icon: 'help'
+                icon: 'chat'
               }
             ]} />
           </div>
