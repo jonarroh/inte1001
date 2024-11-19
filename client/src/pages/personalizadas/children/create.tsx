@@ -1,31 +1,33 @@
-import { LoaderFunction, useFetcher, useLoaderData, useNavigate } from "react-router-dom";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CaretSortIcon } from "@radix-ui/react-icons";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { CheckIcon } from "lucide-react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useState } from "react";
+import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { CaretSortIcon } from "@radix-ui/react-icons";
+import { CheckIcon } from "lucide-react";
+import { useState } from "react";
+import { LoaderFunction, useLoaderData, useFetcher, useNavigate } from "react-router-dom";
+
 
 type ValidationError = {
     _errors: string[];
-};
+}
 
-type OfertasData = {
+type OfertasPersonalizadasData = {
     id: ValidationError;
     nombre: ValidationError;
     descripcion: ValidationError;
-    fechainicio: ValidationError;
-    fechafin: ValidationError;
+    fechaInicio: ValidationError;
+    fechaFin: ValidationError;
     descuento: ValidationError;
-    estado: ValidationError;
-    productos: ValidationError;
-    badgepromoid: ValidationError;
-    limitecanje: ValidationError;
+    estatus: ValidationError;
+    productoId: ValidationError;
+    badgePromoId: ValidationError;
+    limiteCanje: ValidationError;
+    motivo: ValidationError;
 }
 
 type prod = {
@@ -47,7 +49,7 @@ export const loader: LoaderFunction = async () => {
     return data;
 };
 
-const CreateOfferPage = () => {
+const CreatePersonOfferPage = () => {
     const data = useLoaderData() as prod[];
 
     const fetcher = useFetcher();
@@ -55,26 +57,26 @@ const CreateOfferPage = () => {
     const [open, setOpen] = useState(false)
     const [value, setValue] = useState("")
 
-    const actionData = fetcher.data as OfertasData | null;
+    const actionData = fetcher.data as OfertasPersonalizadasData | null;
 
     const navigate = useNavigate();
 
     return (
         <div className="bg-gray-50 min-h-full flex items-center justify-center p-5">
-            <fetcher.Form method="POST" action="/ofertas">
+            <fetcher.Form method="POST" action="/personalizadas">
                 {/* grid para 2 columnas */}
                 <div className="grid grid-cols-2 gap-4 mb-5 mt-2">
                     <div>
                         <div className="grid w-full max-w-sm items-center gap-1.5">
                             <Label htmlFor="nombre">Nombre</Label>
-                            <Input type="text" id="nombre" placeholder="Nombre" name="nombre" required/>
+                            <Input type="text" id="nombre" placeholder="Nombre" name="nombre" required />
                             {actionData?.nombre && <p className="text-red-500 text-sm">{actionData.nombre._errors[0]}</p>}
                         </div>
                     </div>
                     <div>
                         <div className="grid w-full max-w-sm items-center gap-1.5">
                             <Label htmlFor="descripcion">Descripcion</Label>
-                            <Textarea id="descripcion" placeholder="Descripcion" name="descripcion" required/>
+                            <Textarea id="descripcion" placeholder="Descripcion" name="descripcion" required />
                             {actionData?.descripcion && <p className="text-red-500 text-sm">{actionData.descripcion._errors[0]}</p>}
                         </div>
                     </div>
@@ -84,15 +86,15 @@ const CreateOfferPage = () => {
                     <div>
                         <div className="grid w-full max-w-sm items-center gap-1.5">
                             <Label htmlFor="fechainicio">Fecha de inicio</Label>
-                            <Input type="date" id="fechainicio" placeholder="Fecha de inicio" name="fechainicio" required/>
-                            {actionData?.fechainicio && <p className="text-red-500 text-sm">{actionData.fechainicio._errors[0]}</p>}
+                            <Input type="date" id="fechainicio" placeholder="Fecha de inicio" name="fechainicio" required />
+                            {actionData?.fechaInicio && <p className="text-red-500 text-sm">{actionData.fechaInicio._errors[0]}</p>}
                         </div>
                     </div>
                     <div>
                         <div className="grid w-full max-w-sm items-center gap-1.5">
                             <Label htmlFor="fechafin">Fecha de fin</Label>
-                            <Input type="date" id="fechafin" placeholder="Fecha de fin" name="fechafin" required/>
-                            {actionData?.fechafin && <p className="text-red-500 text-sm">{actionData.fechafin._errors[0]}</p>}
+                            <Input type="date" id="fechafin" placeholder="Fecha de fin" name="fechafin" required />
+                            {actionData?.fechaFin && <p className="text-red-500 text-sm">{actionData.fechaFin._errors[0]}</p>}
                         </div>
                     </div>
                 </div>
@@ -101,14 +103,14 @@ const CreateOfferPage = () => {
                     <div className="">
                         <div className="grid w-full max-w-sm items-center gap-1.5">
                             <Label htmlFor="limitecanje">Limite de canje</Label>
-                            <Input type="number" id="limitecanje" placeholder="Limite" name="limitecanje" max={10} min={1} required/>
-                            {actionData?.limitecanje && <p className="text-red-500 text-sm">{actionData.limitecanje._errors[0]}</p>}
+                            <Input type="number" id="limitecanje" placeholder="Limite" name="limitecanje" max={10} min={1} required />
+                            {actionData?.limiteCanje && <p className="text-red-500 text-sm">{actionData.limiteCanje._errors[0]}</p>}
                         </div>
                     </div>
                     <div className="">
                         <div className="grid w-full max-w-sm items-center gap-1.5">
                             <Label htmlFor="descuento">Descuento</Label>
-                            <Input type="number" id="descuento" placeholder="Descuento" name="descuento" required/>
+                            <Input type="number" id="descuento" placeholder="Descuento" name="descuento" required />
                             {actionData?.descuento && <p className="text-red-500 text-sm">{actionData.descuento._errors[0]}</p>}
                         </div>
                     </div>
@@ -182,10 +184,32 @@ const CreateOfferPage = () => {
                 </div>
                 {
                     value && (
-                        <Input type="hidden" name="productos" value={value}  required/>
+                        <Input type="hidden" name="productoId" value={value} required />
                     )
                 }
 
+                {/* grid para 2 columnas */}
+                <div className="grid grid-cols-2 gap-4 mb-5">
+                    <div>
+                        <div className="grid w-full max-w-sm items-center gap-1.5">
+                            <Label htmlFor="motivo">Motivo</Label>
+                            <Select required name="motivo">
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Seleccionar motivo" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectLabel>Motivo</SelectLabel>
+                                        <SelectItem value="Cumpleanio">Cumpleaños</SelectItem>
+                                        <SelectItem value="Cantidad">Cantidad producto comprado</SelectItem>
+                                        <SelectItem value="Producto">Producto m&aacute;s comprado</SelectItem>
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                            {actionData?.motivo && <p className="text-red-500 text-sm">{actionData.motivo._errors[0]}</p>}
+                        </div>
+                    </div>
+                </div>
                 {/* Grid para 2 columnas con los botones crear y limpiar */}
                 <div className="grid grid-cols-2 gap-4">
                     <div>
@@ -194,15 +218,14 @@ const CreateOfferPage = () => {
                         </Button>
                     </div>
                     <div>
-                        <Button variant="outline" type="button" onClick={() => navigate("/ofertas")}>
+                        <Button variant="outline" type="button" onClick={() => navigate("/personalizadas")}>
                             Cancelar
                         </Button>
                     </div>
                 </div>
             </fetcher.Form>
-
         </div>
-    );
-};
+    )
+}
 
-export default CreateOfferPage;
+export default CreatePersonOfferPage;
