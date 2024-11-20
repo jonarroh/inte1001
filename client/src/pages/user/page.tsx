@@ -1,15 +1,16 @@
 import { Await, defer, useLoaderData } from "react-router-dom";
 import { selectLocation } from "@server/schema/location";
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import DashboardLayout from "@/components/layout/app";
 import PageContainer from "@/components/templates/page-container";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Heading } from "@/components/ui/heading";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { Bar, BarChart, Label, XAxis, YAxis } from "recharts";
+import { ChartConfig, ChartContainer, ChartLegend, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { Bar, BarChart, CartesianGrid, Label, XAxis, YAxis } from "recharts";
 import { Pie, PieChart } from "recharts";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export function loader() {
   return defer({
@@ -46,6 +47,64 @@ export default function UserPage() {
     tablet: { label: "Tablet", color: "hsl(var(--chart-3))" }
   } satisfies ChartConfig;
 
+  const chartData = [
+    { month: "January", desktop: 186, mobile: 80 },
+    { month: "February", desktop: 305, mobile: 200 },
+    { month: "March", desktop: 237, mobile: 120 },
+    { month: "April", desktop: 73, mobile: 190 },
+    { month: "May", desktop: 209, mobile: 130 },
+    { month: "June", desktop: 214, mobile: 140 },
+  ]
+
+  const chartData2 = [
+    { year: "2019", kids: 186, adults: 80 },
+    { year: "2020", kids: 305, adults: 200 },
+    { year: "2021", kids: 237, adults: 120 },
+    { year: "2022", kids: 73, adults: 190 },
+    { year: "2023", kids: 209, adults: 130 },
+    { year: "2024", kids: 214, adults: 140 },
+  ]
+
+  const chartData3 = [
+    { videogame: "Halo", sell: 234, price: 30 },
+    { videogame: "Fifa", sell: 305, price: 60 },
+    { videogame: "Call of Duty", sell: 237, price: 80 },
+    { videogame: "GTA", sell: 73, price: 90 },
+    { videogame: "Minecraft", sell: 209, price: 20 },
+    { videogame: "Fortnite", sell: 214, price: 10 },
+  ]
+
+  const chartConfig2 = {
+    chartData: {
+      keys: ["desktop", "mobile"],
+      labels: { desktop: "Desktop", mobile: "Mobile" },
+      colors: { desktop: "#2563eb", mobile: "#60a5fa" },
+      xAxisKey: "month",
+    },
+    chartData2: {
+      keys: ["kids", "adults"],
+      labels: { kids: "Kids", adults: "Adults" },
+      colors: { kids: "#4caf50", adults: "#ff5722" },
+      xAxisKey: "year",
+    },
+    chartData3: {
+      keys: ["sell", "price"],
+      labels: { sell: "Sell", price: "Price" },
+      colors: { sell: "#934CAFFF", price: "#22FFB9FF" },
+      xAxisKey: "videogame",
+    },
+  };
+
+  const [selectedChart, setSelectedChart] = useState<"chartData" | "chartData2" | "chartData3">("chartData");
+
+  const handleChartChange = (value: string) => {
+    setSelectedChart(value as "chartData" | "chartData2");
+  };
+
+  const currentChartData = selectedChart === "chartData" ? chartData : selectedChart === "chartData2" ? chartData2 : chartData3;
+  const currentConfig = chartConfig2[selectedChart];
+
+
   return (
     <DashboardLayout>
       <PageContainer scrollable>
@@ -53,7 +112,7 @@ export default function UserPage() {
           <Breadcrumbs items={[{ title: "Dashboard", link: "/dashboard" }, { title: "Chat", link: "/badges" }]} />
 
           <div className="flex items-start justify-between">
-            <Heading description="Información general" title="Chat" />
+            <Heading description="Información general" title="Graficas" />
           </div>
 
           <div>
@@ -177,6 +236,59 @@ export default function UserPage() {
                   </CardContent>
                 </Card>
 
+              </div>
+            </div>
+          </div>
+          <div>
+            <div className="flex gap-x-10 mb-3">
+              <div className="w-50 bg-white h-screen">
+                <Select value={selectedChart} onValueChange={handleChartChange}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Select an option" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="chartData">Monthly Data</SelectItem>
+                      <SelectItem value="chartData2">Yearly Data</SelectItem>
+                      <SelectItem value="chartData3">Videogame Data</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+
+                <Card className="h-50 w-50 mt-4">
+                  <CardHeader>
+                    <CardTitle>{selectedChart === "chartData" ? "Monthly Data" : "Yearly Data"}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <BarChart
+                      width={500}
+                      height={300}
+                      data={currentChartData}
+                      className="h-[200px] w-full"
+                    >
+                      <CartesianGrid vertical={false} />
+                      <XAxis
+                        dataKey={currentConfig.xAxisKey}
+                        tickLine={false}
+                        tickMargin={10}
+                        axisLine={false}
+                        tickFormatter={(value) => value.slice(0, 3)}
+                      />
+                      <ChartTooltip />
+                      <ChartLegend
+                        formatter={(value) => currentConfig.labels[value as keyof typeof currentConfig.labels]}
+                      />
+                      {currentConfig.keys.map((key) => (
+                        <Bar
+                          key={key}
+                          dataKey={key}
+                          fill={currentConfig.colors[key as keyof typeof currentConfig.colors]}
+                          radius={4}
+                        />
+                      ))}
+                    </BarChart>
+                  </CardContent>
+                </Card>
               </div>
             </div>
           </div>
