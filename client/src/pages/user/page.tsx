@@ -1,4 +1,4 @@
-import { Await, defer, useLoaderData } from "react-router-dom";
+import { Await, defer, LoaderFunctionArgs, useLoaderData, useNavigate } from "react-router-dom";
 import { selectLocation } from "@server/schema/location";
 import { Suspense, useState } from "react";
 import DashboardLayout from "@/components/layout/app";
@@ -12,23 +12,42 @@ import { Pie, PieChart } from "recharts";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-export function loader() {
+export function loader({ request }: LoaderFunctionArgs) {
+  const url = new URL(request.url);
+
+  const date = url.searchParams.get('date') ?? 'lastMonth';
+
   return defer({
     both: fetch('http://localhost:3000/location/both', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ date: 'lastYear' })
+      body: JSON.stringify({ date })
     }).then((res) => res.json()),
 
     device: fetch('http://localhost:3000/location/device', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ date: 'lastYear' })
-    }).then((res) => res.json())
+      body: JSON.stringify({ date })
+    }).then((res) => res.json()),
+
+    // productos mas comprados
+    promos: fetch('https:', {
+
+    }),
+
+    // actividad en la pagina | Bar Chart - Interactive | fecha - logetcount - nologetcount
+    actividad: fetch(''),
+
+    // cantidad usuarios por badge
+    badges: fetch(''),
+
+    // salon mas usado barras normal
+    lugares: fetch(''),
   });
 }
 
 export default function UserPage() {
+  const nav = useNavigate();
   const data = useLoaderData() as {
     device: { deviceType: string, count: number, browser: string }[],
     both: { logged: selectLocation[], notLogged: selectLocation[], loggedCount: number, notLoggedCount: number }
@@ -95,14 +114,13 @@ export default function UserPage() {
     },
   };
 
-  const [selectedChart, setSelectedChart] = useState<"chartData" | "chartData2" | "chartData3">("chartData");
 
   const handleChartChange = (value: string) => {
-    setSelectedChart(value as "chartData" | "chartData2");
+    nav(`/stats/?date=${value}`);
   };
 
-  const currentChartData = selectedChart === "chartData" ? chartData : selectedChart === "chartData2" ? chartData2 : chartData3;
-  const currentConfig = chartConfig2[selectedChart];
+  // const currentChartData = selectedChart === "chartData" ? chartData : selectedChart === "chartData2" ? chartData2 : chartData3;
+  // const currentConfig = chartConfig2[selectedChart];
 
 
   return (
@@ -242,53 +260,20 @@ export default function UserPage() {
           <div>
             <div className="flex gap-x-10 mb-3">
               <div className="w-50 bg-white h-screen">
-                <Select value={selectedChart} onValueChange={handleChartChange}>
+                <Select onValueChange={handleChartChange}>
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Select an option" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      <SelectItem value="chartData">Monthly Data</SelectItem>
-                      <SelectItem value="chartData2">Yearly Data</SelectItem>
-                      <SelectItem value="chartData3">Videogame Data</SelectItem>
+                      <SelectItem value="today">Hoy</SelectItem>
+                      <SelectItem value="yesterday">Ayer</SelectItem>
+                      <SelectItem value="lastWeek">Última semana</SelectItem>
+                      <SelectItem value="lastMonth">Último mes</SelectItem>
+                      <SelectItem value="lastYear">Último año</SelectItem>
                     </SelectGroup>
                   </SelectContent>
                 </Select>
-
-                <Card className="h-50 w-50 mt-4">
-                  <CardHeader>
-                    <CardTitle>{selectedChart === "chartData" ? "Monthly Data" : "Yearly Data"}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <BarChart
-                      width={500}
-                      height={300}
-                      data={currentChartData}
-                      className="h-[200px] w-full"
-                    >
-                      <CartesianGrid vertical={false} />
-                      <XAxis
-                        dataKey={currentConfig.xAxisKey}
-                        tickLine={false}
-                        tickMargin={10}
-                        axisLine={false}
-                        tickFormatter={(value) => value.slice(0, 3)}
-                      />
-                      <ChartTooltip />
-                      <ChartLegend
-                        formatter={(value) => currentConfig.labels[value as keyof typeof currentConfig.labels]}
-                      />
-                      {currentConfig.keys.map((key) => (
-                        <Bar
-                          key={key}
-                          dataKey={key}
-                          fill={currentConfig.colors[key as keyof typeof currentConfig.colors]}
-                          radius={4}
-                        />
-                      ))}
-                    </BarChart>
-                  </CardContent>
-                </Card>
               </div>
             </div>
           </div>
