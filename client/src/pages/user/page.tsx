@@ -32,8 +32,10 @@ export function loader({ request }: LoaderFunctionArgs) {
 
     // productos mas comprados
     promos: fetch('https:', {
-
-    }),
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ date })
+    }).then((res) => res.json()),
 
     // actividad en la pagina | Bar Chart - Interactive | fecha - logetcount - nologetcount
     actividad: fetch(''),
@@ -119,10 +121,6 @@ export default function UserPage() {
     nav(`/stats/?date=${value}`);
   };
 
-  // const currentChartData = selectedChart === "chartData" ? chartData : selectedChart === "chartData2" ? chartData2 : chartData3;
-  // const currentConfig = chartConfig2[selectedChart];
-
-
   return (
     <DashboardLayout>
       <PageContainer scrollable>
@@ -132,11 +130,26 @@ export default function UserPage() {
           <div className="flex items-start justify-between">
             <Heading description="Información general" title="Graficas" />
           </div>
-
+          <div className="w-50 bg-white">
+            <Select onValueChange={handleChartChange}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select an option" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectItem value="today">Hoy</SelectItem>
+                  <SelectItem value="yesterday">Ayer</SelectItem>
+                  <SelectItem value="lastWeek">Última semana</SelectItem>
+                  <SelectItem value="lastMonth">Último mes</SelectItem>
+                  <SelectItem value="lastYear">Último año</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
           <div>
             <div className="flex gap-x-10 mb-3">
-              <div className="w-full bg-white h-screen ">
-                <Card className="h-full w-full">
+              <div className="w-50 bg-white h-50 ">
+                <Card className="h-50 w-50">
                   <CardHeader>
                     <CardTitle>Información de ubicación</CardTitle>
                   </CardHeader>
@@ -257,26 +270,7 @@ export default function UserPage() {
               </div>
             </div>
           </div>
-          <div>
-            <div className="flex gap-x-10 mb-3">
-              <div className="w-50 bg-white h-screen">
-                <Select onValueChange={handleChartChange}>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select an option" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectItem value="today">Hoy</SelectItem>
-                      <SelectItem value="yesterday">Ayer</SelectItem>
-                      <SelectItem value="lastWeek">Última semana</SelectItem>
-                      <SelectItem value="lastMonth">Último mes</SelectItem>
-                      <SelectItem value="lastYear">Último año</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </div>
+
         </div>
       </PageContainer>
     </DashboardLayout>
