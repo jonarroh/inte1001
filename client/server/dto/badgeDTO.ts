@@ -18,3 +18,9 @@ export const badgeDTO = z.object({
     .any()
     .optional()
 });
+
+export const badgeDateDTO = z.object({
+  date: z.enum(["today", "yesterday", "lastWeek", "lastMonth", "lastYear"], {
+    message: "La fecha debe ser today, yesterday, lastWeek, lastMonth o lastYear",
+  }),
+});
