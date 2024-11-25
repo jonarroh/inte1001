@@ -125,7 +125,7 @@ export class UserBadges {
       return { isOk: true, value: result };
     } catch (error) {
 
-      return { isOk: false, error: error.message };
+      return { isOk: false, error: 'Failed to fetch' };
     }
   }
 

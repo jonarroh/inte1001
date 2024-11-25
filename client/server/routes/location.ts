@@ -63,6 +63,16 @@ locations.post('/bothTree', zValidator('json', lotationDateDTO), async (c) => {
     return c.json({ error: result.error }, 500);
   }
 });
+locations.post('/deviceTypes', zValidator('json', lotationDateDTO), async (c) => {
+  const controller = new LocationController();
+  const validated = c.req.valid('json');  
+  const result = await controller.getLoggedAndNotLoggedAndDeviceTypeLocation(validated.date);
+  if (result.isOk) {
+    return c.json(result.value);
+  } else {
+    return c.json({ error: result.error }, 500);
+  }
+});
 
 locations.post('/not-logged',zValidator('json', lotationDateDTO), async (c) => {
   const controller = new LocationController();
