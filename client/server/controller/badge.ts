@@ -4,15 +4,15 @@ import { insertBadge, selectBadge, selectUserBadge } from "../db/schema/badge";
 
 
 import * as schema from "../db/schema";
-import { eq , and, gte } from "drizzle-orm";
+import { eq, and, gte, sql } from "drizzle-orm";
 
-export default class BadgeController{
+export default class BadgeController {
 
   async getBadges(): Promise<Result<selectBadge[], string>> {
     try {
       const result = await db.select().from(schema.badges);
       if (result) {
-        return { isOk: true,value: result };
+        return { isOk: true, value: result };
       }
       return { isOk: false, error: 'No badges found' };
     } catch (error) {
@@ -31,7 +31,7 @@ export default class BadgeController{
 
   async insertBadge(body: insertBadge): Promise<Result<selectBadge, string>> {
     try {
-      
+
       await db.transaction(async (trx) => {
         //validar que el nombre no exista
         const badge = db.select().from(schema.badges).where(eq(schema.badges.name, body.name)).get();
@@ -41,7 +41,7 @@ export default class BadgeController{
         await trx.insert(schema.badges).values(body).execute();
       });
       const result = db.select().from(schema.badges).where(eq(schema.badges.name, body.name)).get();
-      
+
       return { isOk: true, value: result };
 
     } catch (error) {
@@ -54,7 +54,7 @@ export default class BadgeController{
     try {
       console.log("updateBadge", newBadge);
       await db.transaction(async (trx) => {
-       
+
         await trx.update(schema.badges).set(newBadge).where(eq(schema.badges.id, id)).execute();
       });
       const result = db.select().from(schema.badges).where(eq(schema.badges.id, id)).get();
@@ -100,15 +100,59 @@ export default class BadgeController{
 
 }
 
-export class UserBadges{
+export class UserBadges {
+
+  async getUsersPerBadge(date: string | "today" | "yesterday" | "lastWeek" | "lastMonth" | "lastYear") {
+    try {
+      const dateCondition = this.getDateCondition(date);
+
+      // Obtener insignias
+      const badges = await db.select().from(schema.badges).all();
+      if (!badges) {
+        return { isOk: false, error: 'No badges found' };
+      }
+
+      const userBadges = await db.select().from(schema.userBadges).all();
+
+      const result = badges.map(badge => {
+        const users = userBadges.filter(userBadge => userBadge.badgeId === badge.id);
+        return {
+          badge: badge.name,
+          userCount: users.length
+        };
+      });
+
+      return { isOk: true, value: result };
+    } catch (error) {
+
+      return { isOk: false, error: 'Failed to fetch' };
+    }
+  }
+
+  getDateCondition(date: string | "today" | "yesterday" | "lastWeek" | "lastMonth" | "lastYear") {
+    switch (date) {
+      case "today":
+        return sql`DATE(achievedAt) = DATE(CURRENT_DATE)`;
+      case "yesterday":
+        return sql`DATE(achievedAt) = DATE(CURRENT_DATE, '-1 day')`;
+      case "lastWeek":
+        return sql`DATE(achievedAt) >= DATE(CURRENT_DATE, '-7 days')`;
+      case "lastMonth":
+        return sql`DATE(achievedAt) >= DATE(CURRENT_DATE, '-1 month')`;
+      case "lastYear":
+        return sql`DATE(achievedAt) >= DATE(CURRENT_DATE, '-1 year')`;
+      default:
+        return sql`DATE(achievedAt) = DATE(${date})`;
+    }
+  }
 
   async getUserBadges(userId: number): Promise<Result<any[], string>> {
     try {
       const result = (await db.select().from(schema.userBadges)
-      .innerJoin(schema.badges, eq(schema.userBadges.badgeId, schema.badges.id))
-      .where(eq(schema.userBadges.userId, userId)));
+        .innerJoin(schema.badges, eq(schema.userBadges.badgeId, schema.badges.id))
+        .where(eq(schema.userBadges.userId, userId)));
       if (result) {
-        return { isOk: true,value: result };
+        return { isOk: true, value: result };
       }
       return { isOk: false, error: 'No se encontraron insignias' };
     } catch (error) {
@@ -120,7 +164,7 @@ export class UserBadges{
     try {
       const result = await db.select().from(schema.userBadges);
       if (result) {
-        return { isOk: true,value: result };
+        return { isOk: true, value: result };
       }
       return { isOk: false, error: 'No se encontraron insignias' };
     } catch (error) {
@@ -183,28 +227,30 @@ export class UserBadges{
 
   async addUserPoints(userId: number, points: number): Promise<Result<number, string>> {
     try {
-        await db.transaction(async (trx) => {
-          //validar que el nombre no exista
-          const badge = db.select().from(schema.userBadgesPoints).where(and(eq(schema.userBadgesPoints.userId, userId), eq(schema.userBadgesPoints.month, new Date().getMonth().toString()))).get();
-          if (badge) {
-            await trx.update(schema.userBadgesPoints).set({ pointsAccumulated: badge.pointsAccumulated + points }).where(and(eq(schema.userBadgesPoints.userId, userId), eq(schema.userBadgesPoints.month, new Date().getMonth().toString()))).execute();
-          } else {
-            await trx.insert(schema.userBadgesPoints).values({ userId, pointsAccumulated: points, month: new Date().getMonth().toString() }).execute();
-          }
-        }
-        );
-
-        const newAccumulatedPoints = db.select().from(schema.userBadgesPoints).where(and(eq(schema.userBadgesPoints.userId, userId), eq(schema.userBadgesPoints.month, new Date().getMonth().toString()))).get();
-          console.log({newAccumulatedPoints});
-        if (newAccumulatedPoints) {
-          return { isOk: true, value: newAccumulatedPoints.pointsAccumulated };
+      await db.transaction(async (trx) => {
+        //validar que el nombre no exista
+        const badge = db.select().from(schema.userBadgesPoints).where(and(eq(schema.userBadgesPoints.userId, userId), eq(schema.userBadgesPoints.month, new Date().getMonth().toString()))).get();
+        if (badge) {
+          await trx.update(schema.userBadgesPoints).set({ pointsAccumulated: badge.pointsAccumulated + points }).where(and(eq(schema.userBadgesPoints.userId, userId), eq(schema.userBadgesPoints.month, new Date().getMonth().toString()))).execute();
         } else {
-          return { isOk: false, error: 'Failed to retrieve new accumulated points' };
+          await trx.insert(schema.userBadgesPoints).values({ userId, pointsAccumulated: points, month: new Date().getMonth().toString() }).execute();
         }
+      }
+      );
+
+      const newAccumulatedPoints = db.select().from(schema.userBadgesPoints).where(and(eq(schema.userBadgesPoints.userId, userId), eq(schema.userBadgesPoints.month, new Date().getMonth().toString()))).get();
+      console.log({ newAccumulatedPoints });
+      if (newAccumulatedPoints) {
+        return { isOk: true, value: newAccumulatedPoints.pointsAccumulated };
+      } else {
+        return { isOk: false, error: 'Failed to retrieve new accumulated points' };
+      }
     } catch (error) {
       console.error(error);
       return { isOk: false, error: 'Error al insertar los puntos' };
     }
   }
+
+
 
 }
