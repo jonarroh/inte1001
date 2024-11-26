@@ -123,7 +123,7 @@ export default function UserPage() {
           <Breadcrumbs items={[{ title: "Dashboard", link: "/dashboard" }]} />
 
           <div className="flex items-start justify-between">
-            <Heading description="Información general" title="Graficas" />
+            <Heading description="" title="Graficas" />
           </div>
           <div className="w-50 bg-white">
             <Select onValueChange={handleChartChange}>

@@ -39,6 +39,7 @@ export interface User {
 const signOut = async () => {
   localStorage.removeItem('token');
   localStorage.removeItem('user');
+  window.location.href = '/';
 }
 
 const useSession = () => {

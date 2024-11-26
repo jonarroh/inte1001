@@ -19,6 +19,7 @@ import {
   CredenzaClose,
 } from "@/components/templates/credenza";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { class } from '../../../create';
 
 
 export const loader: LoaderFunction = async () => {
@@ -74,7 +75,7 @@ export default function BadgesPage() {
 
 
           <div className="flex items-start justify-between">
-            <Heading description="Información general" title="Insignias" />
+            <Heading description="" title="Insignias" />
           </div>
 
           <div>

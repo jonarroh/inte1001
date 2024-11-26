@@ -80,19 +80,19 @@ export default function OfertasPage() {
           ]} />
 
           <div className="flex items-start justify-between">
-            <Heading description="" title="Ofertas" />
+            <Heading description="" title="Ofertas de los productos" />
           </div>
 
           <div>
             <div className="flex justify-between gap-x-10">
               <Outlet />
               <Input
-                placeholder="Search"
+                placeholder="Buscar una oferta específica"
                 value={searchQuery}
                 onChange={handleSearchChange}
               />
 
-              <Button onClick={() => navigate("/ofertas/create")}>Neuva</Button>
+              <Button onClick={() => navigate("/ofertas/create")}>Nueva</Button>
             </div>
 
           </div>
@@ -113,7 +113,7 @@ export default function OfertasPage() {
                   </CardContent>
                   <CardFooter>
                     <Button variant="edit" onClick={() => navigate(`/ofertas/update/${item.id}`)}>Editar</Button>
-                    <Button variant="delete" onClick={() => fetcher.submit({ idle: true }, { method: "post", action: `/ofertas/delete/${item.id}` })}>Eliminar</Button>
+                    <Button className="mx-3" variant="delete" onClick={() => fetcher.submit({ idle: true }, { method: "post", action: `/ofertas/delete/${item.id}` })}>Eliminar</Button>
                   </CardFooter>
                 </Card>
               ))}

@@ -67,14 +67,14 @@ const CreateOfferPage = () => {
                     <div>
                         <div className="grid w-full max-w-sm items-center gap-1.5">
                             <Label htmlFor="nombre">Nombre</Label>
-                            <Input type="text" id="nombre" placeholder="Nombre" name="nombre" required/>
+                            <Input type="text" id="nombre" placeholder="Nombre de la promoción" name="nombre" required/>
                             {actionData?.nombre && <p className="text-red-500 text-sm">{actionData.nombre._errors[0]}</p>}
                         </div>
                     </div>
                     <div>
                         <div className="grid w-full max-w-sm items-center gap-1.5">
                             <Label htmlFor="descripcion">Descripcion</Label>
-                            <Textarea id="descripcion" placeholder="Descripcion" name="descripcion" required/>
+                            <Textarea id="descripcion" placeholder="Descripción de la promoción" name="descripcion" required/>
                             {actionData?.descripcion && <p className="text-red-500 text-sm">{actionData.descripcion._errors[0]}</p>}
                         </div>
                     </div>
@@ -101,7 +101,7 @@ const CreateOfferPage = () => {
                     <div className="">
                         <div className="grid w-full max-w-sm items-center gap-1.5">
                             <Label htmlFor="limitecanje">Limite de canje</Label>
-                            <Input type="number" id="limitecanje" placeholder="Limite" name="limitecanje" max={10} min={1} required/>
+                            <Input type="number" id="limitecanje" placeholder="Límite" name="limitecanje" max={10} min={1} required/>
                             {actionData?.limitecanje && <p className="text-red-500 text-sm">{actionData.limitecanje._errors[0]}</p>}
                         </div>
                     </div>
@@ -187,14 +187,14 @@ const CreateOfferPage = () => {
                 }
 
                 {/* Grid para 2 columnas con los botones crear y limpiar */}
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4 mt-2 mb-2">
                     <div>
                         <Button type="submit" variant="create" disabled={fetcher.state !== "idle"}>
-                            Crear
+                            Registrar
                         </Button>
                     </div>
                     <div>
-                        <Button variant="outline" type="button" onClick={() => navigate("/ofertas")}>
+                        <Button variant="destructive" type="button" onClick={() => navigate("/ofertas")}>
                             Cancelar
                         </Button>
                     </div>

@@ -54,10 +54,10 @@ export default function EmailsPage() {
     <DashboardLayout>
       <PageContainer scrollable>
         <div className="space-y-4">
-          <Breadcrumbs items={[{ title: "Dashboard", link: "/dashboard" }, { title: "Chat", link: "/badges" }]} />
+          <Breadcrumbs items={[{ title: "Dashboard", link: "/dashboard" }, { title: "Correos", link: "/badges" }]} />
 
           <div className="flex items-start justify-between">
-            <Heading description="Información general" title="Chat" />
+            <Heading description="" title="Envío de correos" />
           </div>
 
           <div>
@@ -66,12 +66,12 @@ export default function EmailsPage() {
                 <fetcher.Form
                   onSubmit={(e) => e.preventDefault()} // Evitar el envío HTML nativo
                 >
-                  <Textarea placeholder="Escribe tu mensaje" name="message" className="w-full h-full" />
+                  <Textarea placeholder="Escribe el mensaje que se enviará a los destinatarios." name="message" className="w-full h-full mt-3 mb-3" rows={7} />
                   {errors.message && <p className="text-red-500 text-sm">{errors.message}</p>}
                   <div>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button variant="outline" type="button">Enviar mensaje</Button>
+                        <Button variant="default" type="button">Enviar mensaje</Button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
@@ -103,16 +103,16 @@ export default function EmailsPage() {
                     </AlertDialog>
                     <Popover open={open} onOpenChange={setOpen}>
                       <PopoverTrigger asChild>
-                        <Button variant="outline" role="combobox" aria-expanded={open} className="w-[200px] justify-between">
-                          {value ? options.find((opt) => opt.value === value)?.label : "Select framework..."}
+                        <Button variant="outline" role="combobox" aria-expanded={open} className="w-[200px] justify-between mx-4">
+                          {value ? options.find((opt) => opt.value === value)?.label : "Buscar.."}
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-[200px] p-0">
                         <Command>
-                          <CommandInput placeholder="Search framework..." />
+                          <CommandInput placeholder="Buscar.." />
                           <CommandList>
-                            <CommandEmpty>No framework found.</CommandEmpty>
+                            <CommandEmpty>No se encontro la opción</CommandEmpty>
                             <CommandGroup>
                               {options.map((opt) => (
                                 <CommandItem
