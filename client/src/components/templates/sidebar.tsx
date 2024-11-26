@@ -20,7 +20,7 @@ export default function Sidebar({ className }: SidebarProps) {
   return (
     <aside
       className={cn(
-        `relative  hidden h-screen flex-none border-r bg-card transition-[width] duration-500 md:block`,
+        `relative  hidden h-screen flex-none border-r bg-slate-200 transition-[width] duration-500 md:block`,
         !isMinimized ? 'w-72' : 'w-[72px]',
         className
       )}
@@ -46,7 +46,7 @@ export default function Sidebar({ className }: SidebarProps) {
       </div>
       <ChevronLeft
         className={cn(
-          'absolute -right-3 top-10 z-50  cursor-pointer rounded-full border bg-background text-3xl text-foreground',
+          'absolute -right-3 top-10 z-50  cursor-pointer rounded-full border bg-slate-200 text-3xl text-foreground',
           isMinimized && 'rotate-180'
         )}
         onClick={handleToggle}
@@ -60,7 +60,7 @@ export default function Sidebar({ className }: SidebarProps) {
                 href: '/stats',
                 description: 'Información general',
                 icon: 'dashboard',
-                label: 'chart'
+                label: 'chart',
               },
               {
                 title: 'Insignias',
@@ -74,12 +74,12 @@ export default function Sidebar({ className }: SidebarProps) {
                 description: 'Ofertas de trabajo',
                 icon: 'ofertas'
               },
-              {
-                title: 'Personalizadas',
-                href: '/personalizadas',
-                description: 'Ofertas personalizadas',
-                icon: 'personalizas'
-              },
+              // {
+              //   title: 'Personalizadas',
+              //   href: '/personalizadas',
+              //   description: 'Ofertas personalizadas',
+              //   icon: 'personalizas'
+              // },
               {
                 title: 'Correos',
                 href: '/emails',
