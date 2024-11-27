@@ -108,7 +108,29 @@ const CreateOfferPage = () => {
                     <div className="">
                         <div className="grid w-full max-w-sm items-center gap-1.5">
                             <Label htmlFor="descuento">Descuento</Label>
-                            <Input type="number" id="descuento" placeholder="Descuento" name="descuento" required/>
+                            <Input 
+                                type="number" 
+                                id="descuento" 
+                                placeholder="Descuento" 
+                                name="descuento" 
+                                required 
+                                max={50} 
+                                min={1} 
+                                onInput={(e) => {
+                                    const target = e.target as HTMLInputElement;
+                                    if (["6", "7", "8", "9"].includes(target.value[0]) && target.value.length === 2) {
+                                        target.value = target.value.slice(0, 1);
+                                    }
+
+                                    if (target.value[0] === "0" && target.value.length === 2) {
+                                        target.value = target.value.slice(0, 1);
+                                    }
+
+                                    if (["1", "2", "3", "4", "5"].includes(target.value[0]) && target.value.length === 3) {
+                                        target.value = target.value.slice(0, 2);
+                                    }
+                                }}
+                            />
                             {actionData?.descuento && <p className="text-red-500 text-sm">{actionData.descuento._errors[0]}</p>}
                         </div>
                     </div>
