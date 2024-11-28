@@ -25,9 +25,24 @@ export const userBadgesPoints = sqliteTable('user_badges_points', {
 });
 
 
+export const ExternalUserInteractions = sqliteTable('external_user_interactions', {
+  id: integer('id').primaryKey(),
+  userId: integer('user_id').notNull(),
+  interactionType: text('interaction_type',{
+    enum: ['email', 'sms', 'whatsapp']
+  }).notNull(),
+  interactionData: text('interaction_data'),
+  subject: text('subject'),
+  interactionAt: text('interaction_at').notNull().default(sql`(current_timestamp)`),
+});
+
+
 // Inferencia de tipos
 type insertBadge = typeof badges.$inferInsert;
 type selectBadge = typeof badges.$inferSelect;
+
+type insertExternalUserInteractions = typeof ExternalUserInteractions.$inferInsert;
+type selectExternalUserInteractions = typeof ExternalUserInteractions.$inferSelect;
 
 
 type insertUserBadge = typeof userBadges.$inferInsert;
@@ -42,5 +57,7 @@ export type {
   insertUserBadge,
   selectUserBadge,
   insertUserBadgePoints,
-  selectUserBadgePoints
+  selectUserBadgePoints,
+  insertExternalUserInteractions,
+  selectExternalUserInteractions
 }

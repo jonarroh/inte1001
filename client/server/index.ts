@@ -33,6 +33,7 @@ app.route('/email',email);
 app.route('/web', web);
 app.route('/api/logger', logger)
 app.route('/password', password)
+app.route('/external', require('./routes/external').default);
 app.get(
   '/ws',
   upgradeWebSocket(() => {

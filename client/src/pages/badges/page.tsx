@@ -19,7 +19,6 @@ import {
   CredenzaClose,
 } from "@/components/templates/credenza";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { class } from '../../../create';
 
 
 export const loader: LoaderFunction = async () => {
@@ -54,8 +53,8 @@ export default function BadgesPage() {
   };
 
   const items = [
-    {title: "Bashboard", link: "/dashboard"},
-    {title: "Insignias", link: "/badges"}
+    { title: "Bashboard", link: "/dashboard" },
+    { title: "Insignias", link: "/badges" }
   ]
 
   if (location.pathname.includes("/create")) {
@@ -65,11 +64,11 @@ export default function BadgesPage() {
   }
 
   return (
-    
+
     <DashboardLayout>
       <PageContainer scrollable>
         <div className="space-y-4">
-          
+
           <Breadcrumbs items={items} />
 
 
@@ -80,7 +79,7 @@ export default function BadgesPage() {
 
           <div>
             <div className="flex justify-between gap-x-10 mb-3">
-              <Input placeholder="Buscar" onChange={(e) => setSearch(e.target.value)}  className="border-gray-400"/>
+              <Input placeholder="Buscar" onChange={(e) => setSearch(e.target.value)} className="border-gray-400" />
               <Button onClick={() => navigate("/badges/create")}>Nueva</Button>
             </div>
 
@@ -109,20 +108,20 @@ export default function BadgesPage() {
                       {/* Buttons */}
 
                       <CardFooter className="flex justify-between">
-                          <Button
-                            variant={"delete"}
-                            onClick={() => openDeleteModal(badge.id, badge.name)}
-                          >
-                            <Trash2 />
-                          </Button>
-                        
-                          <Button
-                            variant={"edit"}
-                            onClick={() => navigate(`/badges/update/${badge.id}`)}
-                          >
-                            <Pencil />
-                          </Button>
-                      
+                        <Button
+                          variant={"delete"}
+                          onClick={() => openDeleteModal(badge.id, badge.name)}
+                        >
+                          <Trash2 />
+                        </Button>
+
+                        <Button
+                          variant={"edit"}
+                          onClick={() => navigate(`/badges/update/${badge.id}`)}
+                        >
+                          <Pencil />
+                        </Button>
+
                       </CardFooter>
                     </Card>
                   ))}

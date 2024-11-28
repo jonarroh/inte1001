@@ -151,6 +151,9 @@ export class UserBadges {
       const result = (await db.select().from(schema.userBadges)
         .innerJoin(schema.badges, eq(schema.userBadges.badgeId, schema.badges.id))
         .where(eq(schema.userBadges.userId, userId)));
+
+console.log("result",result);
+
       if (result) {
         return { isOk: true, value: result };
       }
@@ -175,6 +178,11 @@ export class UserBadges {
   async addUserBadge(userId: number, badgeId: number): Promise<Result<boolean, string>> {
     try {
       await db.transaction(async (trx) => {
+        //validar que no se haya insertado antes
+        const userBadge = db.select().from(schema.userBadges).where(and(eq(schema.userBadges.userId, userId), eq(schema.userBadges.badgeId, badgeId))).get();
+        if (userBadge) {
+          return { isOk: true, value: true };
+        }
         await trx.insert(schema.userBadges).values({ userId, badgeId }).execute();
       });
       return { isOk: true, value: true };
@@ -241,6 +249,17 @@ export class UserBadges {
       const newAccumulatedPoints = db.select().from(schema.userBadgesPoints).where(and(eq(schema.userBadgesPoints.userId, userId), eq(schema.userBadgesPoints.month, new Date().getMonth().toString()))).get();
       console.log({ newAccumulatedPoints });
       if (newAccumulatedPoints) {
+
+        //ver si se puede agregar un nuevo user_badge
+        const badges = db.select().from(schema.badges).all();
+
+        if (badges) {
+          for (const badge of badges) {
+            if (newAccumulatedPoints.pointsAccumulated >= badge.pointsRequired) {
+              await this.addUserBadge(userId, badge.id);
+            }
+          }
+        }
         return { isOk: true, value: newAccumulatedPoints.pointsAccumulated };
       } else {
         return { isOk: false, error: 'Failed to retrieve new accumulated points' };

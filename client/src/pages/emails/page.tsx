@@ -1,141 +1,314 @@
-import DashboardLayout from "@/components/layout/app";
-import PageContainer from "@/components/templates/page-container";
-import {
-  AlertDialog, AlertDialogTrigger,
-  AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction
-} from "@/components/ui/alert-dialog";
-import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import React, { useState } from 'react';
+import { defer, LoaderFunction, useFetcher, useLoaderData } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { Heading } from "@/components/ui/heading";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { useState } from "react";
-import { useFetcher } from "react-router-dom";
-import { z } from "zod";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { X, ChevronsUpDown, Check, LoaderCircle } from "lucide-react";
+import { Heading } from '@/components/ui/heading';
+import { Breadcrumbs } from '@/components/ui/breadcrumbs';
+import PageContainer from '@/components/templates/page-container';
+import DashboardLayout from '@/components/layout/app';
+import useFetch from '@/lib/useFetcht';
+import { set } from 'zod';
+
+export interface Address {
+  id: number;
+  calle: string;
+  colonia: string;
+  ciudad: string;
+  estado: string;
+  pais: string;
+  codigoPostal: string;
+  userId: number;
+  numeroExterior: number;
+  estatus: string;
+}
+
+export interface CreditCard {
+  id: number;
+  cardNumber: string;
+  expiryDate: string;
+  cardHolderName: string;
+  userId: number;
+  estatus: string;
+  cvv: string;
+}
+
+export interface User {
+  id: number;
+  name: string;
+  lastName: string;
+  email: string;
+  password: string;
+  role: string;
+  token: string;
+  estatus: string;
+  direcciones: Address[];
+  creditCards: CreditCard[];
+}
 
 const options = [
   { value: "todos", label: "Todos" },
   { value: "lessActivity", label: "Menos actividad" },
-  { value: "MoreActivity", label: "Más actividad" }
+  { value: "moreActivity", label: "Más actividad" },
+  { value: "custom", label: "Personalizado" }
 ];
 
-// Esquema de validación usando Zod
-const formSchema = z.object({
-  message: z.string().min(1, "El mensaje es requerido"),
-  framework: z.string().default("todos").refine((val) => options.some(option => option.value === val), {
-    message: "Seleccione una opción válida",
-  })
-});
+export const userData: LoaderFunction = async () => {
+  const response = await fetch("http://localhost:5275/api/Users");
+  if (!response.ok) {
+    throw new Error("Network response was not ok");
+  }
+  const data: User[] = await response.json();
+
+  return { data };
+};
 
 export default function EmailsPage() {
-  const fetcher = useFetcher();
+  const data = useLoaderData() as { data: User[] };
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("todos");
-  const [errors, setErrors] = useState({ message: "", framework: "" });
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
-  const handleSubmit = (formData: { message: string; framework: string }) => {
-    const validation = formSchema.safeParse(formData);
-    if (!validation.success) {
-      const fieldErrors = validation.error.flatten().fieldErrors;
-      setErrors({
-        message: fieldErrors.message?.[0] || "",
-        framework: fieldErrors.framework?.[0] || "",
-      });
+  // Initialize users from loader data
+  const [users, setUsers] = useState(data.data || []);
+  const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
+  const [message, setMessage] = useState("");
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [errors, setErrors] = useState({ message: "", framework: "" });
+  const featcher = useFetcher();
+
+  const handleSubmit = () => {
+    if (!message.trim()) {
+      setErrors((prev) => ({ ...prev, message: "El mensaje es requerido" }));
       return false;
     }
+
+    if (!value) {
+      setErrors((prev) => ({ ...prev, framework: "Seleccione una opción válida" }));
+      return false;
+    }
+
     setErrors({ message: "", framework: "" });
     return true;
+  };
+
+  const handleAddUser = (user: User) => {
+    setSelectedUsers([...selectedUsers, user]);
+    setUsers(users.filter((u) => u.id !== user.id));
+  };
+
+  const handleRemoveUser = (user: User) => {
+    setSelectedUsers(selectedUsers.filter((u) => u.id !== user.id));
+    setUsers([...users, user]);
   };
 
   return (
     <DashboardLayout>
       <PageContainer scrollable>
         <div className="space-y-4">
-          <Breadcrumbs items={[{ title: "Dashboard", link: "/dashboard" }, { title: "Correos", link: "/badges" }]} />
+          <Breadcrumbs
+            items={[
+              { title: "Dashboard", link: "/dashboard" },
+              { title: "Envío de correos", link: "/emails" }
+            ]}
+          />
 
           <div className="flex items-start justify-between">
-            <Heading description="" title="Envío de correos" />
+            <Heading
+              description="Información general"
+              title="Envío de correos"
+            />
           </div>
-
           <div>
-            <div className="flex justify-between gap-x-10 mb-3">
-              <div className="w-full bg-white h-[500px]">
-                <fetcher.Form
-                  onSubmit={(e) => e.preventDefault()} // Evitar el envío HTML nativo
-                >
-                  <Textarea placeholder="Escribe el mensaje que se enviará a los destinatarios." name="message" className="w-full h-full mt-3 mb-3" rows={7} />
-                  {errors.message && <p className="text-red-500 text-sm">{errors.message}</p>}
-                  <div>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button variant="default" type="button">Enviar mensaje</Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>¿Estás seguro de enviar el mensaje?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Una vez enviado, no se podrá deshacer. Asegúrate de que el mensaje sea el correcto.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                          <AlertDialogAction
-                            type="button"
-                            onClick={() => {
-                              const message = (document.querySelector('textarea[name="message"]') as HTMLTextAreaElement)?.value || "";
-                              const formData = { message, framework: value };
+            <div className="p-4 max-w-4xl mx-auto">
+              <h1 className="text-2xl font-bold mb-4">Envío de correos</h1>
 
-                              if (handleSubmit(formData)) {
-                                const data = new FormData();
-                                data.append("message", formData.message);
-                                data.append("framework", formData.framework);
-                                fetcher.submit(data, { method: "post" });
+              <div className="bg-white p-6 rounded-lg shadow-md">
+                <textarea
+                  placeholder="Escribe el mensaje que se enviará a los destinatarios."
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  className="w-full h-48 p-2 border rounded mb-3"
+                />
+                {errors.message && <p className="text-red-500 text-sm mb-3">{errors.message}</p>}
+
+                <div className="flex items-center space-x-4">
+                  <div className="relative">
+                    <Button
+                      variant="outline"
+                      onClick={() => setOpen(!open)}
+                      className="w-[200px] justify-between"
+                    >
+                      {value ? options.find((opt) => opt.value === value)?.label : "Buscar..."}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+
+                    {open && (
+                      <div className="absolute z-10 w-[200px] bg-white border rounded shadow-lg mt-1">
+                        {options.map((opt) => (
+                          <div
+                            key={opt.value}
+                            onClick={() => {
+                              setValue(opt.value);
+                              if (opt.value === "custom") {
+                                setIsSheetOpen(true);
                               }
+                              setOpen(false);
                             }}
+                            className="p-2 hover:bg-gray-100 cursor-pointer flex items-center"
                           >
-                            Enviar
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                    <Popover open={open} onOpenChange={setOpen}>
-                      <PopoverTrigger asChild>
-                        <Button variant="outline" role="combobox" aria-expanded={open} className="w-[200px] justify-between mx-4">
-                          {value ? options.find((opt) => opt.value === value)?.label : "Buscar.."}
-                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-[200px] p-0">
-                        <Command>
-                          <CommandInput placeholder="Buscar.." />
-                          <CommandList>
-                            <CommandEmpty>No se encontro la opción</CommandEmpty>
-                            <CommandGroup>
-                              {options.map((opt) => (
-                                <CommandItem
-                                  key={opt.value}
-                                  value={opt.value}
-                                  onSelect={(currentValue) => {
-                                    setValue(currentValue === value ? "todos" : currentValue);
-                                    setOpen(false);
-                                  }}
-                                >
-                                  <Check className={cn("mr-2 h-4 w-4", value === opt.value ? "opacity-100" : "opacity-0")} />
-                                  {opt.label}
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          </CommandList>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
-                    {errors.framework && <p className="text-red-500 text-sm">{errors.framework}</p>}
+                            <Check className={`mr-2 h-4 w-4 ${value === opt.value ? "opacity-100" : "opacity-0"}`} />
+                            {opt.label}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                </fetcher.Form>
+
+                  <Button
+                    onClick={() => {
+                      if (handleSubmit()) {
+                        console.log("Sending message:", message);
+                        console.log("To recipients:", value);
+
+
+                        if (value == "custom") {
+                          fetch('http://localhost:3000/email/customToEmail', {
+                            method: 'POST',
+                            headers: {
+                              'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                              message,
+                              subject: selectedUsers.map((u) => u.email),
+                            })
+                          }).then(() => {
+                            window.location.href = "/emails";
+                          }
+                          )
+                          return;
+                        }
+
+                        const data = {
+                          message,
+                          framework: value
+                        };
+
+                        // const form
+                        setIsLoaded(true);
+                        featcher.submit(data, { method: "post" });
+
+
+
+
+                      }
+                    }}
+                  >
+                    {
+                      isLoaded ? (
+                        <LoaderCircle className="h-6 w-6 animate-spin" />
+
+                      )
+
+
+                        : "Enviar"
+                    }
+                  </Button>
+                </div>
+                {errors.framework && <p className="text-red-500 text-sm mt-2">{errors.framework}</p>}
               </div>
+
+              {isSheetOpen && (
+                <div className="fixed inset-0 bg-black/50 z-50 flex justify-end">
+                  <div className="w-[600px] bg-white h-full p-6 overflow-y-auto">
+                    <div className="flex justify-between items-center mb-4">
+                      <h2 className="text-xl font-semibold">Seleccionar Usuarios Personalizados</h2>
+                      <Button variant="ghost" size="icon" onClick={() => setIsSheetOpen(false)}>
+                        <X className="h-6 w-6" />
+                      </Button>
+                    </div>
+
+                    <div className="mb-6">
+                      <h3 className="text-lg font-semibold mb-3">Usuarios Disponibles</h3>
+                      {users.length === 0 ? (
+                        <p className="text-gray-500">No hay usuarios disponibles</p>
+                      ) : (
+                        <div className="space-y-3">
+                          {users.map((user) => (
+                            <div
+                              key={user.id}
+                              className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-100"
+                            >
+                              <div className="flex items-center space-x-4">
+                                <Avatar>
+                                  <AvatarImage src={
+                                    `http://localhost:5000/static/users/${user.id}.webp`
+                                  }
+                                    alt={user.name} />
+                                  <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                                </Avatar>
+                                <div>
+                                  <p className="font-medium">{user.name}</p>
+                                  <p className="text-sm text-gray-500">{user.email}</p>
+                                </div>
+                              </div>
+                              <Button variant="outline" size="sm" onClick={() => handleAddUser(user)}>
+                                Agregar
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    <div>
+                      <h3 className="text-lg font-semibold mb-3">Usuarios Seleccionados</h3>
+                      {selectedUsers.length === 0 ? (
+                        <p className="text-gray-500">No se han seleccionado usuarios</p>
+                      ) : (
+                        <div className="space-y-3">
+                          {selectedUsers.map((user) => (
+                            <div
+                              key={user.id}
+                              className="flex items-center justify-between p-3 border rounded-lg bg-green-50"
+                            >
+                              <div className="flex items-center space-x-4">
+                                <Avatar>
+                                  <AvatarImage src={
+                                    `http://localhost:5000/static/users/${user.id}.webp`
+                                  } alt={user.name} />
+                                  <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                                </Avatar>
+                                <div>
+                                  <p className="font-medium">{user.name}</p>
+                                  <p className="text-sm text-gray-500">{user.email}</p>
+                                </div>
+                              </div>
+                              <Button variant="destructive" size="sm" onClick={() => handleRemoveUser(user)}>
+                                <X className="h-4 w-4 mr-2" /> Eliminar
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="mt-6 flex justify-end space-x-2">
+                      <Button variant="outline" onClick={() => setIsSheetOpen(false)}>
+                        Cancelar
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          setValue("custom");
+                          setIsSheetOpen(false);
+                        }}
+                      >
+                        Confirmar Selección
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

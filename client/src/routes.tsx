@@ -35,12 +35,12 @@ import UpdateOfferPage, {
   loaderUpdateOffer,
 } from "./pages/ofertas/children/update";
 import ChatPage, { ChatLoader } from "./pages/chat/page";
-import EmailsPage from "./pages/emails/page";
+import EmailsPage, { userData } from "./pages/emails/page";
 import { ActionEmailsCreate } from "./pages/emails/children/actions";
-import CreatePersonOfferPage, {loader as loaderPersonPage} from "./pages/personalizadas/children/create";
-import PersonalizadasPage, {loader as PersonalizadasLoader} from "./pages/personalizadas/page";
+import CreatePersonOfferPage, { loader as loaderPersonPage } from "./pages/personalizadas/children/create";
+import PersonalizadasPage, { loader as PersonalizadasLoader } from "./pages/personalizadas/page";
 import { ActionPersonalizadasCreate, ActionPersonalizadasUpdate, ActionPersonalizadasDelete } from "./pages/personalizadas/children/actions";
-import UpdateOfferPersonalPage, {loaderUpdateOfferPersonal} from "./pages/personalizadas/children/update";
+import UpdateOfferPersonalPage, { loaderUpdateOfferPersonal } from "./pages/personalizadas/children/update";
 
 const router = createBrowserRouter([
   {
@@ -110,17 +110,17 @@ const router = createBrowserRouter([
     element: <PersonalizadasPage />,
     loader: PersonalizadasLoader,
     action: ActionPersonalizadasCreate,
-    children:[
+    children: [
       {
         path: "create",
         loader: loaderPersonPage,
         element: <CreatePersonOfferPage />,
-      },{
+      }, {
         path: "update/:id",
         action: ActionPersonalizadasUpdate,
         loader: loaderUpdateOfferPersonal,
         element: <UpdateOfferPersonalPage />,
-      },{
+      }, {
         path: "delete/:id",
         action: ActionPersonalizadasDelete,
       }
@@ -167,7 +167,8 @@ const router = createBrowserRouter([
   {
     path: "/emails",
     element: <EmailsPage />,
-    action: ActionEmailsCreate
+    action: ActionEmailsCreate,
+    loader: userData
   }
 ]);
 

@@ -27,3 +27,17 @@ export const sendToEmailDTO = z.object({
   }),
   framework: z.enum(["todos", "lessActivity", "MoreActivity"]),
 });
+
+export const customToEmailDTO = z.object({
+  message: z.string({
+    message: "El mensaje debe ser una cadena de texto",
+  }).refine((value) => value.length > 0, {
+    message: "El mensaje no puede estar vacio",
+  }),
+  //subject array of string
+  subject: z.array(z.string({
+    message: "El asunto debe ser una cadena de texto",
+  }).refine((value) => value.length > 0, {
+    message: "El asunto no puede estar vacio",
+  })),
+});

@@ -97,18 +97,16 @@ export default function ChatPage() {
                     filteredMessages.map((message, index) => (
                       <div
                         key={index}
-                        className={`flex ${
-                          message.rol === "user"
+                        className={`flex ${message.rol === "user"
                             ? "justify-start"
                             : "justify-end"
-                        } mb-4`}
+                          } mb-4`}
                       >
                         <div
-                          className={`flex max-w-96 ${
-                            message.rol === "user"
+                          className={`flex max-w-96 ${message.rol === "user"
                               ? "bg-white"
                               : "bg-gray-600 text-white"
-                          } rounded-lg p-3`}
+                            } rounded-lg p-3`}
                         >
                           <p>{message.mensaje}</p>
                         </div>
