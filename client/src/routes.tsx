@@ -41,6 +41,7 @@ import CreatePersonOfferPage, { loader as loaderPersonPage } from "./pages/perso
 import PersonalizadasPage, { loader as PersonalizadasLoader } from "./pages/personalizadas/page";
 import { ActionPersonalizadasCreate, ActionPersonalizadasUpdate, ActionPersonalizadasDelete } from "./pages/personalizadas/children/actions";
 import UpdateOfferPersonalPage, { loaderUpdateOfferPersonal } from "./pages/personalizadas/children/update";
+import UsersPage from "./pages/users/page";
 
 const router = createBrowserRouter([
   {
@@ -169,6 +170,10 @@ const router = createBrowserRouter([
     element: <EmailsPage />,
     action: ActionEmailsCreate,
     loader: userData
+  },
+  {
+    path: "interactions",
+    element: <UsersPage />,
   }
 ]);
 

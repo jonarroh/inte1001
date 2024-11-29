@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { defer, LoaderFunction, useFetcher, useLoaderData } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { defer, LoaderFunction, useFetcher, useLoaderData, useParams, useSearchParams } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { X, ChevronsUpDown, Check, LoaderCircle } from "lucide-react";
@@ -9,6 +9,7 @@ import PageContainer from '@/components/templates/page-container';
 import DashboardLayout from '@/components/layout/app';
 import useFetch from '@/lib/useFetcht';
 import { set } from 'zod';
+import MessageHistory from './children/History';
 
 export interface Address {
   id: number;
@@ -76,6 +77,21 @@ export default function EmailsPage() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [errors, setErrors] = useState({ message: "", framework: "" });
   const featcher = useFetcher();
+  let [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    console.log({ searchParams });
+    const emailparam = searchParams.get("email");
+    if (emailparam) {
+      setValue("custom");
+      //agreagar el email a los seleccionados
+      const user = users.find((u) => u.email === emailparam);
+      if (user) {
+        handleAddUser(user);
+      }
+    }
+  }, []
+  )
 
   const handleSubmit = () => {
     if (!message.trim()) {
@@ -120,10 +136,11 @@ export default function EmailsPage() {
             />
           </div>
           <div>
-            <div className="p-4 max-w-4xl mx-auto">
-              <h1 className="text-2xl font-bold mb-4">Envío de correos</h1>
+            <div className="p-4 max-w-4xl mx-auto flex flex-row">
+              <MessageHistory />
 
-              <div className="bg-white p-6 rounded-lg shadow-md">
+              <div className="bg-white  rounded-lg shadow-md border p-4 w-96 gap-5">
+                <h2 className="text-lg font-semibold mb-3">Enviar Correos</h2>
                 <textarea
                   placeholder="Escribe el mensaje que se enviará a los destinatarios."
                   value={message}
@@ -214,6 +231,19 @@ export default function EmailsPage() {
                         : "Enviar"
                     }
                   </Button>
+                  {
+                    value == "custom" && (
+                      <div>
+                        <Button
+                          onClick={() => {
+                            setIsSheetOpen(true);
+                          }}
+                        >
+                          Seleccionar Usuarios
+                        </Button>
+                      </div>
+                    )
+                  }
                 </div>
                 {errors.framework && <p className="text-red-500 text-sm mt-2">{errors.framework}</p>}
               </div>

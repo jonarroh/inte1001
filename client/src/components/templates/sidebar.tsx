@@ -91,6 +91,12 @@ export default function Sidebar({ className }: SidebarProps) {
                 href: '/chat',
                 description: 'Historial de chat',
                 icon: 'chat'
+              },
+              {
+                title: 'Interacciones',
+                href: '/interactions',
+                description: 'Interacciones de usuario',
+                icon: 'kanban'
               }
             ]} />
           </div>

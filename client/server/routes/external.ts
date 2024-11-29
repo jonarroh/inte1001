@@ -15,7 +15,18 @@ external.get('/', async (c) => {
     return c.json({ error: result.error }, 500);
   }
 }
-);
+)
+;
+
+external.get('/email', async (c) => {
+  const controller = new ExternalUserInteractionsController();
+  const result = await controller.getEmailHistiry();
+  if (result.isOk) {
+    return c.json(result.value);
+  } else {
+    return c.json({ error: result.error }, 500);
+  }
+});
 
 external.get('/grouped', async (c) => {
   const controller = new ExternalUserInteractionsController();

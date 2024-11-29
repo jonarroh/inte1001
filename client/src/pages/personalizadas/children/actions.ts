@@ -35,6 +35,7 @@ export const ActionPersonalizadasUpdate: ActionFunction = async ({ request }) =>
     productoId: Number(formData.get("productoId")),
     limitecanje: Number(formData.get("limitecanje")),
     motivo: String(formData.get("motivo")),
+    userId: 4
   }
 
   const data = {
@@ -86,6 +87,7 @@ export const ActionPersonalizadasCreate: ActionFunction = async ({ request }) =>
     productoId: Number(formData.get("productoId")),
     limitecanje: Number(formData.get("limitecanje")),
     motivo: String(formData.get("motivo")),
+    userId: 4
   }
 
   const data = {

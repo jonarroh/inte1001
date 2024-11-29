@@ -2,7 +2,7 @@
 import { Result } from "../../utils/types";
 import { db } from "../db";
 import * as schema from "../db/schema"; // Asegúrate de que tu archivo schema tenga las definiciones necesarias
-import { eq, sql } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 import { selectExternalUserInteractions,insertExternalUserInteractions} from "../db/schema/badge";
 
 export class ExternalUserInteractionsController{
@@ -29,6 +29,23 @@ export class ExternalUserInteractionsController{
       return { isOk: false, error: 'Failed to retrieve external user interactions' };
     }
   }
+
+
+  async getEmailHistiry(): Promise<Result<selectExternalUserInteractions[], string>> {
+    try {
+      const result = await db.select().from(schema.ExternalUserInteractions)
+      .where(eq(schema.ExternalUserInteractions.interactionType, 'email'))
+      .groupBy(schema.ExternalUserInteractions.interactionAt)
+      .orderBy(desc(schema.ExternalUserInteractions.interactionAt));
+      if (result) {
+        return { isOk: true, value: result };
+      }
+      return { isOk: false, error: 'No external user interactions found' };
+    } catch (error) {
+      return { isOk: false, error: 'Failed to retrieve external user interactions' };
+    }
+  }
+
 
   async getMessagesGroupedByUser(): Promise<Result<{
     id: number,
@@ -62,6 +79,7 @@ export class ExternalUserInteractionsController{
     const formattedResult = result.map(row => ({
       id: row.id,
       nombre: users.find((user: { id: number }) => user.id === row.id).name,
+      //@ts-ignore
       messages: JSON.parse(row.messages) // Convertimos el JSON string a objetos
     }));
 

@@ -38,6 +38,7 @@ export const ActionOfertasUpdate: ActionFunction = async ({ request }) => {
     badgepromoid: Number(formData.get("badgepromoid")),
     limitecanje: Number(formData.get("limitecanje")),
     productos: String(formData.get("productos")),
+    userId: 4
   };
 
   // Validar que los campos no estén vacíos
@@ -95,6 +96,7 @@ export const ActionOfertasCreate: ActionFunction = async ({ request }) => {
     badgepromoid: Number(formData.get("badgepromoid")),
     limitecanje: Number(formData.get("limitecanje")),
     productos: String(formData.get("productos")),
+    userId: 4
   }
 
   // console.log(formFields);
@@ -109,6 +111,7 @@ export const ActionOfertasCreate: ActionFunction = async ({ request }) => {
     estado: 1,
     badgePromoId: formFields.badgepromoid,
     limiteCanje: formFields.limitecanje,
+    userId: 4
   }
 
   // console.log(data);
