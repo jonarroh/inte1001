@@ -5,6 +5,8 @@ import { Heading } from "@/components/ui/heading";
 import { Input } from "@/components/ui/input";
 import { useLoaderData } from "react-router-dom";
 import React, { useState, useEffect } from "react";
+import { formatDistanceToNow } from "date-fns";
+import { es } from "date-fns/locale";
 
 export async function ChatLoader() {
   const response = await fetch("http://localhost:5275/api/Chats");
@@ -95,14 +97,10 @@ export default function ChatPage() {
                         </p>
                         {/* Mostrar la fecha */}
                         <p className="text-sm text-gray-400">
-                          {new Date(conversation.fecha).toLocaleDateString(
-                            "es-MX",
-                            {
-                              day: "2-digit",
-                              month: "2-digit",
-                              year: "numeric",
-                            }
-                          )}
+                          {formatDistanceToNow(new Date(conversation.fecha), {
+                            addSuffix: true,
+                            locale: es,
+                          })}
                         </p>
                       </div>
                     </div>
