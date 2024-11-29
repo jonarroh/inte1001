@@ -16,10 +16,19 @@ export async function ChatLoader() {
 }
 
 export default function ChatPage() {
-  const data = useLoaderData();
+  const data: {
+    conversacionId: number;
+    nombreCompleto: string;
+    email: string;
+    fecha: string;
+    mensaje: string;
+    rol: string;
+  }[] = useLoaderData();
 
   // Estado para guardar la conversación seleccionada
-  const [selectedConversation, setSelectedConversation] = useState(null);
+  const [selectedConversation, setSelectedConversation] = useState<
+    number | null
+  >(null);
 
   // Filtrar mensajes por la conversación seleccionada
   const filteredMessages = selectedConversation
@@ -30,6 +39,10 @@ export default function ChatPage() {
   const groupedConversations = Array.from(
     new Map(data.map((item) => [item.conversacionId, item])).values()
   );
+
+  const selectedConversationData = groupedConversations.find(
+    (conv) => conv.conversacionId === selectedConversation
+  ) || { nombreCompleto: "", fecha: "" };
 
   return (
     <DashboardLayout>
@@ -71,9 +84,26 @@ export default function ChatPage() {
                       className="flex items-center mb-4 cursor-pointer hover:bg-gray-100 p-2 rounded-md"
                     >
                       <div className="flex-1">
+                        {/* Mostrar el nombre completo */}
                         <h2 className="text-lg font-semibold">
-                          {conversation.conversacionId}
+                          {conversation.nombreCompleto ||
+                            "Nombre no disponible"}
                         </h2>
+                        {/* Mostrar el correo */}
+                        <p className="text-sm text-gray-500">
+                          {conversation.email || "Correo no disponible"}
+                        </p>
+                        {/* Mostrar la fecha */}
+                        <p className="text-sm text-gray-400">
+                          {new Date(conversation.fecha).toLocaleDateString(
+                            "es-MX",
+                            {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                            }
+                          )}
+                        </p>
                       </div>
                     </div>
                   ))}
@@ -84,11 +114,29 @@ export default function ChatPage() {
               <div className="flex-1">
                 {/* Chat Header */}
                 <header className="bg-white p-4 text-gray-700">
-                  <h1 className="text-2xl font-semibold">
-                    {selectedConversation
-                      ? selectedConversation
-                      : "Selecciona una conversación"}
-                  </h1>
+                  <div className="flex justify-between items-center">
+                    <h1 className="text-2xl font-semibold">
+                      {selectedConversationData?.nombreCompleto || "Sin nombre"}
+                    </h1>
+                    {selectedConversationData && (
+                      <span>
+                        {new Date(
+                          selectedConversationData.fecha
+                        ).toLocaleDateString("es-MX", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                        })}{" "}
+                        -{" "}
+                        {new Date(
+                          selectedConversationData.fecha
+                        ).toLocaleTimeString("es-MX", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </span>
+                    )}
+                  </div>
                 </header>
 
                 {/* Mensajes del chat */}
@@ -97,16 +145,18 @@ export default function ChatPage() {
                     filteredMessages.map((message, index) => (
                       <div
                         key={index}
-                        className={`flex ${message.rol === "user"
+                        className={`flex ${
+                          message.rol === "user"
                             ? "justify-start"
                             : "justify-end"
-                          } mb-4`}
+                        } mb-4`}
                       >
                         <div
-                          className={`flex max-w-96 ${message.rol === "user"
+                          className={`flex max-w-96 ${
+                            message.rol === "user"
                               ? "bg-white"
                               : "bg-gray-600 text-white"
-                            } rounded-lg p-3`}
+                          } rounded-lg p-3`}
                         >
                           <p>{message.mensaje}</p>
                         </div>
