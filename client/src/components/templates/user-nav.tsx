@@ -23,7 +23,7 @@ export function UserNav() {
             {user ? (
               <>
                 <AvatarImage
-                  src={`http://localhost:5000/users/${user.id}.webp`}
+                  src={`http://191.101.1.86:5000/users/${user.id}.webp`}
                   alt={user.name}
                 />
                 <AvatarFallback>{user.name[0]}</AvatarFallback>

@@ -23,7 +23,7 @@ type OfertasPersonalizadasData = {
 }
 
 export const loader: LoaderFunction = async () => {
-  const response = await fetch("https://localhost:7268/api/PromocionesPersonalizadas/Promos");
+  const response = await fetch("http://191.101.1.86:5275/api/PromocionesPersonalizadas/Promos");
 
   if (!response.ok) {
     throw new Error("Failed to fetch data");
@@ -91,7 +91,7 @@ export default function PersonalizadasPage() {
                   <CardContent>
                     <CardDescription>
                       {item.descripcion}
-                      <img src={`http://localhost:5000/static/products/${item.productoId}.webp`} alt={item.nombre} />
+                      <img src={`http://191.101.1.86:5000/static/products/${item.productoId}.webp`} alt={item.nombre} />
                     </CardDescription>
                   </CardContent>
                   <CardFooter>

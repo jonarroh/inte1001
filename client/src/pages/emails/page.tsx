@@ -55,7 +55,7 @@ const options = [
 ];
 
 export const userData: LoaderFunction = async () => {
-  const response = await fetch("http://localhost:5275/api/Users");
+  const response = await fetch("http://191.101.1.86:5275/api/Users");
   if (!response.ok) {
     throw new Error("Network response was not ok");
   }
@@ -190,7 +190,7 @@ export default function EmailsPage() {
 
 
                         if (value == "custom") {
-                          fetch('http://localhost:3000/email/customToEmail', {
+                          fetch('http://191.101.1.86:3000/email/customToEmail', {
                             method: 'POST',
                             headers: {
                               'Content-Type': 'application/json',
@@ -272,7 +272,7 @@ export default function EmailsPage() {
                               <div className="flex items-center space-x-4">
                                 <Avatar>
                                   <AvatarImage src={
-                                    `http://localhost:5000/static/users/${user.id}.webp`
+                                    `http://191.101.1.86:5000/static/users/${user.id}.webp`
                                   }
                                     alt={user.name} />
                                   <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
@@ -305,7 +305,7 @@ export default function EmailsPage() {
                               <div className="flex items-center space-x-4">
                                 <Avatar>
                                   <AvatarImage src={
-                                    `http://localhost:5000/static/users/${user.id}.webp`
+                                    `http://191.101.1.86:5000/static/users/${user.id}.webp`
                                   } alt={user.name} />
                                   <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                                 </Avatar>

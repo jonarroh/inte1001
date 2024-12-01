@@ -9,7 +9,7 @@ export const ActionOfertasDelete: ActionFunction = async ({ params }) => {
 
   console.log(id);
 
-  const deleteOferta = await fetch(`https://localhost:7268/api/Promociones/deletePromocion/${id}`, {
+  const deleteOferta = await fetch(`https://191.101.1.86:7268/api/Promociones/deletePromocion/${id}`, {
     method: "PUT",
   }).then((res) => res.json()).then(async (data) => {
     // console.log(data);
@@ -64,7 +64,7 @@ export const ActionOfertasUpdate: ActionFunction = async ({ request }) => {
 
   // console.log(data);
 
-  const updateOferta = await fetch(`https://localhost:7268/api/Promociones/updatePromocion/${data.id}`, {
+  const updateOferta = await fetch(`http://191.101.1.86:5275/api/Promociones/updatePromocion/${data.id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -116,7 +116,7 @@ export const ActionOfertasCreate: ActionFunction = async ({ request }) => {
 
   // console.log(data);
 
-  const addOferta = await fetch("https://localhost:7268/api/Promociones/addPromocion", {
+  const addOferta = await fetch("http://191.101.1.86:5275/api/Promociones/addPromocion", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

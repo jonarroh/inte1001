@@ -83,7 +83,7 @@ export default class BadgeController {
       const formData = new FormData();
       formData.append('imagen', file);
       formData.append('id', idFile);
-      const response = await fetch('http://localhost:5000/badge/upload', {
+      const response = await fetch('http://191.101.1.86:5000/badge/upload', {
         method: 'POST',
         body: formData,
       });

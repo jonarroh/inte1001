@@ -39,7 +39,7 @@ async function createFolder(name: string) {
   import { inser${capitalName} } from "@server/schema/${name}";
 
   export class ${capitalName}Service {
-    private baseUrl: string = "http://localhost:3000/${name}";
+    private baseUrl: string = "http://191.101.1.86:3000/${name}";
 
     async create${capitalName}(new${capitalName}: FormData): Promise<inser${capitalName} | { success: false; error: any }
     > {

@@ -22,7 +22,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 
 
 export const loader: LoaderFunction = async () => {
-  const response = await fetch('http://localhost:3000/badge');
+  const response = await fetch('http://191.101.1.86:3000/badge');
   if (!response.ok) {
     throw new Error('Network response was not ok');
   }

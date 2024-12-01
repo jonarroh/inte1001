@@ -3,7 +3,7 @@
   import { inserPersonalizadas } from "@server/schema/personalizadas";
 
   export class PersonalizadasService {
-    private baseUrl: string = "http://localhost:3000/personalizadas";
+    private baseUrl: string = "http://191.101.1.86:3000/personalizadas";
 
     async createPersonalizadas(newPersonalizadas: FormData): Promise<inserPersonalizadas | { success: false; error: any }
     > {

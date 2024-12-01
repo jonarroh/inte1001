@@ -3,7 +3,7 @@
   import { inserOfertas } from "@server/schema/ofertas";
 
   export class OfertasService {
-    private baseUrl: string = "http://localhost:3000/ofertas";
+    private baseUrl: string = "http://191.101.1.86:3000/ofertas";
 
     async createOfertas(newOfertas: FormData): Promise<inserOfertas | { success: false; error: any }
     > {
