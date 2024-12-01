@@ -11,7 +11,7 @@ const MessageHistory = () => {
   useEffect(() => {
     const fetchInteractions = async () => {
       try {
-        const res = await fetch('http://localhost:3000/external/email');
+        const res = await fetch('http://191.101.1.86:3000/external/email');
         const data = await res.json();
         setInteractions(data);
       } catch (error) {

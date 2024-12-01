@@ -7,7 +7,7 @@ export const sendLog = async (message: string, type: 'info' | 'error' | 'warning
     };
 
     try {
-        await fetch(`http://localhost:3000/api/logger/write${type}`, {
+        await fetch(`http://191.101.1.86:3000/api/logger/write${type}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

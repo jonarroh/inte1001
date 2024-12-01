@@ -43,12 +43,12 @@ export default function UsersPage() {
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
 
   const { data: users, error } = useSWR<User[]>(
-    'http://localhost:5275/api/Users',
+    'http://191.101.1.86:5275/api/Users',
     fetcher
   );
 
   const { data: messages } = useSWR<Message[]>(
-    'http://localhost:3000/external/email',
+    'http://191.101.1.86:3000/external/email',
     fetcher
   );
 
@@ -87,7 +87,7 @@ export default function UsersPage() {
           <div className="flex items-center">
             <Avatar>
               <AvatarImage
-                src={`http://localhost:5000/static/users/${user.id}.webp`}
+                src={`http://191.101.1.86:5000/static/users/${user.id}.webp`}
                 alt={user.name}
               />
               <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>

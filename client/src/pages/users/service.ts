@@ -3,7 +3,7 @@
   import { inserUsers } from "@server/schema/users";
 
   export class UsersService {
-    private baseUrl: string = "http://localhost:3000/users";
+    private baseUrl: string = "http://191.101.1.86:3000/users";
 
     async createUsers(newUsers: FormData): Promise<inserUsers | { success: false; error: any }
     > {

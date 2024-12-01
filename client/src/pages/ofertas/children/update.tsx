@@ -30,7 +30,7 @@ type prod = {
 
 export const loaderUpdateOffer: LoaderFunction = async ({ params }) => {
     const id = params.id;
-    const response = await fetch(`https://localhost:7268/api/Promociones/getPromocion/${id}`);
+    const response = await fetch(`http://191.101.1.86:5275/api/Promociones/getPromocion/${id}`);
 
     if (!response.ok) {
         throw new Error('Network response was not ok');
@@ -41,7 +41,7 @@ export const loaderUpdateOffer: LoaderFunction = async ({ params }) => {
 };
 
 export const loadProducts = async () => {
-    const response = await fetch("https://localhost:7268/api/Productos");
+    const response = await fetch("http://191.101.1.86:5275/api/Productos");
 
     if (!response.ok) {
         throw new Error('Network response was not ok');

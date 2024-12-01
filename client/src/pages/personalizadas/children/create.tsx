@@ -36,7 +36,7 @@ type prod = {
 }
 
 export const loader: LoaderFunction = async () => {
-    const response = await fetch("https://localhost:7268/api/Productos");
+    const response = await fetch("https://191.101.1.86:7268/api/Productos");
 
     if (!response.ok) {
         throw new Error("Failed to fetch data");

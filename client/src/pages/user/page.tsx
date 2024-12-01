@@ -20,40 +20,40 @@ export function loader({ request }: LoaderFunctionArgs) {
   const date = url.searchParams.get('date') ?? 'lastMonth';
 
   return defer({
-    both: fetch('http://localhost:3000/location/both', {
+    both: fetch('http://191.101.1.86:3000/location/both', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ date })
     }).then((res) => res.json()),
 
-    device: fetch('http://localhost:3000/location/device', {
+    device: fetch('http://191.101.1.86:3000/location/device', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ date })
     }).then((res) => res.json()),
 
     // productos mas comprados
-    promos: fetch(`https://localhost:7268/api/Orders/getBestSellers/${date}`, {
+    promos: fetch(`http://191.101.1.86:5275/api/Orders/getBestSellers/${date}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
     }).then((res) => res.json()),
 
     // actividad en la pagina | Bar Chart - Interactive | fecha - logetcount - nologetcount
-    actividad: fetch('http://localhost:3000/location/deviceTypes', {
+    actividad: fetch('http://191.101.1.86:3000/location/deviceTypes', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ date })
     }).then((res) => res.json()),
 
     // cantidad usuarios por badge
-    badges: fetch('http://localhost:3000/badge/usersPerBadge', {
+    badges: fetch('http://191.101.1.86:3000/badge/usersPerBadge', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ date })
     }).then((res) => res.json()),
 
     // salon mas usado barras normal
-    lugares: fetch(`https://localhost:7268/api/Espacios/espacioMasSolicitado/${date}`, {
+    lugares: fetch(`http://191.101.1.86:5275/api/Espacios/espacioMasSolicitado/${date}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
     }).then((res) => res.json()),

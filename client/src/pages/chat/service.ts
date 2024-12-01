@@ -3,7 +3,7 @@
   import { inserChat } from "@server/schema/chat";
 
   export class ChatService {
-    private baseUrl: string = "http://localhost:3000/chat";
+    private baseUrl: string = "http://191.101.1.86:3000/chat";
 
     async createChat(newChat: FormData): Promise<inserChat | { success: false; error: any }
     > {

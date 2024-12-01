@@ -18,7 +18,7 @@ type ActionData = {
 
 export const loaderUpdateBadge: LoaderFunction = async ({ params }) => {
   const id = params.id;
-  const response = await fetch(`http://localhost:3000/badge/${id}`);
+  const response = await fetch(`http://191.101.1.86:3000/badge/${id}`);
   if (!response.ok) {
     throw new Error('Network response was not ok');
   }

@@ -100,7 +100,7 @@ private async getUserByEmail(email: string): Promise<number | null> {
     };
 
     try{
-      await fetch('http://localhost:3000/email', {
+      await fetch('http://191.101.1.86:3000/email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

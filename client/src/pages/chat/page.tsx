@@ -9,7 +9,7 @@ import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 
 export async function ChatLoader() {
-  const response = await fetch("http://localhost:5275/api/Chats");
+  const response = await fetch("http://191.101.1.86:5275/api/Chats");
   if (!response.ok) {
     throw new Error("Network response was not ok");
   }

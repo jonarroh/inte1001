@@ -3,7 +3,7 @@
   import { insertBadge } from "@server/schema/badge";
 
   export class BadgesService {
-    private baseUrl: string = "http://localhost:3000/badge";
+    private baseUrl: string = "http://191.101.1.86:3000/badge";
 
     async createBadges(newBadges: FormData): Promise<insertBadge | { success: false; error: any }
     > {

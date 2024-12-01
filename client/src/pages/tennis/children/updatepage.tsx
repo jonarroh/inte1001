@@ -9,7 +9,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
     return redirect("/tennis");
   }
 
-  const response = await fetch(`http://localhost:3000/tennis/${id}`);
+  const response = await fetch(`http://191.101.1.86:3000/tennis/${id}`);
 
   if (!response.ok) {
     throw new Error("Network response was not ok");

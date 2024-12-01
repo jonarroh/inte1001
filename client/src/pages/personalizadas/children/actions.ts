@@ -5,7 +5,7 @@ import { ActionFunction, json, redirect } from "react-router-dom";
 export const ActionPersonalizadasDelete: ActionFunction = async ({ params }) => {
   const id = params.id;
 
-  const deleteOferta = await fetch(`https://localhost:7268/api/PromocionesPersonalizadas/deletePromocion/${id}`, {
+  const deleteOferta = await fetch(`http://191.101.1.86:5275/api/PromocionesPersonalizadas/deletePromocion/${id}`, {
     method: "PUT",
   }).then((res) => res.json()).then(async (data) => {
     // console.log(data);
@@ -53,7 +53,7 @@ export const ActionPersonalizadasUpdate: ActionFunction = async ({ request }) =>
     userId: user.id,
   }
 
-  const updateOffer = await fetch(`https://localhost:7268/api/PromocionesPersonalizadas/updatePromocion/${data.id}`, {
+  const updateOffer = await fetch(`http://191.101.1.86:5275/api/PromocionesPersonalizadas/updatePromocion/${data.id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -106,7 +106,7 @@ export const ActionPersonalizadasCreate: ActionFunction = async ({ request }) =>
 
   console.log(data);
 
-  const addOferta = await fetch(`https://localhost:7268/api/PromocionesPersonalizadas/addPromocionPersonalizada`, {
+  const addOferta = await fetch(`http://191.101.1.86:5275/api/PromocionesPersonalizadas/addPromocionPersonalizada`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

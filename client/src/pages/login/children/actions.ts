@@ -7,7 +7,7 @@ export const ActionLogin: ActionFunction = async ({ request }) => {
   const password = formData.get("password");
   const captchaToken = formData.get("captchaToken");
 
-  const BASE_URL = "http://localhost:5275/Account/login";
+  const BASE_URL = "http://191.101.1.86:5275/Account/login";
 
   const response = await fetch(BASE_URL, {
     method: "POST",
@@ -56,7 +56,7 @@ export const ActionLogin: ActionFunction = async ({ request }) => {
     // Realiza la petición para obtener los datos del usuario
     try {
       const userResponse = await fetch(
-        `https://localhost:7268/api/Users/${userId}`,
+        `https://191.101.1.86:7268/api/Users/${userId}`,
         {
           method: "GET",
           headers: {
